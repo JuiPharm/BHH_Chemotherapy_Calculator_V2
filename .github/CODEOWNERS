@@ -1,0 +1,5 @@
+# Replace with actual BHH reviewers after the new repository is created.
+# Clinical data files should require Oncology Pharmacy review.
+/data/ @JuiPharm
+/src/ @JuiPharm
+/tests/ @JuiPharm
