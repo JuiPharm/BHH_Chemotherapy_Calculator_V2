@@ -11,9 +11,12 @@ function close(actual, expected, eps = 1e-9, label = '') {
 
 const regimens = JSON.parse(fs.readFileSync(new URL('../data/regimens.published.json', import.meta.url), 'utf8'));
 const rounding = JSON.parse(fs.readFileSync(new URL('../data/rounding-profiles.json', import.meta.url), 'utf8'));
+const legacyRoot = JSON.parse(fs.readFileSync(new URL('../data/legacy-regimens.v1.json', import.meta.url), 'utf8'));
+const legacyRegimens = legacyRoot['สูตรยาเคมีบำบัด'] ?? [];
 const profiles = Object.fromEntries(rounding.map(p => [p.id, p]));
 
-assert(regimens.length === 6, 'Expected exactly 6 approved pilot regimens in v2.1');
+assert(regimens.length === 6, 'Expected exactly 6 approved pilot regimens in v2.1.1');
+assert(legacyRegimens.length === 136, `Expected 136 preserved V1 regimens, got ${legacyRegimens.length}`);
 assert(regimens.every(r => r.localApproval === true), 'All six pilot regimens must have localApproval=true');
 let schemaErrors = 0;
 for (const regimen of regimens) schemaErrors += validateRegimen(regimen).filter(x => x.severity === 'error').length;
@@ -63,4 +66,4 @@ const abvdCalc = calculateRegimen({
 const bleo = abvdCalc.results.find(x => x.orderId === 'abvd-bleomycin');
 assert(bleo?.rawUnit === 'IU', 'Bleomycin must remain IU');
 
-console.log(`PRODUCTION_SMOKE_PASS regimens=${regimens.length} schemaErrors=${schemaErrors}`);
+console.log(`PRODUCTION_SMOKE_PASS active=${regimens.length} legacy=${legacyRegimens.length} schemaErrors=${schemaErrors}`);
