@@ -26,14 +26,9 @@ npx wrangler d1 create bhh-chemo-production
 ```
 
 3. Copy their IDs into the matching `d1_databases` entries in `v3/wrangler.jsonc`. Staging must not point at production. Local ID is only for the local simulator.
-4. Choose hospital-controlled staging/production hostnames, for example `chemo-staging.your-hospital-domain` and `chemo.your-hospital-domain`. Add `routes` in each environment using your actual domain:
-
-```json
-"routes": [{"pattern":"chemo-staging.your-hospital-domain","custom_domain":true}]
-```
-
-5. In Cloudflare Zero Trust, configure Google as the identity provider (hospital-managed Google Workspace recommended). Create separate Access applications for the entire staging and production hostnames; restrict admission to hospital users/groups. Configure session duration to hospital policy. Do not exclude `/api`, assets, or the service worker from protection.
-6. Set the actual team domain (`yourteam.cloudflareaccess.com`) and the **matching application audience** in the matching environment variables. The Worker verifies the JWT signature, issuer, audience, expiry, subject and app token type. Roles come from D1, not from a browser header or Google profile claim. `workers_dev` remains false; bypassing Access cannot bypass JWT verification.
+4. **Staging no-domain option (selected):** use the isolated `bhh-chemotherapy-v3-staging.<YOUR_WORKERS_SUBDOMAIN>.workers.dev` hostname; `env.staging.workers_dev` is `true` and no staging `routes` are required. Follow [STAGING_OTP.md](STAGING_OTP.md) for the exact Zero Trust application setup. If a hospital staging domain exists, instead set `workers_dev=false` and use a genuine `routes` custom domain for staging.
+5. **Staging identity method: Cloudflare Access email One-time PIN (OTP)**, no Google Cloud Console or Google OAuth required. Add One-time PIN in Zero Trust > Integrations > Identity providers, create a staging self-hosted Access application covering the full exact hostname, and allow only named tester email addresses with Require: One-time PIN login method. Never use a public/Everyone Access policy, and protect `/api`, assets and the service worker. Production will have a separate Access application and hospital-approved authentication method, not automatically inherited from staging.
+6. Set the actual team domain (`yourteam.cloudflareaccess.com`) and the **matching staging application audience** in the staging environment. The Worker verifies JWT signature, issuer, audience, expiry, subject and app token type. Roles come from D1, not browser identity fields. Staging's `workers.dev` endpoint can be publicly reachable but must fail closed without a valid Access JWT and a provisioned D1 user. Root production `workers_dev` remains false and must use an Access-protected custom domain.
 7. Run the deploy guard and apply migrations **to staging only**:
 
 ```sh
@@ -58,7 +53,7 @@ INSERT INTO audit_logs VALUES(
  strftime('%Y-%m-%dT%H:%M:%fZ','now'),'REPLACE_OPERATOR');
 ```
 
-Provision calculator_user, regimen_editor and oncology_pharmacist similarly. Use lowercase verified Google email addresses. Separate the author from the independent reviewer. Do not grant admin to all users. Run reviewed user provisioning/audit inserts together as one transaction using the Cloudflare D1 console.
+Provision calculator_user, regimen_editor and oncology_pharmacist similarly. Use lowercase email addresses verified by the selected Access login method (OTP for staging). Separate the author from the independent reviewer. Do not grant admin to all users. Run reviewed user provisioning/audit inserts together as one transaction using the Cloudflare D1 console.
 
 9. Deploy staging:
 
@@ -66,7 +61,7 @@ Provision calculator_user, regimen_editor and oncology_pharmacist similarly. Use
 npm run deploy:staging:v3
 ```
 
-10. Sign in from two separate browsers using real accounts. Run the checks listed in REQUIREMENT_MATRIX.md: identities and role denial; 142 seeded records; clone/save/review/publish; same content on both clients; hard max, IU and AUC golden checks; cache invalidation and offline banner; logout/session expiry and denied accounts. Use only synthetic patient parameters during UAT.
+10. Sign in from two separate browsers using allowlisted, real OTP inboxes and named staging D1 accounts. Run the checks listed in REQUIREMENT_MATRIX.md: identities and role denial; 142 seeded records; clone/save/review/publish; same content on both clients; hard max, IU and AUC golden checks; cache invalidation and offline banner; logout/session expiry and denied accounts. Use only synthetic patient parameters during UAT.
 
 ## GitHub CI
 
@@ -74,7 +69,7 @@ npm run deploy:staging:v3
 
 ## Production cutover
 
-After staging UAT and hospital clinical/IT sign-off, apply migrations to the dedicated production D1, provision real identities, configure the production Access application and domain, run `node v3/scripts/check-deploy.mjs production`, and deploy using:
+After staging UAT and hospital clinical/IT sign-off **including separate production identity assurance/MFA decision**, apply migrations to the dedicated production D1, provision real identities, configure the production Access application and custom domain, run `node v3/scripts/check-deploy.mjs production`, and deploy using:
 
 ```sh
 npx wrangler d1 migrations apply DB --config v3/wrangler.jsonc --remote
