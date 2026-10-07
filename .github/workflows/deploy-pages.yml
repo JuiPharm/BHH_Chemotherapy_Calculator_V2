@@ -29,6 +29,13 @@ jobs:
       - name: Run production smoke tests
         run: node tests/production-smoke.mjs
 
+      - name: Parse-check browser runtime
+        run: |
+          node --check dist/app.js
+          node --check dist/engine.js
+          node --check dist/storage.js
+          node --check dist/validators.js
+
       - name: Verify static deployment files
         run: |
           test -f index.html
