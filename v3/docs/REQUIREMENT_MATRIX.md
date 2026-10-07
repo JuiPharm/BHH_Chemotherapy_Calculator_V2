@@ -5,11 +5,11 @@
 | Requirement | Implemented? | Tested? | Result / evidence |
 |---|---|---|---|
 | Cloudflare Static Assets + Worker + D1 | Yes | Actual local runtime | PASS local; remote PENDING ACCOUNT |
-| Dedicated staging/production databases | Config + deploy guard | Guard rejects placeholders | PENDING real account IDs |
+| Dedicated staging/production databases | Config + deploy guard | Guard rejects placeholders, same IDs and local auth | PENDING real account IDs |
 | Responsive clinical UI / BDMS theme / existing BHH logo | Yes | Desktop + 390px browser; visual screenshots | PASS local |
 | Central clinical master, no GitHub/localStorage editor | Yes | Source review + real central CRUD | PASS local |
 | Four roles | Yes | API denials, four browser identities | PASS local |
-| Cloudflare Access + Google Login | JWT verification/config/runbook | Signed JWT unit fixtures | Crypto validation PASS; real Google login PENDING ACCOUNT |
+| Cloudflare Access email OTP (staging) | JWT code unchanged; OTP runbook/hosting guard updated | JWT fixture and deploy guard local tests | JWT crypto baseline PASS; deploy guard local tests PASS; real Access OTP PENDING STAGING |
 | All required D1 domain tables | Yes | Migration tests, schema inspection | PASS local |
 | All writes include domain actor/time + audit | Yes | Schema, API audit before/after | PASS local; real user provisioning must include audit |
 | Draft/Submitted/Clinical Review Required/Approved/Published/Retired | Yes | API + browser transitions | PASS local |
@@ -57,9 +57,9 @@
 | Range/AUC/g/IU/loading/maintenance/per-day/infusion/max/duplicates/multi-phase review flags | Yes | Import report + conservative classifier | PASS; all flagged originals remain draft |
 | Unknown/ambiguous originals never auto-published | Yes | Exactly six Published on fresh D1 | PASS local |
 | Wrangler config / migrations / seed/import / API / build | Yes | Actual local deployment and deterministic build | PASS local |
-| CI/CD and one-time deployment instructions | Yes | Files + guard; existing V2 checks | Ready; remote CI status to be confirmed on pushed branch |
+| CI/CD and one-time deployment instructions | Yes | Files + updated staging guard; existing V2 checks | Code changes staged on branch; remote CI and actual OTP Access policy must be verified |
 | Unit / integration / migration / API / golden / frontend tests | Yes | 31 unit/migration/auth + 42 API + 3 browser suites | PASS local |
 | Two clients see new Published version and consistent reload | Yes | API + separate browser contexts | PASS local; real remote clients PENDING STAGING |
 | Browser console/network/API/D1/workflow checked | Yes | Real browser/runtime logs and tests | PASS local |
-| Cloudflare staging deployed and account login exercised | Templates ready | Cannot execute without account auth | PENDING ACCOUNT; NOT claimed production ready |
+| Cloudflare staging deployed and OTP sign-in exercised | OTP/Worker/D1 templates ready | Cannot execute without account auth | PENDING ACCOUNT; NOT deployed or clinically approved |
 | Merge main only after all release gates pass | Branch isolated | main untouched | NOT MERGED; staging/account gates pending |
