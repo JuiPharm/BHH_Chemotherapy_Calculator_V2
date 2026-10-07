@@ -22,7 +22,7 @@ Browser → same-origin Access-protected Worker → D1. The browser downloads on
 | /api/versions/:id/retire | POST | Admin; Published only |
 | /api/audit | GET | Admin; last 200 append-only events |
 
-All writes require same-origin Origin and the application's request header; credentials and role assertions are not accepted from the production browser. Local test identities are accepted only in explicit local environment on loopback addresses. JWT tests cover signature, audience, issuer, expiry and missing identity; actual Google/Access login must be verified in staging.
+All writes require same-origin Origin and the application's request header; credentials and role assertions are not accepted from the production browser. Local test identities are accepted only in explicit local environment on loopback addresses. JWT tests cover signature, audience, issuer, expiry and missing identity. Staging uses Cloudflare Access email One-time PIN with exact-email Access allowlisting; real Access OTP flow and D1 role enforcement must be verified on staging. Production authentication policy requires separate hospital IT approval. Authentication provider does not supply clinical roles; D1 does.
 
 ## Persistence and concurrency
 
