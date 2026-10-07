@@ -18,12 +18,13 @@
         <h1>BHH Chemotherapy Calculator V2</h1>
         <p class="subtitle">Structured regimen engine · fail-closed calculation · zero-code regimen drafts</p>
       </div>
-      <div class="test-banner">PRODUCTION v2.1<br><span>6 PILOT REGIMENS APPROVED</span></div>
+      <div class="test-banner">PRODUCTION v2.1.1<br><span>6 ACTIVE · 136 LEGACY PRESERVED</span></div>
     </header>
 
     <nav class="tabs" aria-label="Main navigation">
       <button class="active" data-tab="calculator">Calculator</button>
       <button data-tab="registry">Regimen Registry</button>
+      <button data-tab="library">All Regimens (V1 Library)</button>
       <button data-tab="builder">Regimen Builder</button>
       <button data-tab="rounding">Rounding Policy</button>
       <button data-tab="legacy">Legacy Validator</button>
@@ -77,6 +78,12 @@
       <section id="tab-registry" class="tab-panel hidden">
         <div class="section-heading"><div><h2>Regimen Registry</h2><p>Published pilot records + local drafts. Calculator reads published records only.</p></div><input id="registry-search" type="search" placeholder="Search regimen / indication"></div>
         <div id="registry-list" class="registry-grid"></div>
+      </section>
+
+      <section id="tab-library" class="tab-panel hidden">
+        <div class="section-heading"><div><h2>All Regimens — Legacy Migration Library</h2><p>Preserved from the original V1 repository. Searchable now; activation in Calculator requires structured validation and approval.</p></div><input id="library-search" type="search" placeholder="Search regimen / cancer / drug"></div>
+        <div id="library-summary" class="alert alert-info"></div>
+        <div id="library-list" class="registry-grid"></div>
       </section>
 
       <section id="tab-builder" class="tab-panel hidden">
@@ -135,12 +142,12 @@
           <p>Clinical calculations use structured dose objects only. Free-text legacy doses are never fed to the calculation engine. Draft regimen data may be stored in browser localStorage; patient inputs are not persisted.</p>
           <h3>Recommended production promotion gate</h3>
           <p>Regimen source verified → structured schema validated → independent oncology pharmacist review → golden test cases passed → local approval recorded → immutable published snapshot generated.</p>
-          <h3>Version</h3><p><code>2.1.0</code> · generated 7 October 2026.</p>
+          <h3>Version</h3><p><code>2.1.1</code> · generated 7 October 2026.</p>
         </div>
       </section>
     </main>
 
-    <footer>Bangkok Hospital Hatyai · Pharmacy Department · Production v2.1 · six pilot regimens approved · change control required for future updates.</footer>
+    <footer>Bangkok Hospital Hatyai · Pharmacy Department · Production v2.1.1 · six pilot regimens active · 136 V1 regimens preserved for migration.</footer>
   </div>
   <script type="module" src="./dist/app.js"></script>
   <script type="module" src="./register-sw.js"></script>
