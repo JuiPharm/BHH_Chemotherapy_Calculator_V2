@@ -15,28 +15,37 @@ let roundingOverrideActive = false;
 let lastCalculation = null;
 let builderOrders = [];
 let legacyFindings = [];
+let legacyRegimens = [];
+const cloneData = (value) => JSON.parse(JSON.stringify(value));
+const newId = () => globalThis.crypto?.randomUUID?.() ?? `id-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 async function loadJson(url) {
 const response = await fetch(url, { cache: 'no-store' });
 if (!response.ok)
 throw new Error(`Failed to load ${url}: ${response.status}`);
 return response.json();
 }
+async function loadJsonOptional(url, fallback) {
+try { return await loadJson(url); } catch { return fallback; }
+}
 async function init() {
 try {
-[publishedRegimens, defaultProfileList] = await Promise.all([
+[publishedRegimens, defaultProfileList, legacyRegimens] = await Promise.all([
 loadJson('./data/regimens.published.json'),
 loadJson('./data/rounding-profiles.json'),
+loadJsonOptional('./data/legacy-regimens.v1.json', { "สูตรยาเคมีบำบัด": [] }),
 ]);
+legacyRegimens = Array.isArray(legacyRegimens?.["สูตรยาเคมีบำบัด"]) ? legacyRegimens["สูตรยาเคมีบำบัด"] : [];
 const storedProfiles = loadRoundingOverrides();
 profileList = storedProfiles && isCompatibleRoundingOverride(storedProfiles, defaultProfileList)
 ? storedProfiles
-: structuredClone(defaultProfileList);
+: cloneData(defaultProfileList);
 roundingOverrideActive = Boolean(storedProfiles && isCompatibleRoundingOverride(storedProfiles, defaultProfileList));
 profiles = Object.fromEntries(profileList.map((p) => [p.id, p]));
 bindNavigation();
 populateRegimenSelect();
 bindCalculator();
 bindRegistry();
+bindLibrary();
 bindBuilder();
 bindRoundingPolicy();
 bindLegacyValidator();
@@ -58,10 +67,12 @@ button.addEventListener('click', () => showTab(button.dataset.tab ?? 'calculator
 function showTab(tab) {
 document.querySelectorAll('.tab-panel').forEach((panel) => panel.classList.add('hidden'));
 document.querySelectorAll('[data-tab]').forEach((button) => button.classList.toggle('active', button.dataset.tab === tab));
-const panel = document.querySelector(`#tab-${CSS.escape(tab)}`);
+const panel = document.getElementById(`tab-${tab}`);
 panel?.classList.remove('hidden');
 if (tab === 'registry')
 renderRegistry();
+if (tab === 'library')
+renderLibrary();
 if (tab === 'builder')
 renderBuilderOrders();
 if (tab === 'rounding')
@@ -208,6 +219,35 @@ ${warningHtml}
 </table></div>
 <p class="micro">*Cycle total is arithmetic dose × structured administration count only; it is not a prescribing recommendation. Continuous infusions are counted as one administration.</p>`;
 }
+function bindLibrary() {
+$('#library-search').addEventListener('input', renderLibrary);
+renderLibrary();
+}
+function renderLibrary() {
+const q = $('#library-search').value.trim().toLowerCase();
+const filtered = legacyRegimens.filter((r) => {
+const name = String(r['ชื่อสูตรยา'] ?? '');
+const cancer = String(r['ชนิดของมะเร็ง'] ?? '');
+const drugs = Array.isArray(r['รายการยา']) ? r['รายการยา'] : [];
+const drugText = drugs.map((d) => String(d?.['ชื่อยา'] ?? '')).join(' ');
+return `${name} ${cancer} ${drugText}`.toLowerCase().includes(q);
+});
+$('#library-summary').innerHTML = `<strong>${legacyRegimens.length}</strong> legacy regimen records preserved from V1 · <strong>${publishedRegimens.length}</strong> structured approved pilots active in Calculator · remaining legacy records require structured clinical migration before activation.`;
+$('#library-list').innerHTML = filtered.map((r) => {
+const name = String(r['ชื่อสูตรยา'] ?? 'Unnamed regimen');
+const cancer = String(r['ชนิดของมะเร็ง'] ?? '');
+const drugs = Array.isArray(r['รายการยา']) ? r['รายการยา'] : [];
+return `<article class="registry-card">
+<div class="registry-top"><div><span class="badge badge-warning">LEGACY REVIEW</span></div><span class="micro">${drugs.length} drug item(s)</span></div>
+<h3>${escapeHtml(name)}</h3>
+<p>${escapeHtml(cancer)}</p>
+<details><summary>Original V1 drug/dose data</summary>
+<div class="legacy-drug-list">${drugs.map((d) => `<div><strong>${escapeHtml(String(d?.['ชื่อยา'] ?? 'Unknown drug'))}</strong><span>${escapeHtml(String(d?.['ขนาดยา'] ?? ''))}</span></div>`).join('')}</div>
+</details>
+<p class="micro">Preserved for migration/reference. This record is not fed directly into the production calculation engine.</p>
+</article>`;
+}).join('') || '<p class="muted">No matching legacy regimens.</p>';
+}
 function bindRegistry() {
 $('#registry-search').addEventListener('input', renderRegistry);
 }
@@ -254,7 +294,7 @@ $('#builder-export').addEventListener('click', exportBuilderJson);
 }
 function blankBuilderOrder() {
 return {
-id: crypto.randomUUID(), drugName: '', basis: 'bsa', value: '', unit: 'mg', route: 'IV', days: '1', roundingProfileId: 'BHH_NEAREST_10MG_DEFAULT',
+id: newId(), drugName: '', basis: 'bsa', value: '', unit: 'mg', route: 'IV', days: '1', roundingProfileId: 'BHH_NEAREST_10MG_DEFAULT',
 };
 }
 function resetBuilder() {
@@ -286,7 +326,7 @@ $('#builder-cycles').value = String(source.cycleCount ?? 1);
 $('#builder-source').value = source.references[0]?.url ?? '';
 const firstPhase = source.phases[0];
 builderOrders = (firstPhase?.orders ?? []).map((o) => ({
-id: crypto.randomUUID(),
+id: newId(),
 drugName: o.drugName,
 basis: o.dose.basis,
 value: String(o.dose.value ?? o.dose.defaultOption ?? ''),
@@ -476,7 +516,7 @@ renderBuilderOrders();
 }
 function resetRoundingPolicy() {
 clearRoundingOverrides();
-profileList = structuredClone(defaultProfileList);
+profileList = cloneData(defaultProfileList);
 profiles = Object.fromEntries(profileList.map((p) => [p.id, p]));
 roundingOverrideActive = false;
 $('#rounding-message').innerHTML = '<div class="alert alert-success">Reset to published rounding defaults.</div>';
