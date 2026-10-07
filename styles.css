@@ -3,3 +3,5 @@
 @media print{.tabs,.button-row,.test-banner,.form-card,.two-col>aside,footer{display:none!important}body{background:white}.output-card{border:0;box-shadow:none;padding:0}.topbar{background:white;color:#000;padding:0 0 12px}.subtitle,.eyebrow{color:#555}.card{box-shadow:none}}
 
 .success-text{color:var(--ok)!important}.rounding-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}.rounding-card{border:1px solid var(--border);border-radius:12px;padding:15px;background:#fbfdff}.compact-grid{margin-top:10px}
+
+.legacy-drug-list{display:grid;gap:8px;margin-top:10px}.legacy-drug-list>div{display:flex;justify-content:space-between;gap:14px;padding:8px 10px;background:#f6f9fc;border-radius:7px}.legacy-drug-list span{color:var(--muted);text-align:right}@media(max-width:640px){.legacy-drug-list>div{flex-direction:column}.legacy-drug-list span{text-align:left}}
