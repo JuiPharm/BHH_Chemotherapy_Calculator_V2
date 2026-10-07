@@ -31,14 +31,20 @@ jobs:
 
       - name: Parse-check browser runtime
         run: |
+          node --check app.bundle.js
           node --check dist/app.js
           node --check dist/engine.js
           node --check dist/storage.js
           node --check dist/validators.js
 
+      - name: Verify runtime startup contract
+        run: node tests/runtime-startup-static.mjs
+
       - name: Verify static deployment files
         run: |
           test -f index.html
+          test -f app.bundle.js
+          test -f cleanup.js
           test -f dist/app.js
           test -f dist/engine.js
           test -f data/regimens.published.json
@@ -63,9 +69,8 @@ jobs:
 
       - name: Assemble static site
         run: |
-          mkdir -p _site/dist _site/data
-          cp index.html styles.css manifest.json register-sw.js sw.js 404.html .nojekyll _site/
-          cp dist/*.js _site/dist/
+          mkdir -p _site/data
+          cp index.html styles.css manifest.json cleanup.js app.bundle.js register-sw.js sw.js 404.html .nojekyll _site/
           cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json _site/data/
 
       - name: Upload GitHub Pages artifact

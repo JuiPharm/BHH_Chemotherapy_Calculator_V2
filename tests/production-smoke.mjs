@@ -15,7 +15,7 @@ const legacyRoot = JSON.parse(fs.readFileSync(new URL('../data/legacy-regimens.v
 const legacyRegimens = legacyRoot['สูตรยาเคมีบำบัด'] ?? [];
 const profiles = Object.fromEntries(rounding.map(p => [p.id, p]));
 
-assert(regimens.length === 6, 'Expected exactly 6 approved pilot regimens in v2.1.1');
+assert(regimens.length === 6, 'Expected exactly 6 approved pilot regimens in v2.2.0');
 assert(legacyRegimens.length === 136, `Expected 136 preserved V1 regimens, got ${legacyRegimens.length}`);
 assert(regimens.every(r => r.localApproval === true), 'All six pilot regimens must have localApproval=true');
 let schemaErrors = 0;

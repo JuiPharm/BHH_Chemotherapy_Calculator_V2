@@ -629,4 +629,4 @@ function escapeHtml(value) {
 return value.replace(/[&<>'"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;' })[ch] ?? ch);
 }
 function escapeAttr(value) { return escapeHtml(value); }
-init;
+init();

@@ -18,7 +18,7 @@
         <h1>BHH Chemotherapy Calculator V2</h1>
         <p class="subtitle">Structured regimen engine · fail-closed calculation · zero-code regimen drafts</p>
       </div>
-      <div class="test-banner">PRODUCTION v2.1.1<br><span>6 ACTIVE · 136 LEGACY PRESERVED</span></div>
+      <div class="test-banner">PRODUCTION v2.2.0<br><span>6 ACTIVE · 136 LEGACY PRESERVED</span></div>
     </header>
 
     <nav class="tabs" aria-label="Main navigation">
@@ -142,14 +142,14 @@
           <p>Clinical calculations use structured dose objects only. Free-text legacy doses are never fed to the calculation engine. Draft regimen data may be stored in browser localStorage; patient inputs are not persisted.</p>
           <h3>Recommended production promotion gate</h3>
           <p>Regimen source verified → structured schema validated → independent oncology pharmacist review → golden test cases passed → local approval recorded → immutable published snapshot generated.</p>
-          <h3>Version</h3><p><code>2.1.1</code> · generated 7 October 2026.</p>
+          <h3>Version</h3><p><code>2.2.0</code> · generated 7 October 2026.</p>
         </div>
       </section>
     </main>
 
-    <footer>Bangkok Hospital Hatyai · Pharmacy Department · Production v2.1.1 · six pilot regimens active · 136 V1 regimens preserved for migration.</footer>
+    <footer>Bangkok Hospital Hatyai · Pharmacy Department · Production v2.2.0 · simple runtime · six active regimens · 136 V1 regimens preserved.</footer>
   </div>
-  <script type="module" src="./dist/app.js"></script>
-  <script type="module" src="./register-sw.js"></script>
+  <script src="./cleanup.js?v=2.2.0" defer></script>
+  <script src="./app.bundle.js?v=2.2.0" defer></script>
 </body>
 </html>

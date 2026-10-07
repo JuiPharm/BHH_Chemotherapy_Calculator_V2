@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+const bundle = fs.readFileSync(new URL('../app.bundle.js', import.meta.url), 'utf8');
+const index = fs.readFileSync(new URL('../index.html', import.meta.url), 'utf8');
+if (!bundle.includes('init();')) throw new Error('Runtime does not invoke init()');
+if (/\binit;\s*$/.test(bundle)) throw new Error('Runtime ends with init; instead of init()');
+if (!bundle.includes('const BHH_PUBLISHED_REGIMENS =')) throw new Error('Published data is not embedded');
+if (!bundle.includes('const BHH_LEGACY_REGIMENS =')) throw new Error('Legacy data is not embedded');
+if (!index.includes('app.bundle.js?v=2.2.0')) throw new Error('Index is not using v2.2.0 simple runtime');
+if (index.includes('type="module" src="./dist/app.js"')) throw new Error('Index still uses module runtime');
+console.log('RUNTIME_STARTUP_STATIC_PASS');
