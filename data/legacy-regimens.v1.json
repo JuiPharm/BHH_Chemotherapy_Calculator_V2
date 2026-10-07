@@ -1,0 +1,3804 @@
+{
+  "สูตรยาเคมีบำบัด": [
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Pemetrexed + Platinum regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดไม่ใช่เซลล์เล็ก (Non-Squamous NSCLC)",
+      "รอบการรักษา": "4 cycles induction, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Pemetrexed",
+          "ขนาดยา": "500 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5-6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Paclitaxel + Carboplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดไม่ใช่เซลล์เล็ก (Squamous NSCLC)",
+      "รอบการรักษา": "4 cycles induction, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "200 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Platinum + Fluorouracil regimen",
+      "ชนิดของมะเร็ง": "มะเร็งหลอดอาหาร (Esophageal Squamous Cell Carcinoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "80-100 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "1000 mg/m² IV continuous days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Paclitaxel + Cisplatin ± Bevacizumab regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปากมดลูก (Cervical Cancer)",
+      "รอบการรักษา": "Up to 35 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "175 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "15 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Nab-Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม Triple-Negative (TNBC)",
+      "รอบการรักษา": "Up to 35 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Nab-Paclitaxel",
+          "ขนาดยา": "100 mg/m² IV days 1,8,15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Pemetrexed + Platinum regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเยื่อหุ้มปอด (Malignant Pleural Mesothelioma)",
+      "รอบการรักษา": "Up to 6 cycles induction, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Pemetrexed",
+          "ขนาดยา": "500 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + CAPOX regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะอาหาร (Gastroesophageal Adenocarcinoma)",
+      "รอบการรักษา": "4 cycles induction",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "400 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 42 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Capecitabine",
+          "ขนาดยา": "1000–1250 mg/m² PO BID days 1-14",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "PO",
+            "frequency": "BID",
+            "days": "1-14",
+            "dose_range_mg_per_m2": {
+              "min": 1000,
+              "max": 1250
+            },
+            "default_mg_per_m2": 1000,
+            "rounding": {
+              "tablet_strengths_mg": [
+                150,
+                500
+              ],
+              "policy": "nearest_150",
+              "max_overfill_pct": 5
+            }
+          }
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "130 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + mFOLFOX6 regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (MSI-H/dMMR Colorectal Cancer)",
+      "รอบการรักษา": "Up to 2 years",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Docetaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดไม่ใช่เซลล์เล็ก (NSCLC after CPI)",
+      "รอบการรักษา": "Up to progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Docetaxel",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Carboplatin + Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดไม่ใช่เซลล์เล็ก (Non-Squamous NSCLC)",
+      "รอบการรักษา": "4-6 cycles, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "15 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "200 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Carboplatin + Gemcitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งรังไข่ (Recurrent Platinum-Sensitive Ovarian Cancer)",
+      "รอบการรักษา": "6 cycles, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "15 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Paclitaxel + Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปากมดลูก (Persistent/Recurrent Cervical Cancer)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "15 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "175 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Trifluridine-Tipiracil regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (Refractory Colorectal Cancer)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "5 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Trifluridine-Tipiracil",
+          "ขนาดยา": "35 mg/m² PO BID days 1-5 and 8-12",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Cisplatin + Capecitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะอาหาร (Gastric Cancer)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "7.5 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "80 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Capecitabine",
+          "ขนาดยา": "1000–1250 mg/m² PO BID days 1-14",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "PO",
+            "frequency": "BID",
+            "days": "1-14",
+            "dose_range_mg_per_m2": {
+              "min": 1000,
+              "max": 1250
+            },
+            "default_mg_per_m2": 1000,
+            "rounding": {
+              "tablet_strengths_mg": [
+                150,
+                500
+              ],
+              "policy": "nearest_150",
+              "max_overfill_pct": 5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + FOLFOX regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (Metastatic Colorectal Cancer)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "5 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + FOLFIRI regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (Metastatic Colorectal Cancer)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "5 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Irinotecan",
+          "ขนาดยา": "180 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Carboplatin + Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งรังไข่ (Advanced Ovarian Cancer)",
+      "รอบการรักษา": "6 cycles, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "15 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5-6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "175 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Platinum + Fluoropyrimidine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งหลอดอาหาร (Esophageal Squamous Cell Carcinoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "240 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "80 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "800 mg/m² IV continuous days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Platinum + Fluoropyrimidine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะอาหาร (Gastric Cancer)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "360 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "800 mg/m² IV continuous days 1-5",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Etoposide + Platinum regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดเซลล์เล็ก (Extensive-Stage SCLC)",
+      "รอบการรักษา": "4 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "360 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5-6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + AVD regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Hodgkin (Advanced Hodgkin Lymphoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "240 mg IV day 1 and 15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "25 mg/m² IV day 1 and 15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vinblastine",
+          "ขนาดยา": "6 mg/m² IV day 1 and 15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Dacarbazine",
+          "ขนาดยา": "375 mg/m² IV day 1 and 15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Platinum-Doublet regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดไม่ใช่เซลล์เล็ก (Resectable NSCLC)",
+      "รอบการรักษา": "4 cycles neoadjuvant, followed by adjuvant",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "360 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Pemetrexed",
+          "ขนาดยา": "500 mg/m² IV day 1 (non-squamous)",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Cisplatin + Gemcitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งถุงน้ำดี (Biliary Tract Cancer)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "240 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "25 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Ipilimumab regimen (with chemo if needed)",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (MSI-H/dMMR mCRC)",
+      "รอบการรักษา": "Up to 2 years",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "3 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Ipilimumab",
+          "ขนาดยา": "1 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Bevacizumab + Carboplatin + Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดไม่ใช่เซลล์เล็ก (Non-Squamous NSCLC)",
+      "รอบการรักษา": "4 cycles, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "15 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "200 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Carboplatin + Nab-Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดไม่ใช่เซลล์เล็ก (Non-Squamous NSCLC)",
+      "รอบการรักษา": "4 cycles, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Nab-Paclitaxel",
+          "ขนาดยา": "100 mg/m² IV day 1,8,15",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Carboplatin + Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดเซลล์เล็ก (Extensive-Stage SCLC)",
+      "รอบการรักษา": "4 cycles, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Bevacizumab regimen",
+      "ชนิดของมะเร็ง": "มะเร็งตับ (Hepatocellular Carcinoma)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "15 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Nab-Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม Triple-Negative (PD-L1+ TNBC)",
+      "รอบการรักษา": "Up to 35 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "840 mg IV day 1,15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Nab-Paclitaxel",
+          "ขนาดยา": "100 mg/m² IV days 1,8,15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + mFOLFOX6 regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (dMMR Stage III Colon Cancer)",
+      "รอบการรักษา": "12 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "840 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Lurbinectin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอดชนิดเซลล์เล็ก (ES-SCLC Maintenance)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Lurbinectin",
+          "ขนาดยา": "3.2 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + FOLFIRI regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (KRAS Wild-Type mCRC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "400 mg/m² IV loading, then 250 mg/m² weekly",
+          "ความถี่ในการให้": "ทุก 7 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Irinotecan",
+          "ขนาดยา": "180 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + FOLFOX regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (KRAS Wild-Type mCRC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "500 mg/m² IV every 2 weeks",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + Encorafenib + mFOLFOX6 regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (BRAF V600E mCRC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "400 mg/m² IV loading, then 250 mg/m² weekly",
+          "ความถี่ในการให้": "ทุก 7 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Encorafenib",
+          "ขนาดยา": "300 mg PO daily",
+          "ความถี่ในการให้": "daily",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + Irinotecan regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (Refractory mCRC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "400 mg/m² IV loading, then 250 mg/m² weekly",
+          "ความถี่ในการให้": "ทุก 7 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Irinotecan",
+          "ขนาดยา": "350 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + Paclitaxel + Carboplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งคอหูจมูก (Head and Neck Squamous Cell Carcinoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "400 mg/m² IV loading, then 250 mg/m² weekly",
+          "ความถี่ในการให้": "ทุก 7 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "135 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 7 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 2 IV day 1",
+          "ความถี่ในการให้": "ทุก 7 วัน",
+          "maximum_dose": "900 mg"
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + Docetaxel + Cisplatin + Fluorouracil regimen",
+      "ชนิดของมะเร็ง": "มะเร็งคอหูจมูก (Locally Advanced HNSCC)",
+      "รอบการรักษา": "3 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "400 mg/m² IV loading, then 250 mg/m² weekly",
+          "ความถี่ในการให้": "ทุก 7 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Docetaxel",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "100 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "700 mg/m²/day IV continuous days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-CHOP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Non-Hodgkin (DLBCL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "750 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "1.4 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "100 mg PO days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-CVP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Follicular (FL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "750 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "1.4 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "100 mg PO days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "BR regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Follicular (Indolent NHL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bendamustine",
+          "ขนาดยา": "90 mg/m² IV days 1-2",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-ICE regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Relapsed NHL)",
+      "รอบการรักษา": "2-3 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Ifosfamide",
+          "ขนาดยา": "1500 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-DHAP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Relapsed DLBCL)",
+      "รอบการรักษา": "4 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Dexamethasone",
+          "ขนาดยา": "40 mg PO/IV days 1-4",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "100 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine",
+          "ขนาดยา": "2 g/m² IV every 12h day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-GemOx regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Relapsed/Refractory NHL)",
+      "รอบการรักษา": "4-6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "100 mg/m² IV day 2",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-FCM regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Mantle Cell Lymphoma)",
+      "รอบการรักษา": "4 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fludarabine",
+          "ขนาดยา": "25 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "250 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Mitoxantrone",
+          "ขนาดยา": "10 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-BAC regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Waldenstrom Macroglobulinemia)",
+      "รอบการรักษา": "4-6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bendamustine",
+          "ขนาดยา": "90 mg/m² IV days 1-2",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-CHOP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Burkitt (Pediatric B-Cell Lymphoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "750 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "1.4 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "100 mg PO days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-DA-EPOCH regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (PMBL/MGZL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "50 mg/m²/day IV continuous days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "60 mg/m²/day PO days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "0.4 mg/m²/day IV continuous days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "750 mg/m² IV day 5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "10 mg/m²/day IV continuous days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-CODOX-M/IVAC regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Burkitt (High-Risk)",
+      "รอบการรักษา": "Alternating cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "per cycle",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "800 mg/m² IV days 1-2",
+          "ความถี่ในการให้": "R-CODOX-M",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "1.5 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "R-CODOX-M",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "R-CODOX-M",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate",
+          "ขนาดยา": "3 g/m² IV day 10",
+          "ความถี่ในการให้": "R-CODOX-M",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Ifosfamide",
+          "ขนาดยา": "1500 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "IVAC",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "60 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "IVAC",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine",
+          "ขนาดยา": "2 g/m² IV BID days 1-5",
+          "ความถี่ในการให้": "IVAC",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-HCVAD regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Lymphoblastic Lymphoma)",
+      "รอบการรักษา": "Alternating cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "per cycle",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "300 mg/m² IV every 12h days 1-3",
+          "ความถี่ในการให้": "odd cycles",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "2 mg IV days 4-5",
+          "ความถี่ในการให้": "odd cycles",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 4",
+          "ความถี่ในการให้": "odd cycles",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Dexamethasone",
+          "ขนาดยา": "40 mg PO/IV days 1-4 and 11-14",
+          "ความถี่ในการให้": "odd cycles",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate",
+          "ขนาดยา": "1000 mg/m² IV day 1",
+          "ความถี่ในการให้": "even cycles",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine",
+          "ขนาดยา": "70 mg/m² IT day 2,7",
+          "ความถี่ในการให้": "even cycles",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-BEAM regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Autologous Transplant Conditioning)",
+      "รอบการรักษา": "1 cycle",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day -13 and -6",
+          "ความถี่ในการให้": "pre-transplant",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carmustine",
+          "ขนาดยา": "300 mg/m² IV day -6",
+          "ความถี่ในการให้": "day -6",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "200 mg/m² IV days -5 to -2",
+          "ความถี่ในการให้": "days -5 to -2",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine",
+          "ขนาดยา": "400 mg/m² IV BID days -5 to -2",
+          "ความถี่ในการให้": "days -5 to -2",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Melphalan",
+          "ขนาดยา": "140 mg/m² IV day -1",
+          "ความถี่ในการให้": "day -1",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-FND regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Marginal Zone Lymphoma)",
+      "รอบการรักษา": "4 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "250 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fludarabine",
+          "ขนาดยา": "25 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Mitoxantrone",
+          "ขนาดยา": "8 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Dexamethasone",
+          "ขนาดยา": "20 mg PO days 1-5",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-GemVin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Relapsed CLL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV day 1,8,15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vinorelbine",
+          "ขนาดยา": "25 mg/m² IV day 1,8,15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-CP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง CLL (Untreated CLL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "1000 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "100 mg PO days 1-5",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-FC regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง CLL (Relapsed CLL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fludarabine",
+          "ขนาดยา": "25 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "250 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-B regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง CLL (Previously Untreated CLL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bendamustine",
+          "ขนาดยา": "90 mg/m² IV days 1-2",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "FOLFOX-4 regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (Colorectal Cancer)",
+      "รอบการรักษา": "12 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "200 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil (5-FU) bolus",
+          "ขนาดยา": "400 mg/m² IV bolus day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil (5-FU) continuous infusion",
+          "ขนาดยา": "600 mg/m² IV over 22h day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "TCH regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม HER2-positive (HER2-positive Breast Cancer)",
+      "รอบการรักษา": "6 cycles combined chemotherapy, followed by trastuzumab alone to complete 1 year",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Docetaxel",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน (6 cycles)",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 6 mg/ml/min IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน (6 cycles)",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Trastuzumab (loading dose)",
+          "ขนาดยา": "8 mg/kg IV day 1",
+          "ความถี่ในการให้": "cycle 1 เท่านั้น",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Trastuzumab (maintenance)",
+          "ขนาดยา": "6 mg/kg IV",
+          "ความถี่ในการให้": "ทุก 21 วัน (total 1 year, about 18 cycles)",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "FOLFIRI regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (Colorectal Cancer)",
+      "รอบการรักษา": "12 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Irinotecan",
+          "ขนาดยา": "180 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil (5-FU) bolus",
+          "ขนาดยา": "400 mg/m² IV bolus day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil (5-FU) continuous infusion",
+          "ขนาดยา": "2400 mg/m² IV over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "AC-T regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Breast Cancer)",
+      "รอบการรักษา": "4 cycles AC followed by 4 cycles T",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "60 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "175 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "CMF regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Breast Cancer)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "100 mg/m² PO days 1-14",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate",
+          "ขนาดยา": "40 mg/m² IV days 1 and 8",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "600 mg/m² IV days 1 and 8",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "ABVD regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Hodgkin (Hodgkin Lymphoma)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "25 mg/m² IV day 1 and 15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bleomycin",
+          "ขนาดยา": "10 units/m² IV day 1 and 15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vinblastine",
+          "ขนาดยา": "6 mg/m² IV day 1 and 15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Dacarbazine",
+          "ขนาดยา": "375 mg/m² IV day 1 and 15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "7+3 regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเม็ดเลือดขาวเฉียบพลัน (Acute Myeloid Leukemia)",
+      "รอบการรักษา": "1-2 cycles induction, followed by consolidation",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cytarabine",
+          "ขนาดยา": "100-200 mg/m² IV continuous infusion days 1-7",
+          "ความถี่ในการให้": "induction cycle",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Daunorubicin",
+          "ขนาดยา": "60-90 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "induction cycle",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "EP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (Lung Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "80 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Carboplatin-Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (Non-Small Cell Lung Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "200 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Carboplatin-Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งรังไข่ (Ovarian Cancer)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5-6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "175 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "CHOP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Non-Hodgkin (Non-Hodgkin Lymphoma)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "750 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "1.4 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "100 mg PO days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "FAC regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Breast Cancer)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "500 mg/m² IV days 1 and 8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "500 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "TC regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Breast Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Docetaxel",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "CVP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Non-Hodgkin (Non-Hodgkin Lymphoma)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "750 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "1.4 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "100 mg PO days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "ICE regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Lymphoma Relapse)",
+      "รอบการรักษา": "2-3 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Ifosfamide",
+          "ขนาดยา": "1500 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Hyper-CVAD regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Lymphoblastic Lymphoma)",
+      "รอบการรักษา": "4-8 cycles alternating",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "300 mg/m² IV every 12h days 1-3",
+          "ความถี่ในการให้": "odd cycles",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "2 mg IV days 4-5",
+          "ความถี่ในการให้": "odd cycles",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 4",
+          "ความถี่ในการให้": "odd cycles",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Dexamethasone",
+          "ขนาดยา": "40 mg PO/IV days 1-4 and 11-14",
+          "ความถี่ในการให้": "odd cycles",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate",
+          "ขนาดยา": "1000 mg/m² IV day 1",
+          "ความถี่ในการให้": "even cycles",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine",
+          "ขนาดยา": "70 mg/m² IT day 2,7",
+          "ความถี่ในการให้": "even cycles",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "BEP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งอัณฑะ (Testicular Cancer)",
+      "รอบการรักษา": "3-4 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bleomycin",
+          "ขนาดยา": "30 units IV days 1,8,15",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "20 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Gemcitabine-Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งถุงน้ำดี (Biliary Tract Cancer)",
+      "รอบการรักษา": "6-8 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV days 1 and 8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "25 mg/m² IV days 1 and 8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "FL regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะอาหาร (Gastric Cancer)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "800 mg/m² IV continuous infusion days 1-5",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "20 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "ECF regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะอาหาร (Gastric Cancer)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Epirubicin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "60 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "200 mg/m² IV continuous infusion days 1-21",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Doxorubicin-Bleomycin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Hodgkin Lymphoma)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "25 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bleomycin",
+          "ขนาดยา": "10 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "MOPP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Hodgkin Lymphoma)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Mechlorethamine",
+          "ขนาดยา": "6 mg/m² IV day 1 and 8",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "1.4 mg/m² IV day 1 and 8",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Procarbazine",
+          "ขนาดยา": "100 mg/m² PO days 1-10",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "40 mg/m² PO days 1-14",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "BEACOPP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Advanced Hodgkin Lymphoma)",
+      "รอบการรักษา": "6-8 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bleomycin",
+          "ขนาดยา": "10 mg/m² IV day 8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "190 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Adriamycin (Doxorubicin)",
+          "ขนาดยา": "35 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "650 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oncovin (Vincristine)",
+          "ขนาดยา": "1.4 mg/m² IV day 8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "2 mg"
+        },
+        {
+          "ชื่อยา": "Procarbazine",
+          "ขนาดยา": "100 mg/m² PO days 1-7",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "40 mg/m² PO days 1-14",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "DHAP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Lymphoma Relapse)",
+      "รอบการรักษา": "4 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Dexamethasone",
+          "ขนาดยา": "40 mg PO/IV days 1-4",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "100 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine",
+          "ขนาดยา": "2 g/m² IV every 12h day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "ESHAP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Non-Hodgkin Lymphoma)",
+      "รอบการรักษา": "4 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "40 mg/m² IV days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methylprednisolone",
+          "ขนาดยา": "500 mg IV days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine",
+          "ขนาดยา": "2 g/m² IV day 4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "25 mg/m² IV days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "IMVP-16 regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Hodgkin Lymphoma)",
+      "รอบการรักษา": "4 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Ifosfamide",
+          "ขนาดยา": "1200 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate",
+          "ขนาดยา": "30 mg/m² IV days 1,3,5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "50 mg PO days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Stanford V regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Hodgkin Lymphoma)",
+      "รอบการรักษา": "12 สัปดาห์",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "25 mg/m² IV weeks 1,3,5,7,9,11",
+          "ความถี่ในการให้": "ตาม schedule",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vinblastine",
+          "ขนาดยา": "6 mg/m² IV weeks 1,3,5,7,9,11",
+          "ความถี่ในการให้": "ตาม schedule",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Mechlorethamine",
+          "ขนาดยา": "6 mg/m² IV weeks 1,5,9",
+          "ความถี่ในการให้": "ตาม schedule",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "60 mg/m² IV weeks 3,7,11",
+          "ความถี่ในการให้": "ตาม schedule",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Prednisone",
+          "ขนาดยา": "40 mg PO even weeks",
+          "ความถี่ในการให้": "ตาม schedule",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bleomycin",
+          "ขนาดยา": "5 units/m² IV weeks 2,6,10",
+          "ความถี่ในการให้": "ตาม schedule",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "etoposide-Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (Small Cell Lung Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "80 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Carboplatin-Etoposide regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (Small Cell Lung Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5-6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pemetrexed-Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (Non-Squamous NSCLC)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pemetrexed",
+          "ขนาดยา": "500 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cisplatin-Gemcitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (NSCLC)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1250 mg/m² IV days 1 and 8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Docetaxel-Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (NSCLC)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Docetaxel",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cisplatin-5FU regimen",
+      "ชนิดของมะเร็ง": "มะเร็งหลอดอาหาร (Esophageal Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "100 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "1000 mg/m² IV continuous infusion days 1-4",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "FOLFOX regimen",
+      "ชนิดของมะเร็ง": "มะเร็งหลอดอาหาร (Esophageal Cancer)",
+      "รอบการรักษา": "6-12 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Carboplatin-Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปากมดลูก (Cervical Cancer)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "135 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปากมดลูก (Cervical Cancer)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "40 mg/m² IV weekly",
+          "ความถี่ในการให้": "weekly",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Doxorubicin-Dacarbazine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งซอฟต์ทิชู (Soft Tissue Sarcoma)",
+      "รอบการรักษา": "6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "60 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Dacarbazine",
+          "ขนาดยา": "750 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Ifosfamide-Doxorubicin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งซอฟต์ทิชู (Soft Tissue Sarcoma)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Ifosfamide",
+          "ขนาดยา": "2500 mg/m² IV days 1-4",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "20 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Methotrexate-Leucovorin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งโพรงจมูก-คอ (Head and Neck Cancer)",
+      "รอบการรักษา": "Induction, then maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Methotrexate",
+          "ขนาดยา": "40 mg/m² IV weekly",
+          "ความถี่ในการให้": "weekly",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "5 mg PO q6h x 6 doses",
+          "ความถี่ในการให้": "after Methotrexate",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cisplatin-5FU regimen",
+      "ชนิดของมะเร็ง": "มะเร็งโพรงจมูก-คอ (Head and Neck Cancer)",
+      "รอบการรักษา": "3-4 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "100 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "1000 mg/m² IV continuous days 1-4",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cisplatin-Topotecan regimen",
+      "ชนิดของมะเร็ง": "มะเร็งรังไข่ (Ovarian Cancer Relapse)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Topotecan",
+          "ขนาดยา": "0.75 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Liposomal Doxorubicin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งรังไข่ (Ovarian Cancer Relapse)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin (liposomal)",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bleomycin-Vinblastine-Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งอัณฑะ (Testicular Cancer)",
+      "รอบการรักษา": "3 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bleomycin",
+          "ขนาดยา": "30 units IV days 2,9,16",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vinblastine",
+          "ขนาดยา": "0.15 mg/kg IV days 2 and 16",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "20 mg/m² IV days 2-6",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "VIP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งอัณฑะ (Testicular Cancer Relapse)",
+      "รอบการรักษา": "2 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Vinblastine",
+          "ขนาดยา": "0.11 mg/kg IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Ifosfamide",
+          "ขนาดยา": "1200 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "20 mg/m² IV days 1-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "TIP regimen",
+      "ชนิดของมะเร็ง": "มะเร็งอัณฑะ (Testicular Cancer Relapse)",
+      "รอบการรักษา": "2 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "250 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Ifosfamide",
+          "ขนาดยา": "1500 mg/m² IV days 2-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "25 mg/m² IV days 2-5",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "CISCA regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะปัสสาวะ (Bladder Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "100 mg/m² IV day 2",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 2",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "650 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "MVAC regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะปัสสาวะ (Bladder Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Methotrexate",
+          "ขนาดยา": "30 mg/m² IV days 1,15,22",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vinblastine",
+          "ขนาดยา": "3 mg/m² IV days 2,15,22",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "30 mg/m² IV day 2",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "70 mg/m² IV day 2",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Gemcitabine-Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะปัสสาวะ (Bladder Cancer)",
+      "รอบการรักษา": "4-6 รอบการรักษา",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV days 1,8,15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "70 mg/m² IV day 2",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Docetaxel + Carboplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (NSCLC)",
+      "รอบการรักษา": "4-6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Docetaxel",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Cisplatin + Gemcitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (NSCLC)",
+      "รอบการรักษา": "4-6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "15 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1250 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Gemcitabine + Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (NSCLC)",
+      "รอบการรักษา": "4-6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "360 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "75 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Carboplatin + Etoposide regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (SCLC)",
+      "รอบการรักษา": "4 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        },
+        {
+          "ชื่อยา": "Etoposide",
+          "ขนาดยา": "100 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + Irinotecan + Fluorouracil regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (mCRC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "500 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Irinotecan",
+          "ขนาดยา": "180 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Rituximab + Fludarabine + Cyclophosphamide regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเม็ดเลือดขาว CLL (Untreated CLL)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fludarabine",
+          "ขนาดยา": "25 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "250 mg/m² IV days 1-3",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Gemcitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (NSCLC after CPI)",
+      "รอบการรักษา": "Up to progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV day 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Oxaliplatin + Capecitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (mCRC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "7.5 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "130 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Capecitabine",
+          "ขนาดยา": "850 mg/m² PO BID days 1-14",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "PO",
+            "frequency": "BID",
+            "days": "1-14",
+            "dose_mg_per_m2": 850,
+            "rounding": {
+              "tablet_strengths_mg": [
+                150,
+                500
+              ],
+              "policy": "nearest_150",
+              "max_overfill_pct": 5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Pemetrexed + Carboplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (Non-Squamous NSCLC)",
+      "รอบการรักษา": "4 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "360 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Pemetrexed",
+          "ขนาดยา": "500 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 5 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Paclitaxel + Carboplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งปอด (Squamous NSCLC)",
+      "รอบการรักษา": "4 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "200 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Carboplatin",
+          "ขนาดยา": "AUC 6 IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": "900 mg"
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + Encorafenib regimen (with FOLFIRI if needed)",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (BRAF V600E mCRC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "400 mg/m² IV loading, then 250 mg/m² weekly",
+          "ความถี่ในการให้": "ทุก 7 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Encorafenib",
+          "ขนาดยา": "300 mg PO daily",
+          "ความถี่ในการให้": "daily",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Irinotecan",
+          "ขนาดยา": "180 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Rituximab + Lenalidomide regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (FL Grade 1-2)",
+      "รอบการรักษา": "12 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1 cycle 1, then weekly x4 cycle 1, day 1 cycles 2-5",
+          "ความถี่ในการให้": "per cycle",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Lenalidomide",
+          "ขนาดยา": "20 mg PO days 1-21",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Lenvatinib + mFOLFOX6 regimen",
+      "ชนิดของมะเร็ง": "มะเร็งกระเพาะอาหาร (Gastroesophageal Cancer)",
+      "รอบการรักษา": "6 cycles induction",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "400 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 42 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Lenvatinib",
+          "ขนาดยา": "8 mg PO daily",
+          "ความถี่ในการให้": "daily",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "85 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "bolus",
+            "dose_mg_per_m2": 400
+          }
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "IV",
+            "type": "infusion",
+            "dose_mg_per_m2": 2400,
+            "infusion": {
+              "duration_hours": 46
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Paclitaxel regimen",
+      "ชนิดของมะเร็ง": "มะเร็งรังไข่ (Platinum-Resistant Ovarian Cancer)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "10 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "80 mg/m² IV weekly",
+          "ความถี่ในการให้": "weekly",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Doxorubicin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง (Hodgkin Lymphoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "240 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "25 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Cobimetinib + Vemurafenib regimen",
+      "ชนิดของมะเร็ง": "มะเร็งผิวหนัง (BRAF-Mutant Melanoma)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "840 mg IV day 1,15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cobimetinib",
+          "ขนาดยา": "60 mg PO days 1-21",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vemurafenib",
+          "ขนาดยา": "960 mg PO BID daily",
+          "ความถี่ในการให้": "daily",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Cetuximab + Panitumumab regimen",
+      "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (Refractory mCRC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Cetuximab",
+          "ขนาดยา": "500 mg/m² IV every 2 weeks",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Panitumumab",
+          "ขนาดยา": "6 mg/kg IV every 2 weeks",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Rituximab + Ibrutinib regimen",
+      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง CLL (Symptomatic CLL)",
+      "รอบการรักษา": "Up to 2 years",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV weekly x4, then monthly",
+          "ความถี่ในการให้": "per schedule",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Ibrutinib",
+          "ขนาดยา": "420 mg PO daily",
+          "ความถี่ในการให้": "daily",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Eribulin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม Triple-Negative (PD-L1+ TNBC)",
+      "รอบการรักษา": "Until progression or up to 35 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Eribulin",
+          "ขนาดยา": "1.4 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + AC regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Early-Stage TNBC)",
+      "รอบการรักษา": "4 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "60 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Sacituzumab Govitecan regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม Triple-Negative (Metastatic TNBC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Sacituzumab Govitecan",
+          "ขนาดยา": "10 mg/kg IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Anthracycline + Cyclophosphamide regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Early-Stage TNBC)",
+      "รอบการรักษา": "4 cycles neoadjuvant, followed by maintenance",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Epirubicin",
+          "ขนาดยา": "90 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Capecitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม Triple-Negative (PD-L1+ Metastatic TNBC)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "840 mg IV days 1,15",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Capecitabine",
+          "ขนาดยา": "1000–1250 mg/m² PO BID days 1-14",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "PO",
+            "frequency": "BID",
+            "days": "1-14",
+            "dose_range_mg_per_m2": {
+              "min": 1000,
+              "max": 1250
+            },
+            "default_mg_per_m2": 1000,
+            "rounding": {
+              "tablet_strengths_mg": [
+                150,
+                500
+              ],
+              "policy": "nearest_150",
+              "max_overfill_pct": 5
+            }
+          }
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Trastuzumab Deruxtecan regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม HER2-low (Metastatic Breast Cancer)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "240 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Trastuzumab Deruxtecan",
+          "ขนาดยา": "5.4 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Paclitaxel + Doxorubicin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Early-Stage TNBC)",
+      "รอบการรักษา": "4 cycles neoadjuvant",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "360 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "80 mg/m² IV weekly",
+          "ความถี่ในการให้": "weekly",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "60 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Doxorubicin + Cyclophosphamide regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Metastatic Breast Cancer)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "10 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "50 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Vinorelbine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (Metastatic Breast Cancer)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "10 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vinorelbine",
+          "ขนาดยา": "25 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Rituximab + Bendamustine + Trastuzumab regimen",
+      "ชนิดของมะเร็ง": "มะเร็งเต้านม (HER2+ with CD20 Expression)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Bendamustine",
+          "ขนาดยา": "90 mg/m² IV days 1-2",
+          "ความถี่ในการให้": "ทุก 28 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Trastuzumab",
+          "ขนาดยา": "8 mg/kg IV loading, then 6 mg/kg",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Nivolumab + Cisplatin + Gemcitabine regimen",
+      "ชนิดของมะเร็ง": "มะเร็งท่อน้ำดี (Cholangiocarcinoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Nivolumab",
+          "ขนาดยา": "360 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "25 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Gemcitabine + Oxaliplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งท่อน้ำดี (Advanced Cholangiocarcinoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "100 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Atezolizumab + Gemcitabine + Cisplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งท่อน้ำดี (Unresectable Cholangiocarcinoma)",
+      "รอบการรักษา": "6-8 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Atezolizumab",
+          "ขนาดยา": "1200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Gemcitabine",
+          "ขนาดยา": "1000 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cisplatin",
+          "ขนาดยา": "25 mg/m² IV days 1,8",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Bevacizumab + Capecitabine + Oxaliplatin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งท่อน้ำดี (Advanced Cholangiocarcinoma)",
+      "รอบการรักษา": "6 cycles",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Bevacizumab",
+          "ขนาดยา": "7.5 mg/kg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Capecitabine",
+          "ขนาดยา": "1000–1250 mg/m² PO BID days 1-14",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null,
+          "structured_dose": {
+            "schema": "per_m2",
+            "route": "PO",
+            "frequency": "BID",
+            "days": "1-14",
+            "dose_range_mg_per_m2": {
+              "min": 1000,
+              "max": 1250
+            },
+            "default_mg_per_m2": 1000,
+            "rounding": {
+              "tablet_strengths_mg": [
+                150,
+                500
+              ],
+              "policy": "nearest_150",
+              "max_overfill_pct": 5
+            }
+          }
+        },
+        {
+          "ชื่อยา": "Oxaliplatin",
+          "ขนาดยา": "130 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Pembrolizumab + Fluorouracil + Leucovorin regimen",
+      "ชนิดของมะเร็ง": "มะเร็งท่อน้ำดี (MSI-H Cholangiocarcinoma)",
+      "รอบการรักษา": "Until progression",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Pembrolizumab",
+          "ขนาดยา": "200 mg IV day 1",
+          "ความถี่ในการให้": "ทุก 21 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "400 mg/m² IV bolus",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Fluorouracil",
+          "ขนาดยา": "2400 mg/m² IV infusion over 46h",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Leucovorin",
+          "ขนาดยา": "400 mg/m² IV day 1",
+          "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        }
+      ]
+    }
+  ]
+}
