@@ -1,3 +1,5 @@
+> V3 Cloudflare production candidate is in [v3/README.md](v3/README.md). The root files below preserve the V2.3 application and history. V3 uses Worker/D1 as its clinical master; root JSON is import source only.
+
 # BHH Chemotherapy Calculator
 
 Version: `2.3.0`

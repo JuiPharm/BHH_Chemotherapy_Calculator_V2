@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="th">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>BHH Chemotherapy Calculator</title>
+    <link rel="stylesheet" href="/style.css" />
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <header>
+      <img src="/logo.png" alt="Bangkok Hospital Hatyai" />
+      <div>
+        <h1>Chemotherapy Calculator</h1>
+        <p>ฝ่ายเภสัชกรรม · Bangkok Hospital Hatyai</p>
+      </div>
+      <div id="account"></div>
+    </header>
+    <div id="connection" role="status" aria-live="polite">กำลังเชื่อมต่อ…</div>
+    <div id="notice" role="alert" hidden></div>
+    <nav aria-label="Main navigation">
+      <button data-page="calculator" class="active">Calculator</button
+      ><button data-page="library">All Regimens Library</button
+      ><button data-page="registry">Regimen Registry</button
+      ><button data-page="builder">Regimen Builder</button
+      ><button data-page="audit" id="audit-tab" hidden>Audit Log</button>
+    </nav>
+    <main>
+      <section id="calculator">
+        <div class="heading">
+          <div>
+            <h2>คำนวณขนาดยา</h2>
+            <p>เลือกสูตรยาและรอบการรักษา แล้วตรวจสอบขนาดยาก่อนใช้งาน</p>
+          </div>
+          <span class="pill">V3 · Clinical candidate</span>
+        </div>
+        <form id="patient-form">
+          <div class="panel">
+            <h3>ข้อมูลผู้ป่วย / Patient parameters</h3>
+            <div class="fields">
+              <label
+                >Age (years)<input
+                  name="ageYears"
+                  type="number"
+                  step="any"
+                  min="0.01"
+                  max="139"
+                  required /></label
+              ><label
+                >Sex<select name="sex" required>
+                  <option value="">เลือกเพศ</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select></label
+              ><label
+                >Height (cm)<input
+                  name="heightCm"
+                  type="number"
+                  step="any"
+                  min="1"
+                  required /></label
+              ><label
+                >Weight (kg)<input
+                  name="weightKg"
+                  type="number"
+                  step="any"
+                  min="0.1"
+                  required
+              /></label>
+              <label
+                >Cancer Type<select id="cancer" required>
+                  <option value="">เลือกชนิดมะเร็ง</option>
+                </select></label
+              ><label class="span2"
+                >Search Regimen<input
+                  id="regimen-search"
+                  autocomplete="off"
+                  placeholder="ค้นหาชื่อสูตรยา / ยา / ข้อบ่งใช้"
+                  role="combobox"
+                  aria-expanded="false"
+                  aria-controls="matches"
+                  aria-autocomplete="list" />
+                <div id="matches" role="listbox" hidden></div></label
+              ><label
+                >Cycle<input
+                  name="cycle"
+                  type="number"
+                  step="1"
+                  min="1"
+                  required
+              /></label>
+              <label
+                >Kidney function method<select
+                  name="kidneyMethod"
+                  id="kidney-method"
+                  required
+                >
+                  <option value="cockcroft_gault">Cockcroft-Gault CrCl</option>
+                  <option value="measured_gfr">Measured GFR (mL/min)</option>
+                  <option value="bsa_adjusted_egfr">
+                    eGFR (mL/min/1.73 m²) → absolute
+                  </option>
+                </select></label
+              ><label id="scr-label" hidden
+                >Serum creatinine (mg/dL)<input
+                  name="serumCreatinineMgDl"
+                  type="number"
+                  step="any"
+                  min="0.01" /></label
+              ><label id="kidney-label" hidden
+                >Kidney function value<input
+                  name="kidneyValue"
+                  type="number"
+                  step="any"
+                  min="0.01" /></label
+              ><label
+                >Rounding Policy<select id="rounding">
+                  <option value="drug-specific">Drug-specific</option>
+                </select></label
+              >
+            </div>
+            <div id="auc-options" class="fields"></div>
+          </div>
+          <div id="selected" class="panel muted">ยังไม่ได้เลือกสูตรยา</div>
+          <div class="actions">
+            <button class="primary" type="submit" id="calculate">
+              Calculate</button
+            ><button type="button" id="clear-patient">Clear patient</button>
+          </div>
+        </form>
+        <div id="result" aria-live="polite"></div>
+      </section>
+      <section id="library" hidden>
+        <div class="heading">
+          <div>
+            <h2>All Regimens Library</h2>
+            <p id="library-count"></p>
+          </div>
+        </div>
+        <div class="toolbar">
+          <label
+            >Search<input
+              id="library-search"
+              placeholder="ชื่อสูตร / ชื่อยา / ข้อบ่งใช้" /></label
+          ><label
+            >Cancer Type<select id="library-cancer">
+              <option value="">ทั้งหมด</option>
+            </select></label
+          ><label
+            >Status<select id="library-status">
+              <option value="">ทั้งหมด</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+              <option value="clinical_review_required">
+                Clinical Review Required
+              </option>
+            </select></label
+          >
+        </div>
+        <div id="library-list"></div>
+      </section>
+      <section id="registry" hidden>
+        <div class="heading">
+          <div>
+            <h2>Regimen Registry</h2>
+            <p>ประวัติรุ่น การทบทวน และสถานะเผยแพร่</p>
+          </div>
+          <button id="registry-refresh">Refresh</button>
+        </div>
+        <div id="registry-list"></div>
+        <div id="review-detail"></div>
+      </section>
+      <section id="builder" hidden>
+        <div class="heading">
+          <div>
+            <h2>Regimen Builder</h2>
+            <p>จัดทำสูตรยาเป็น Draft เพื่อส่งให้เภสัชกรทบทวน</p>
+          </div>
+          <button id="new-draft">New Regimen</button>
+        </div>
+        <div id="builder-content" class="panel muted">
+          เลือก Clone หรือ Edit Draft จาก Library / Registry
+        </div>
+      </section>
+      <section id="audit" hidden>
+        <h2>Audit Log</h2>
+        <div id="audit-list"></div>
+      </section>
+    </main>
+    <footer>
+      <img src="/logo.png" alt="Bangkok Hospital Hatyai" /><span
+        >Pharmacist verification is required before administration.</span
+      ><button id="clear-offline">Clear cached protocols</button>
+    </footer>
+  </body>
+</html>
