@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b2c55">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <title>BHH Chemotherapy Calculator V2 — Completed Production</title>
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app-loading" class="loading">Loading BHH Chemotherapy Calculator V2…</div>
+  <div id="app-shell" class="hidden">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Bangkok Hospital Hatyai · Pharmacy Department</div>
+        <h1>BHH Chemotherapy Calculator V2</h1>
+        <p class="subtitle">Structured regimen engine · fail-closed calculation · zero-code regimen drafts</p>
+      </div>
+      <div class="test-banner">PRODUCTION v2.1<br><span>6 PILOT REGIMENS APPROVED</span></div>
+    </header>
+
+    <nav class="tabs" aria-label="Main navigation">
+      <button class="active" data-tab="calculator">Calculator</button>
+      <button data-tab="registry">Regimen Registry</button>
+      <button data-tab="builder">Regimen Builder</button>
+      <button data-tab="rounding">Rounding Policy</button>
+      <button data-tab="legacy">Legacy Validator</button>
+      <button data-tab="about">Safety / About</button>
+    </nav>
+
+    <main>
+      <section id="tab-calculator" class="tab-panel">
+        <div class="two-col">
+          <form id="calc-form" class="card form-card">
+            <h2>Patient & Regimen</h2>
+            <div class="alert alert-success"><strong>Six pilot regimens approved.</strong> This v2.1 release records local approval for the published pilot registry. Rounding policy can be edited from the Rounding Policy tab; browser edits remain local until centrally published.</div>
+            <div class="form-grid">
+              <label class="field"><span>Regimen</span><select id="regimen-select"></select></label>
+              <label class="field"><span>Cycle</span><input id="cycle-input" type="number" min="1" value="1"></label>
+              <label class="field"><span>Age (years)</span><input id="age-input" type="number" min="18" max="120" value="60"></label>
+              <label class="field"><span>Sex</span><select id="sex-input"><option value="male">Male</option><option value="female">Female</option></select></label>
+              <label class="field"><span>Height (cm)</span><input id="height-input" type="number" min="80" max="250" step="0.1" value="170"></label>
+              <label class="field"><span>Weight (kg)</span><input id="weight-input" type="number" min="20" max="300" step="0.1" value="62.6"></label>
+              <label class="field"><span>Kidney function method</span>
+                <select id="kidney-method">
+                  <option value="measured_gfr">Measured GFR</option>
+                  <option value="bsa_adjusted_egfr" selected>BSA-adjusted CKD-EPI eGFR</option>
+                  <option value="cockcroft_gault_legacy">Cockcroft-Gault CrCl — legacy/local only</option>
+                </select>
+              </label>
+              <label class="field"><span id="kidney-value-label">eGFR (mL/min/1.73m²)</span><input id="kidney-value" type="number" min="1" max="250" step="0.1" value="90"></label>
+              <label id="scr-wrap" class="field hidden"><span>Serum creatinine (mg/dL)</span><input id="scr-input" type="number" min="0.1" max="20" step="0.01" value="1"></label>
+            </div>
+            <div id="regimen-context" class="context-box"></div>
+            <div id="dose-selections"></div>
+            <div class="button-row"><button type="submit" class="primary">Calculate</button><button type="button" id="export-calc-btn" class="secondary">Export JSON</button><button type="button" id="print-btn" class="secondary">Print</button></div>
+          </form>
+
+          <aside class="card">
+            <h2>Safety principles</h2>
+            <ul class="safety-list">
+              <li>Exact calculated dose is never replaced by the rounded recommendation.</li>
+              <li>Clinical hard limits are applied before operational rounding.</li>
+              <li>Unknown or incomplete calculation rules block the dose instead of guessing.</li>
+              <li>Carboplatin kidney function is explicit; no hidden universal 125 mL/min cap.</li>
+              <li>IU remains IU. The engine never silently treats Bleomycin units as mg.</li>
+              <li>No patient inputs are stored in localStorage.</li>
+            </ul>
+            <div class="example-box"><span>Rounding example</span><strong>688 mg → 690 mg</strong><strong>682 mg → 680 mg</strong><small>Only when an approved drug/protocol rounding profile applies.</small></div>
+          </aside>
+        </div>
+        <section id="calc-output" class="card output-card"><p class="muted">Enter patient parameters and calculate. The result will show raw calculated dose, clinical dose, recommended rounded dose, and the difference.</p></section>
+      </section>
+
+      <section id="tab-registry" class="tab-panel hidden">
+        <div class="section-heading"><div><h2>Regimen Registry</h2><p>Published pilot records + local drafts. Calculator reads published records only.</p></div><input id="registry-search" type="search" placeholder="Search regimen / indication"></div>
+        <div id="registry-list" class="registry-grid"></div>
+      </section>
+
+      <section id="tab-builder" class="tab-panel hidden">
+        <div class="card">
+          <h2>Zero-code Regimen Builder — Draft only</h2>
+          <div class="alert alert-warning">The builder never publishes directly. Saved records remain local DRAFTS and cannot be selected in the production calculator.</div>
+          <form id="builder-form">
+            <div class="form-grid">
+              <label class="field"><span>Regimen ID</span><input id="builder-id" required></label>
+              <label class="field"><span>Name</span><input id="builder-name" required></label>
+              <label class="field"><span>Cancer group</span><input id="builder-cancer" required></label>
+              <label class="field"><span>Indication</span><input id="builder-indication" required></label>
+              <label class="field"><span>Setting</span><input id="builder-setting" required></label>
+              <label class="field"><span>Intent</span><input id="builder-intent" required></label>
+              <label class="field"><span>Cycle interval (days)</span><input id="builder-cycle-days" type="number" min="1" value="21" required></label>
+              <label class="field"><span>Cycles</span><input id="builder-cycles" type="number" min="1" value="6" required></label>
+              <label class="field field-wide"><span>Clinical source URL</span><input id="builder-source" type="url" required placeholder="https://..."></label>
+            </div>
+            <div class="builder-header"><h3>Drug orders</h3><button type="button" class="secondary" id="builder-add-order">+ Add drug</button></div>
+            <div id="builder-orders"></div>
+            <div class="button-row"><button class="primary" type="submit">Validate & Save Draft</button><button type="button" id="builder-export" class="secondary">Export Draft JSON</button><button type="button" id="builder-reset" class="secondary">New Draft</button></div>
+          </form>
+          <div id="builder-validation"></div>
+        </div>
+      </section>
+
+      <section id="tab-rounding" class="tab-panel hidden">
+        <div class="card">
+          <div class="section-heading"><div><h2>Rounding Policy Editor</h2><p>Edit the active operational rounding profiles without changing calculation code.</p></div><div id="rounding-status"></div></div>
+          <div class="alert alert-info"><strong>Scope:</strong> changes are stored only in this browser. Export the approved JSON and publish it to the repository to make a policy global for all users.</div>
+          <div id="rounding-policy-list" class="rounding-grid"></div>
+          <div class="button-row">
+            <button type="button" id="rounding-save" class="primary">Save Local Override</button>
+            <button type="button" id="rounding-export" class="secondary">Export Policy JSON</button>
+            <label class="file-button">Import Policy JSON<input id="rounding-import" type="file" accept="application/json,.json"></label>
+            <button type="button" id="rounding-reset" class="secondary">Reset to Published Default</button>
+          </div>
+          <div id="rounding-message"></div>
+        </div>
+      </section>
+
+      <section id="tab-legacy" class="tab-panel hidden">
+        <div class="card">
+          <h2>Legacy Regimen Validator</h2>
+          <p>Load the existing V1 <code>regimens.json</code>. This tool performs a safety audit only; it does not publish or calculate from free text.</p>
+          <div class="button-row"><label class="file-button">Choose legacy JSON<input id="legacy-file" type="file" accept="application/json,.json"></label><button id="legacy-export" class="secondary" type="button">Export migration report CSV</button></div>
+          <div id="legacy-results"></div>
+        </div>
+      </section>
+
+      <section id="tab-about" class="tab-panel hidden">
+        <div class="card prose">
+          <h2>Safety / deployment notes</h2>
+          <p>This completed production release contains six pilot regimens with local approval recorded per project-owner confirmation on 7 October 2026. Future regimens still require the same structured validation and approval workflow before publication. Rounding policy is editable locally and exportable for governed central publication.</p>
+          <h3>Data governance</h3>
+          <p>Clinical calculations use structured dose objects only. Free-text legacy doses are never fed to the calculation engine. Draft regimen data may be stored in browser localStorage; patient inputs are not persisted.</p>
+          <h3>Recommended production promotion gate</h3>
+          <p>Regimen source verified → structured schema validated → independent oncology pharmacist review → golden test cases passed → local approval recorded → immutable published snapshot generated.</p>
+          <h3>Version</h3><p><code>2.1.0</code> · generated 7 October 2026.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>Bangkok Hospital Hatyai · Pharmacy Department · Production v2.1 · six pilot regimens approved · change control required for future updates.</footer>
+  </div>
+  <script type="module" src="./dist/app.js"></script>
+  <script type="module" src="./register-sw.js"></script>
+</body>
+</html>
