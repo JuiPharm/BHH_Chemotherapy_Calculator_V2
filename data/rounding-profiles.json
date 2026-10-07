@@ -1,0 +1,31 @@
+[
+  {
+    "id": "BHH_NEAREST_10MG_DEFAULT",
+    "label": "BHH default · nearest 10 mg",
+    "method": "nearest_half_up",
+    "increment": 10,
+    "unit": "mg",
+    "maxPercentDifference": 5,
+    "maxAbsoluteDifference": 10,
+    "notes": "Published default operational profile. Editable in the Rounding Policy screen as a browser-local override; export JSON for governed central publication."
+  },
+  {
+    "id": "BHH_NEAREST_1MG_DEFAULT",
+    "label": "BHH default · nearest 1 mg",
+    "method": "nearest_half_up",
+    "increment": 1,
+    "unit": "mg",
+    "maxPercentDifference": 5,
+    "maxAbsoluteDifference": 1,
+    "notes": "Published default low-dose profile. Editable in the Rounding Policy screen as a browser-local override; export JSON for governed central publication."
+  },
+  {
+    "id": "NO_ROUND",
+    "label": "No operational rounding",
+    "method": "none",
+    "increment": 1,
+    "unit": "mg",
+    "maxPercentDifference": 0,
+    "notes": "Locked no-rounding profile."
+  }
+]
