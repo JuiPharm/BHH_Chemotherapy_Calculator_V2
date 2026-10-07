@@ -1,27 +1,15 @@
 # BHH Chemotherapy Calculator V2 — Completed Production Release
 
 Version: `2.1.0`  
-Generated: 7 October 2026
+Released: 7 October 2026
 
-This package is the **completed production release v2.1.0** for the new repository. The six pilot regimens have local approval recorded per project-owner confirmation on 7 October 2026. Future regimens continue to require structured validation and approval before publication.
+This repository contains the deployed static production release. The six pilot regimens have `localApproval: true` per project-owner confirmation on 7 October 2026. Future or modified regimens continue to require structured validation, independent clinical review, versioning, and publication control.
 
-## What changed from V1
+## Production URL
 
-- Structured dose objects are the only source of truth for calculation.
-- No regex/free-text dose parsing is used in the calculator.
-- Supports fixed dose, mg/m², g/m² engine semantics, mg/kg, IU/IU per BSA, and Carboplatin AUC.
-- Carboplatin kidney function method is explicit; no hidden universal 125 mL/min cap.
-- Multi-phase regimens are represented by cycle ranges.
-- Clinical hard maximum rules are applied before operational rounding.
-- Exact calculated dose and recommended rounded dose are shown together.
-- Rounding test behavior includes `688 mg -> 690 mg` and `682 mg -> 680 mg` for the `nearest 10 mg` profile.
-- Rounding is a drug/protocol profile, not a universal rule.
-- Legacy JSON is audit-only and fails closed for ambiguous expressions.
-- Regimen Builder saves DRAFT records only; it cannot publish them.
-- Patient inputs are not persisted.
-- No runtime external JavaScript libraries or CDNs.
+GitHub Pages is deployed from `main` through `.github/workflows/deploy-pages.yml`. Every push must pass the production smoke gate before Pages deployment.
 
-## Included pilot regimen records
+## Included approved pilot regimens
 
 1. TCH — eviQ ID 53 reference model
 2. modified FOLFOX6 — eviQ ID 637 reference model
@@ -30,86 +18,85 @@ This package is the **completed production release v2.1.0** for the new reposito
 5. BEP metastatic testicular germ cell — eviQ ID 320 reference model
 6. Carboplatin + Paclitaxel ovarian — eviQ ID 252 reference model
 
-All six included pilot records have `localApproval: true` for this project release. Their structured definitions, sources, and calculation behavior remain visible for ongoing review and future change control.
+## Key safety behavior
 
-## Run locally before deployment
+- Structured dose objects are the calculation source of truth; production does not calculate from legacy free text.
+- Supports fixed dose, BSA-based dose, weight-based dose, International Units, and Carboplatin AUC.
+- Carboplatin kidney-function method is explicit; there is no hidden universal 125 mL/min cap.
+- Clinical hard maximum rules are applied before operational rounding.
+- Exact calculated dose and recommended dose are both visible.
+- Published nearest-10-mg behavior includes `688 → 690 mg`, `682 → 680 mg`, and half-up `685 → 690 mg`.
+- Rounding safety thresholds can block a mathematically nearest dose when the percentage/absolute deviation exceeds policy.
+- Bleomycin remains IU; the engine never silently converts IU to mg.
+- Patient inputs are not persisted in localStorage.
 
-Do not double-click `index.html`, because browsers restrict `fetch()` under `file://`.
+## Editable Rounding Policy
 
-From this folder:
+The **Rounding Policy** tab allows editing:
+
+- increment,
+- maximum percentage difference,
+- maximum absolute difference,
+- display label.
+
+Changes are stored as a **browser-local override**. Users can Export JSON, Import JSON, or Reset to Published Default. This intentionally prevents one workstation from silently changing the hospital-wide policy.
+
+To make a policy global, review the exported JSON through BHH change control and publish the approved values to `data/rounding-profiles.json`.
+
+## Regimen Builder
+
+The browser Regimen Builder creates DRAFT records only. Drafts cannot be selected by the production calculator. This preserves the workflow:
+
+Draft → validation → clinical review → approval → published structured snapshot.
+
+## Legacy migration
+
+The **Legacy Validator** can load the V1 `regimens.json` and flags ambiguous expressions such as dose ranges, g/m² free text, IU/units, loading→maintenance, /day, and repeated intra-day schedules. Legacy free text is never used directly as a production calculation source.
+
+## Run locally
+
+Serve the repository root through any static HTTP server:
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Then open:
+Then open `http://localhost:8080`.
 
-`http://localhost:8080`
-
-Any static server is acceptable. The built files are already included.
-
-## Build from TypeScript source
-
-TypeScript 5.8+ is recommended.
-
-```bash
-tsc -p tsconfig.json
-```
-
-Or, if using npm in a normal development environment:
-
-```bash
-npm install
-npm run build
-```
-
-## Run automated tests
-
-With TypeScript available:
+## Automated validation
 
 ```bash
 npm test
 ```
 
-Core tests cover:
+The production smoke test verifies:
 
-- Mosteller BSA
-- `688 -> 690 mg`
-- `682 -> 680 mg`
-- half-up at `685 -> 690 mg`
-- rounding safety threshold
-- Vincristine 2 mg hard maximum before rounding
-- Bleomycin International Units remain IU
-- Calvert formula with no silent 125 mL/min cap
+- exactly six approved pilot regimens,
+- zero registry schema errors,
+- `688 → 690 mg`,
+- `682 → 680 mg`,
+- `685 → 690 mg`,
+- safety-threshold blocking,
+- Vincristine hard maximum 2 mg before rounding,
+- Bleomycin remains IU,
+- Calvert calculation does not silently cap kidney function at 125 mL/min.
 
-## Deploy
+## Change control
 
-The folder is static and can be deployed to GitHub Pages or Netlify. For future clinical-data changes, retain these governance checks:
+For future clinical-data changes, retain these gates:
 
-1. Every regimen has been independently reviewed by Oncology Pharmacy.
-2. BHH-approved rounding profiles replace the test rounding profiles.
-3. Local kidney-function policy for Carboplatin is approved.
-4. Golden clinical test cases are signed off.
-5. `localApproval` is explicitly recorded in the approved snapshot.
-6. Change control / PTC governance is documented.
-7. Record approval/version changes in the published snapshot and changelog.
-
-## Legacy migration
-
-Use the **Legacy Validator** tab and choose the existing V1 `regimens.json`. The tool does not calculate from it. Ambiguous structures such as dose ranges, `g/m²`, IU/units, loading→maintenance, `/day`, and repeated intra-day schedules are blocked for manual structured migration.
+1. source and indication verified,
+2. structured schema validated,
+3. Oncology Pharmacist review completed,
+4. golden calculation tests updated/passed,
+5. `localApproval` explicitly recorded,
+6. regimen/version change documented,
+7. GitHub Actions validation succeeds before deployment.
 
 ## Security / privacy
 
-- Content-Security-Policy restricts resources to the same origin.
+- Same-origin Content-Security-Policy.
 - No external analytics.
-- No patient values are stored in localStorage.
-- Draft regimen records are local to the browser and must not be treated as approved data.
-- For multi-user clinical production, move regimen governance/audit trail to authenticated server-side storage (e.g. Supabase with RLS), while retaining an immutable published snapshot for the calculator.
-
-
-## v2.1 completed release
-
-- Six pilot regimens have `localApproval: true` per project-owner confirmation on 7 October 2026.
-- Added browser-editable Rounding Policy Editor.
-- Rounding edits are local to the browser until exported and centrally published to `data/rounding-profiles.json`.
-- Current defaults retain `688 mg -> 690 mg` and `682 mg -> 680 mg` behavior for the nearest-10-mg profile.
+- Patient calculation inputs are not persisted.
+- Draft regimens and local rounding overrides remain local to the browser.
+- For multi-user centralized authoring/audit in a future phase, use authenticated server-side governance while retaining an immutable published snapshot for the calculator.
