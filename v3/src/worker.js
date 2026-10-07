@@ -595,7 +595,7 @@ export default {
         {
           error: e.status
             ? e.message
-            : 'Service unavailable. No clinical data was changed.',
+            : 'Service unavailable. Reload to verify the operation status before retrying.',
         },
         e.status || 503,
       );

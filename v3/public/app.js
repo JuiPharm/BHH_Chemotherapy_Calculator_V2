@@ -261,17 +261,31 @@ function doseText(d) {
     ? `AUC ${v}`
     : `${v} ${d.unit}${d.basis === 'bsa' ? '/m²' : d.basis === 'weight' ? '/kg' : ''}`;
 }
+function clinicalRuleText(x) {
+  if (x.type === 'hard_max')
+    return `Hard maximum: ${x.value} ${x.unit}. ${x.reason}`;
+  if (x.type === 'hard_min')
+    return `Hard minimum: ${x.value} ${x.unit}. ${x.reason}`;
+  if (x.type === 'multiply')
+    return `Protocol multiplier: ×${x.factor}. ${x.reason}`;
+  return `${x.metric} ${x.operator} ${x.value}: ${x.message}`;
+}
 function protocolHtml(d) {
   const v = d.version,
     r = v.document;
-  return `<h3>${esc(r.name)} ${badge(v.status)}</h3><p>${esc(r.indication)} · v${esc(v.version)}</p><small>Approved: ${esc(v.approved_by === 'v2-approved-import' ? 'Prior local approval (import)' : v.approved_by || '—')} · ${esc(v.approved_at || '—')}<br>Published: ${esc(v.published_at || '—')}</small>${r.phases
+  return `<h3>${esc(r.name)} ${badge(v.status)}</h3><p>${esc(r.indication)} · v${esc(v.version)}</p><p>Population: ${esc(r.population || 'Not defined')} · Cycle interval: ${esc(r.cycleIntervalDays || '—')} days · Cycles: ${esc(r.cycleCount || '—')}</p><small>Approved: ${esc(v.approved_by === 'v2-approved-import' ? 'Prior local approval (import)' : v.approved_by || '—')} · ${esc(v.approved_at || '—')}<br>Published: ${esc(v.published_at || '—')}</small>${r.phases
     .map(
       (p) =>
         `<div class="phase"><strong>${esc(p.name)} · cycles ${p.cycleStart}–${p.cycleEnd}</strong>${table(
-          ['Drug', 'Protocol dose', 'Route / Schedule', 'Rules'],
+          [
+            'Drug',
+            'Protocol dose',
+            'Route / Schedule',
+            'Clinical rules / Rounding',
+          ],
           p.orders.map(
             (o) =>
-              `<tr><td>${esc(o.drugName)}</td><td>${esc(doseText(o.dose))}</td><td>${esc(o.route)} · days ${esc(o.schedule.days.join(', '))}<small>${o.schedule.continuousInfusionHours ? `${o.schedule.continuousInfusionHours} h continuous infusion` : o.schedule.infusionMinutes ? `${o.schedule.infusionMinutes} min` : ''} ${esc(o.schedule.note || '')}</small></td><td>${esc((o.clinicalRules || []).map((x) => x.reason || x.message).join('; '))}</td></tr>`,
+              `<tr><td>${esc(o.drugName)}</td><td>${esc(doseText(o.dose))}</td><td>${esc(o.route)} · days ${esc(o.schedule.days.join(', '))}<small>${esc(o.schedule.administrationsPerDay || 1)} administration(s)/day · ${o.schedule.continuousInfusionHours ? `${o.schedule.continuousInfusionHours} h continuous infusion` : o.schedule.infusionMinutes ? `${o.schedule.infusionMinutes} min` : ''} ${esc(o.schedule.note || '')}</small></td><td>${esc((o.clinicalRules || []).map(clinicalRuleText).join('; '))}<small>Default: ${esc(policies[o.roundingProfileId]?.label || 'Not defined')}<br>Allowed: ${esc((o.allowedRoundingPolicies || []).map((k) => policies[k]?.label || k).join(', '))}</small></td></tr>`,
           ),
         )}</div>`,
     )

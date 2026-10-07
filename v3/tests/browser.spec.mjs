@@ -36,7 +36,8 @@ async function patient(page) {
     await page.locator(`[name=${name}]`).fill(value);
   await page.locator('[name=sex]').selectOption('male');
   await page.locator('#kidney-method').selectOption('measured_gfr');
-  await page.locator('[name=kidneyValue]').fill('90');
+  if (await page.locator('[name=kidneyValue]').isVisible())
+    await page.locator('[name=kidneyValue]').fill('90');
 }
 test('Clinical UI, blank patient, cancer typeahead, rounding, pastel results and reload', async ({
   page,
@@ -55,6 +56,12 @@ test('Clinical UI, blank patient, cancer typeahead, rounding, pastel results and
   await expect(page.locator('[name=sex]')).toHaveValue('');
   await expect(page.locator('#kidney-method')).toHaveValue('cockcroft_gault');
   await selectTCH(page);
+  await page.locator('#selected summary').first().click();
+  await expect(page.locator('#selected')).toContainText('Population: adult');
+  await expect(page.locator('#selected')).toContainText(
+    'Cycle interval: 21 days',
+  );
+  await expect(page.locator('#selected')).toContainText('Allowed:');
   await page.locator('#calculate').click();
   expect(
     await page
@@ -89,6 +96,21 @@ test('Clinical UI, blank patient, cancer typeahead, rounding, pastel results and
   await page.reload();
   await expect(page.locator('[name=ageYears]')).toHaveValue('');
   await expect(page.locator('#connection')).toContainText('Central protocols');
+  await page.locator('#cancer').selectOption('Hematologic');
+  await page.locator('#regimen-search').fill('R-CHOP21');
+  await page
+    .locator('#matches [data-select="BHH-HEME-RCHOP21-EVIQ70:1"]')
+    .click();
+  await page.locator('#selected summary').first().click();
+  await expect(page.locator('#selected')).toContainText('Hard maximum: 2 mg');
+  await patient(page);
+  await page.locator('#calculate').click();
+  await expect(
+    page
+      .locator('#result tr')
+      .filter({ hasText: 'Vincristine' })
+      .locator('.recommended'),
+  ).toHaveText('2 mg');
   expect(errors).toEqual([]);
 });
 test('Browser clone, builder, save, submit, independent approve, publish and second client refresh', async ({

@@ -27,6 +27,8 @@ Critical golden checks passed: 688→690, 682→680, 685→690; Vincristine hard
 
 Browser workflow exercised actual UI controls: blank patient inputs, required fields, default Cockcroft-Gault, cancer filter and autocomplete, original 136-regimen availability, Registry, Clone, structured Builder save, Submit, independent Review/Approve, admin Publish, revision refresh on a second browser context, rounding selection, pastel results, reload consistency, offline cached calculation and disabled writes.
 
+The reviewer screen displays explicit population, cycle interval/count, administration frequency, numeric hard limits, protocol multipliers and allowed/default rounding policies. Browser assertions verify review metadata and Vincristine hard maximum/recommended 2 mg.
+
 During UAT, reconnect initially left an offline calculation visible when the revision number stayed unchanged. This was fixed: reconnect always invalidates results and re-fetches the active protocol. Multi-context testing also required removing single-process Chromium flags; this was a QA harness setting, not an application workaround.
 
 ## Remaining deployment gates
