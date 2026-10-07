@@ -36,6 +36,7 @@ jobs:
           test -f dist/engine.js
           test -f data/regimens.published.json
           test -f data/rounding-profiles.json
+          test -f data/legacy-regimens.v1.json
           test -f .nojekyll
 
   deploy:
@@ -58,7 +59,7 @@ jobs:
           mkdir -p _site/dist _site/data
           cp index.html styles.css manifest.json register-sw.js sw.js 404.html .nojekyll _site/
           cp dist/*.js _site/dist/
-          cp data/regimens.published.json data/rounding-profiles.json _site/data/
+          cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json _site/data/
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
