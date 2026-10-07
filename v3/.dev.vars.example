@@ -1,0 +1,2 @@
+# LOCAL environment ONLY. Never copy to staging/production.
+LOCAL_TEST_AUTH=true

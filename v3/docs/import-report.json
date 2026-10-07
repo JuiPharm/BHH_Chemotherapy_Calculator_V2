@@ -1,0 +1,1358 @@
+{
+  "sourceSha256": "0df070b555159babf24a4e3150acdf2d3f41e3ddf216b30981bade8b10cf7db5",
+  "sourceRegimens": 136,
+  "sourceDrugEntries": 432,
+  "approvedPilots": 6,
+  "totalCatalog": 142,
+  "summary": {
+    "REVIEW REQUIRED": 117,
+    "AUTO-STRUCTURABLE": 19
+  },
+  "records": [
+    {
+      "id": "BHH-CATALOG-001",
+      "name": "Pembrolizumab + Pemetrexed + Platinum regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "AUC RANGE",
+        "MAXIMUM DOSE REVIEW",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-002",
+      "name": "Pembrolizumab + Paclitaxel + Carboplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-003",
+      "name": "Pembrolizumab + Platinum + Fluorouracil regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-004",
+      "name": "Pembrolizumab + Paclitaxel + Cisplatin ± Bevacizumab regimen",
+      "drugCount": 4,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-005",
+      "name": "Pembrolizumab + Nab-Paclitaxel regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-006",
+      "name": "Pembrolizumab + Pemetrexed + Platinum regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "MULTI-PHASE / SCHEDULE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-007",
+      "name": "Pembrolizumab + CAPOX regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-008",
+      "name": "Pembrolizumab + mFOLFOX6 regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-009",
+      "name": "Pembrolizumab + Docetaxel regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-010",
+      "name": "Bevacizumab + Carboplatin + Paclitaxel regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-011",
+      "name": "Bevacizumab + Carboplatin + Gemcitabine regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "MAXIMUM DOSE REVIEW",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-012",
+      "name": "Bevacizumab + Paclitaxel + Cisplatin regimen",
+      "drugCount": 3,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-013",
+      "name": "Bevacizumab + Trifluridine-Tipiracil regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-014",
+      "name": "Bevacizumab + Cisplatin + Capecitabine regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-015",
+      "name": "Bevacizumab + FOLFOX regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-016",
+      "name": "Bevacizumab + FOLFIRI regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-017",
+      "name": "Bevacizumab + Carboplatin + Paclitaxel regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "AUC RANGE",
+        "MAXIMUM DOSE REVIEW",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-018",
+      "name": "Nivolumab + Platinum + Fluoropyrimidine regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-019",
+      "name": "Nivolumab + Platinum + Fluoropyrimidine regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-020",
+      "name": "Nivolumab + Etoposide + Platinum regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "AUC RANGE",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-021",
+      "name": "Nivolumab + AVD regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-022",
+      "name": "Nivolumab + Platinum-Doublet regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-023",
+      "name": "Nivolumab + Cisplatin + Gemcitabine regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-024",
+      "name": "Nivolumab + Ipilimumab regimen (with chemo if needed)",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-025",
+      "name": "Atezolizumab + Bevacizumab + Carboplatin + Paclitaxel regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-026",
+      "name": "Atezolizumab + Carboplatin + Nab-Paclitaxel regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "MAXIMUM DOSE REVIEW",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-027",
+      "name": "Atezolizumab + Carboplatin + Paclitaxel regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "MAXIMUM DOSE REVIEW",
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-028",
+      "name": "Atezolizumab + Bevacizumab regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-029",
+      "name": "Atezolizumab + Nab-Paclitaxel regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-030",
+      "name": "Atezolizumab + mFOLFOX6 regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-031",
+      "name": "Atezolizumab + Lurbinectin regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-032",
+      "name": "Cetuximab + FOLFIRI regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-033",
+      "name": "Cetuximab + FOLFOX regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-034",
+      "name": "Cetuximab + Encorafenib + mFOLFOX6 regimen",
+      "drugCount": 6,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-035",
+      "name": "Cetuximab + Irinotecan regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-036",
+      "name": "Cetuximab + Paclitaxel + Carboplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-037",
+      "name": "Cetuximab + Docetaxel + Cisplatin + Fluorouracil regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION",
+        "DOSE RANGE",
+        "PER-DAY DOSE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-038",
+      "name": "R-CHOP regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "MAXIMUM DOSE REVIEW",
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-039",
+      "name": "R-CVP regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MAXIMUM DOSE REVIEW",
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-040",
+      "name": "BR regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-041",
+      "name": "R-ICE regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-042",
+      "name": "R-DHAP regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "g/m² UNIT REVIEW",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-043",
+      "name": "R-GemOx regimen",
+      "drugCount": 3,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-044",
+      "name": "R-FCM regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-045",
+      "name": "R-BAC regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-046",
+      "name": "R-CHOP regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "MAXIMUM DOSE REVIEW",
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-047",
+      "name": "R-DA-EPOCH regimen",
+      "drugCount": 6,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "PER-DAY DOSE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-048",
+      "name": "R-CODOX-M/IVAC regimen",
+      "drugCount": 8,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "MAXIMUM DOSE REVIEW",
+        "g/m² UNIT REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-049",
+      "name": "R-HCVAD regimen",
+      "drugCount": 7,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-050",
+      "name": "R-BEAM regimen",
+      "drugCount": 5,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-051",
+      "name": "R-FND regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-052",
+      "name": "R-GemVin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-053",
+      "name": "R-CP regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-054",
+      "name": "R-FC regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-055",
+      "name": "R-B regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-056",
+      "name": "FOLFOX-4 regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-057",
+      "name": "TCH regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "MAXIMUM DOSE REVIEW",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-058",
+      "name": "FOLFIRI regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-059",
+      "name": "AC-T regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-060",
+      "name": "CMF regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-061",
+      "name": "ABVD regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "IU/UNITS SEMANTICS"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-062",
+      "name": "7+3 regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-063",
+      "name": "EP regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-064",
+      "name": "Carboplatin-Paclitaxel regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-065",
+      "name": "Carboplatin-Paclitaxel regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "AUC RANGE",
+        "MAXIMUM DOSE REVIEW",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-066",
+      "name": "CHOP regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MAXIMUM DOSE REVIEW",
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-067",
+      "name": "FAC regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-068",
+      "name": "TC regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-069",
+      "name": "CVP regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MAXIMUM DOSE REVIEW",
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-070",
+      "name": "ICE regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-071",
+      "name": "Hyper-CVAD regimen",
+      "drugCount": 6,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-072",
+      "name": "BEP regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "IU/UNITS SEMANTICS",
+        "UNSTRUCTURED EXPRESSION",
+        "DOSE RANGE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-073",
+      "name": "Gemcitabine-Cisplatin regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-074",
+      "name": "FL regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-075",
+      "name": "ECF regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-076",
+      "name": "Doxorubicin-Bleomycin regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-077",
+      "name": "MOPP regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "MAXIMUM DOSE REVIEW",
+        "DOSE RANGE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-078",
+      "name": "BEACOPP regimen",
+      "drugCount": 7,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-079",
+      "name": "DHAP regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "g/m² UNIT REVIEW",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-080",
+      "name": "ESHAP regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "g/m² UNIT REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-081",
+      "name": "IMVP-16 regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-082",
+      "name": "Stanford V regimen",
+      "drugCount": 6,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "IU/UNITS SEMANTICS"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-083",
+      "name": "etoposide-Cisplatin regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-084",
+      "name": "Carboplatin-Etoposide regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "AUC RANGE",
+        "MAXIMUM DOSE REVIEW",
+        "UNSTRUCTURED EXPRESSION",
+        "DOSE RANGE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-085",
+      "name": "Pemetrexed-Cisplatin regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-086",
+      "name": "Cisplatin-Gemcitabine regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-087",
+      "name": "Docetaxel-Cisplatin regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-088",
+      "name": "Cisplatin-5FU regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-089",
+      "name": "FOLFOX regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-090",
+      "name": "Carboplatin-Paclitaxel regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-091",
+      "name": "Cisplatin regimen",
+      "drugCount": 1,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-092",
+      "name": "Doxorubicin-Dacarbazine regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-093",
+      "name": "Ifosfamide-Doxorubicin regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-094",
+      "name": "Methotrexate-Leucovorin regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-095",
+      "name": "Cisplatin-5FU regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-096",
+      "name": "Cisplatin-Topotecan regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-097",
+      "name": "Liposomal Doxorubicin regimen",
+      "drugCount": 1,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-098",
+      "name": "Bleomycin-Vinblastine-Cisplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "IU/UNITS SEMANTICS",
+        "UNSTRUCTURED EXPRESSION",
+        "DOSE RANGE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-099",
+      "name": "VIP regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-100",
+      "name": "TIP regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-101",
+      "name": "CISCA regimen",
+      "drugCount": 3,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-102",
+      "name": "MVAC regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-103",
+      "name": "Gemcitabine-Cisplatin regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-104",
+      "name": "Pembrolizumab + Docetaxel + Carboplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-105",
+      "name": "Bevacizumab + Cisplatin + Gemcitabine regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-106",
+      "name": "Nivolumab + Gemcitabine + Cisplatin regimen",
+      "drugCount": 3,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-107",
+      "name": "Atezolizumab + Carboplatin + Etoposide regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MAXIMUM DOSE REVIEW",
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-108",
+      "name": "Cetuximab + Irinotecan + Fluorouracil regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-109",
+      "name": "Rituximab + Fludarabine + Cyclophosphamide regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-110",
+      "name": "Pembrolizumab + Gemcitabine regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-111",
+      "name": "Bevacizumab + Oxaliplatin + Capecitabine regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-112",
+      "name": "Nivolumab + Pemetrexed + Carboplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-113",
+      "name": "Atezolizumab + Paclitaxel + Carboplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MAXIMUM DOSE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-114",
+      "name": "Cetuximab + Encorafenib regimen (with FOLFIRI if needed)",
+      "drugCount": 6,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-115",
+      "name": "Rituximab + Lenalidomide regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-116",
+      "name": "Pembrolizumab + Lenvatinib + mFOLFOX6 regimen",
+      "drugCount": 6,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW",
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-117",
+      "name": "Bevacizumab + Paclitaxel regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-118",
+      "name": "Nivolumab + Doxorubicin regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-119",
+      "name": "Atezolizumab + Cobimetinib + Vemurafenib regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "DOSE RANGE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-120",
+      "name": "Cetuximab + Panitumumab regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-121",
+      "name": "Rituximab + Ibrutinib regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "INFUSION / MULTI-PHASE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-122",
+      "name": "Pembrolizumab + Eribulin regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-123",
+      "name": "Pembrolizumab + AC regimen",
+      "drugCount": 3,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-124",
+      "name": "Pembrolizumab + Sacituzumab Govitecan regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-125",
+      "name": "Atezolizumab + Anthracycline + Cyclophosphamide regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "MULTI-PHASE / SCHEDULE REVIEW"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-126",
+      "name": "Atezolizumab + Capecitabine regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "DOSE RANGE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-127",
+      "name": "Nivolumab + Trastuzumab Deruxtecan regimen",
+      "drugCount": 2,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-128",
+      "name": "Nivolumab + Paclitaxel + Doxorubicin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-129",
+      "name": "Bevacizumab + Doxorubicin + Cyclophosphamide regimen",
+      "drugCount": 3,
+      "classification": "AUTO-STRUCTURABLE",
+      "flags": []
+    },
+    {
+      "id": "BHH-CATALOG-130",
+      "name": "Bevacizumab + Vinorelbine regimen",
+      "drugCount": 2,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-131",
+      "name": "Rituximab + Bendamustine + Trastuzumab regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-132",
+      "name": "Nivolumab + Cisplatin + Gemcitabine regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DUPLICATE NAME — preserve distinct indication and ID",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-133",
+      "name": "Pembrolizumab + Gemcitabine + Oxaliplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-134",
+      "name": "Atezolizumab + Gemcitabine + Cisplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-135",
+      "name": "Bevacizumab + Capecitabine + Oxaliplatin regimen",
+      "drugCount": 3,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "DOSE RANGE",
+        "UNSTRUCTURED EXPRESSION"
+      ]
+    },
+    {
+      "id": "BHH-CATALOG-136",
+      "name": "Pembrolizumab + Fluorouracil + Leucovorin regimen",
+      "drugCount": 4,
+      "classification": "REVIEW REQUIRED",
+      "flags": [
+        "UNSTRUCTURED EXPRESSION",
+        "INFUSION / MULTI-PHASE"
+      ]
+    }
+  ]
+}

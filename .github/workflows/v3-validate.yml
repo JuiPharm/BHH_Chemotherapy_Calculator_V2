@@ -1,0 +1,37 @@
+name: Validate V3 Cloudflare candidate
+on:
+  push:
+    branches: [production-v3-cloudflare]
+  pull_request:
+    paths: ['v3/**', 'package*.json', '.github/workflows/v3-validate.yml']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Preserve V2 regression checks
+        run: npm test
+      - name: Reproduce import and check structured engine
+        run: |
+          npm run import:v3
+          npm run build:v3
+          git diff --exit-code -- v3/migrations/0002_import.sql v3/docs/import-report.json v3/public/shared/clinical.js v3/public/sw.js
+          npm run test:v3
+      - name: Real local Worker and D1 API checks
+        run: npm run test:api:v3
+      - name: Browser workflow and offline tests
+        run: npm run test:browser:v3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: v3-qa-evidence
+          path: |
+            v3/test-results/
+            v3/v3/test-results/
