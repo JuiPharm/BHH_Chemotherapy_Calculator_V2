@@ -908,25 +908,8 @@ document.addEventListener('click', async (e) => {
 async function boot() {
   try {
     const s = await api('/session');
-    state.user = s.user;
-    state.local = s.local;
-    $('#account').innerHTML =
-      `${esc(s.user.email)}<small>${esc(s.user.role)}</small>${s.authMode === 'internal' ? '<button type="button" id="staging-logout">ออกจากระบบ</button>' : ''}${s.local ? '<label>LOCAL TEST identity<select id="local-user"><option value="calculator@local.test">Calculator user</option><option value="editor@local.test">Regimen editor</option><option value="reviewer@local.test">Oncology pharmacist</option><option value="admin@local.test">Clinical admin</option></select></label>' : ''}`;
-    if (s.authMode === 'internal')
-      $('#staging-logout').onclick = stagingSignOut;
-    if (state.local)
-      $('#local-user').onchange = async () => {
-        state.details.clear();
-        state.selected = null;
-        state.draft = null;
-        await sync();
-        $('#account small').textContent = state.user?.role || '';
-        $('#audit-tab').hidden = state.user?.role !== 'clinical_admin';
-        if (!$('#registry').hidden) await registry();
-        renderLibrary();
-      };
+    renderAccount(s);
     await sync();
-    $('#audit-tab').hidden = state.user?.role !== 'clinical_admin';
   } catch (e) {
     if (e.transport) await offline();
     else {
