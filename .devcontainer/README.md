@@ -15,3 +15,18 @@ The static preview is not a Production-ready clinical calculator. **Password+TOT
 **Security:** The setup script never calls `wrangler login`, `wrangler deploy`, or `wrangler --remote`. It runs only local test migrations against a random temp D1 and generates fake credentials. The secret output is placed in an ignored user-local file visible only to the Codespace owner. Do not configure this port as Public.
 
 **Resource availability:** GitHub personal accounts include free monthly Codespaces compute and storage allowances. If your quota is exhausted or Codespaces disabled, the procedure will not work without account/admin changes. Do not add billing details against your preferences.
+
+## Troubleshooting `HTTP ERROR 502` on a forwarded Codespaces URL
+
+A 502 at a private `<codespace>-8792.app.github.dev` URL often means **port 8792 is no longer connected to a healthy local listener** or a stale forwarded-port mapping remains. This is not a chemotherapy dosing calculation failure.
+
+**No Windows PowerShell is required.** Use the browser-only Codespaces UI:
+
+1. In the Codespace editor, open **PORTS**. Locate port **8792**, right-click → **Remove Port**; use **Add Port** to re-forward **8792**, set visibility **Private** and HTTP protocol. Click its **Open in Browser** icon again.
+2. If you do not see the browser preview, use **View → Command Palette** → **Codespaces: Rebuild Container** (or **Dev Containers: Rebuild Container**, depending on your interface). A rebuild applies new `.devcontainer` settings and runs the self-healing `postStartCommand` and `postAttachCommand`. Open port 8792 only after the startup process finishes.
+3. If the Codespace was created before these code fixes, its checkout may still contain an older commit. In VS Code's **Source Control → … → Pull** to update the `staging-internal-auth-v3` branch first; then rebuild the container. Alternatively create a *new* Codespace from the latest branch after safely preserving your own uncommitted changes.
+4. If it still fails, open **Explorer → `v3/.staging-secrets/codespaces-preview.log`** in the browser editor. The log contains diagnostic startup text and possibly **synthetic-only** test secrets. Share **only** the error portion, not the contents of `CODESPACES_LOGIN.txt` or any secret.
+
+The local Codespaces Worker now listens on `0.0.0.0:8792` for the **private** forwarded port, supports the exact `https://$CODESPACE_NAME-8792.app.github.dev` browser origin in local-preview mode only and refuses other Origins. A GitHub CI simulation checks the HTTPS-hostname headers, CSRF denial and preview restart.
+
+Do **not** change this port to Public. The hosting URL is authenticated by GitHub; Cloudflare Workers staging remains untouched. Use only fake test data.
