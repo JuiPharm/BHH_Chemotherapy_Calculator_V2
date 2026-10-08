@@ -1,4 +1,5 @@
 import { identity } from './auth.js';
+import { isInternalStaging, stagingLogin, stagingLogout } from './staging-auth.js';
 import { validateDefinition, policies } from '../shared/clinical.js';
 import { projections } from '../shared/projections.js';
 const headers = {
@@ -113,6 +114,27 @@ async function dispatch(request, env) {
   const url = new URL(request.url),
     path = url.pathname,
     db = env.DB;
+  if (isInternalStaging(env)) {
+    if (path === '/api/auth/login') return stagingLogin(request, env);
+    if (path === '/api/auth/logout') return stagingLogout(request, env);
+    const publicAsset = {
+      '/login': '/login.html',
+      '/login.html': '/login.html',
+      '/login.js': '/login.js',
+      '/login.css': '/login.css',
+      '/logo.png': '/logo.png',
+    }[path];
+    if (publicAsset && request.method === 'GET') {
+      const a = await env.ASSETS.fetch(new Request(new URL(publicAsset, url), request));
+      const h = new Headers(a.headers);
+      h.set('Cache-Control', 'no-store');
+      h.set('X-Content-Type-Options', 'nosniff');
+      h.set('Referrer-Policy', 'no-referrer');
+      h.set('X-Frame-Options', 'DENY');
+      h.set('Content-Security-Policy', "default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'");
+      return new Response(a.body, { status: a.status, headers: h });
+    }
+  }
   const who = await identity(request, env);
   const user = await dbQuery(
     db,
@@ -148,6 +170,7 @@ async function dispatch(request, env) {
       user: { id: user.id, email: user.email, role: user.role_code },
       local: who.local,
       revision: revision.revision,
+      authMode: isInternalStaging(env) ? 'internal' : 'access',
     });
   if (path === '/api/revision' && request.method === 'GET')
     return response(revision);
@@ -591,7 +614,12 @@ export default {
       return await dispatch(request, env);
     } catch (e) {
       if (!e.status) console.error('V3 request failed', e.message);
-      return response(
+      if (isInternalStaging(env) && e.status === 401 &&
+          request.method === 'GET' &&
+          request.headers.get('Accept')?.includes('text/html') &&
+          !new URL(request.url).pathname.startsWith('/api/'))
+        return Response.redirect(new URL('/login', request.url).toString(), 303);
+      const r = response(
         {
           error: e.status
             ? e.message
@@ -599,6 +627,10 @@ export default {
         },
         e.status || 503,
       );
+      if (!isInternalStaging(env) || e.status !== 401) return r;
+      const h = new Headers(r.headers);
+      h.set('X-BHH-Auth', 'internal');
+      return new Response(r.body, { status: r.status, headers: h });
     }
   },
 };
