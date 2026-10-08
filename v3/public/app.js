@@ -470,29 +470,32 @@ function go(page) {
   if (page === 'library') renderLibrary();
   if (page === 'audit') audit().catch(failure);
 }
-async function registry() {
-  if (!state.online) {
-    $('#registry-list').innerHTML =
-      '<div class="warning">Offline: registry unavailable</div>';
-    return;
-  }
-  const r = await api('/registry');
-  state.registry = r.versions;
-  $('#registry-list').innerHTML = table(
-    [
-      'Regimen',
-      'Cancer Type',
-      'Status / Active',
-      'Version / Updated',
-      'Reviewer / Approval',
-      'Source',
-      'Actions',
-    ],
-    r.versions.map(
-      (v) =>
-        `<tr><td>${esc(v.name)}<small>${esc(v.indication)}</small></td><td>${esc(v.cancerType)}</td><td>${badge(v.status)}<small>${v.active ? 'Active published' : 'Not active'}</small></td><td>v${esc(v.version)}<small>${esc(v.updatedAt)}</small></td><td>${esc(v.reviewer || '—')}<small>${esc(v.approvedAt || '—')}</small></td><td>${esc(v.source.map((x) => x.label).join('; ') || 'Awaiting source review')}</td><td><button data-review="${esc(v.versionId)}">View</button>${canEdit() ? `<button data-clone="${esc(v.versionId)}">Clone</button>${v.status === 'draft' ? `<button data-edit="${esc(v.versionId)}">Edit Draft</button>` : `<button data-new-version="${esc(v.versionId)}">New Version</button>`}` : ''}</td></tr>`,
-    ),
-  );
+function renderRegistry(){
+ const q=($('#registry-search')?.value||'').trim().toLowerCase();
+ const status=$('#registry-status')?.value||'';
+ const filtered=state.registry.filter(v => (!status||v.status===status) &&
+   [v.name,v.indication,v.cancerType,v.status,...(v.source||[]).map(x=>x.label)]
+     .join(' ').toLowerCase().includes(q));
+ $('#registry-count').textContent=filtered.length+' / '+state.registry.length+' versions';
+ $('#registry-list').innerHTML=table(
+  ['Regimen','Cancer Type','Status / Active','Version / Updated','Reviewer / Approval','Source','Actions'],
+  filtered.map(v=>
+   '<tr><td><strong>'+esc(v.name)+'</strong><small>'+esc(v.indication)+'</small></td>'+
+   '<td>'+esc(v.cancerType)+'</td><td>'+badge(v.status)+'<small>'+(v.active?'Active published':'Not active')+'</small></td>'+
+   '<td>v'+esc(v.version)+'<small>'+esc(v.updatedAt)+'</small></td>'+
+   '<td>'+esc(v.reviewer||'—')+'<small>'+esc(v.approvedAt||'—')+'</small></td>'+
+   '<td>'+esc((v.source||[]).map(x=>x.label).join('; ')||'Awaiting source review')+'</td>'+
+   '<td><button data-review="'+esc(v.versionId)+'">View</button>'+
+   (canEdit()?'<button data-clone="'+esc(v.versionId)+'">Clone</button>'+
+   (v.status==='draft'?'<button data-edit="'+esc(v.versionId)+'">Edit Draft</button>':
+     '<button data-new-version="'+esc(v.versionId)+'">New Version</button>'):'')+'</td></tr>')
+ );
+}
+async function registry(){
+ if(!state.online){$('#registry-list').innerHTML='<div class="warning">Offline: registry unavailable</div>';return;}
+ const r=await api('/registry');
+ state.registry=r.versions;
+ renderRegistry();
 }
 async function review(id) {
   const d = await getDetail(id);
