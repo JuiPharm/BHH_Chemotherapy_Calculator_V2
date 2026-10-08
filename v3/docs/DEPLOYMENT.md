@@ -15,53 +15,16 @@ npm run dev:v3
 
 Open the printed localhost URL. Choose LOCAL TEST identity to simulate roles. Test with synthetic data only. This is a real local Worker and local D1, not an HTML-only mock. Delete `v3/.wrangler` to reset local test data, then rerun setup; do not do this on a live database.
 
-## Staging provisioning
+## Staging provisioning — internal authentication candidate
 
-1. Run `npx wrangler login` locally. Do not send a Cloudflare token in chat and do not put a token into `v3/public`.
-2. Create independent D1 databases:
+The staging-only branch `staging-internal-auth-v3` replaces Cloudflare Access OTP with individually provisioned **password + TOTP** accounts. No Google Cloud Console, Access application or email-OTP vendor is used. See [STAGING_INTERNAL_LOGIN.md](STAGING_INTERNAL_LOGIN.md) for operator-only user provisioning, secure storage, rate limiting, login / logout and negative UAT checks.
 
-```sh
-npx wrangler d1 create bhh-chemo-staging
-npx wrangler d1 create bhh-chemo-production
-```
-
-3. Copy their IDs into the matching `d1_databases` entries in `v3/wrangler.jsonc`. Staging must not point at production. Local ID is only for the local simulator.
-4. **Staging no-domain option (selected):** use the isolated `bhh-chemotherapy-v3-staging.<YOUR_WORKERS_SUBDOMAIN>.workers.dev` hostname; `env.staging.workers_dev` is `true` and no staging `routes` are required. Follow [STAGING_OTP.md](STAGING_OTP.md) for the exact Zero Trust application setup. If a hospital staging domain exists, instead set `workers_dev=false` and use a genuine `routes` custom domain for staging.
-5. **Staging identity method: Cloudflare Access email One-time PIN (OTP)**, no Google Cloud Console or Google OAuth required. Add One-time PIN in Zero Trust > Integrations > Identity providers, create a staging self-hosted Access application covering the full exact hostname, and allow only named tester email addresses with Require: One-time PIN login method. Never use a public/Everyone Access policy, and protect `/api`, assets and the service worker. Production will have a separate Access application and hospital-approved authentication method, not automatically inherited from staging.
-6. Set the actual team domain (`yourteam.cloudflareaccess.com`) and the **matching staging application audience** in the staging environment. The Worker verifies JWT signature, issuer, audience, expiry, subject and app token type. Roles come from D1, not browser identity fields. Staging's `workers.dev` endpoint can be publicly reachable but must fail closed without a valid Access JWT and a provisioned D1 user. Root production `workers_dev` remains false and must use an Access-protected custom domain.
-7. Run the deploy guard and apply migrations **to staging only**:
-
-```sh
-npm run check:deploy:v3
-npx wrangler d1 migrations apply DB --config v3/wrangler.jsonc --env staging --remote
-```
-
-Never apply `v3/scripts/local-users.sql` remotely. Real environments have no test authentication or test account selector.
-
-8. Provision the four real identities in D1 before signing in. Use a reviewed SQL file, with actual email addresses and named operator IDs. Example for the initial administrator (replace placeholders, record this operation in your change record):
-
-```sql
-INSERT INTO users(id,email,role_code,active,created_at,created_by,updated_at,updated_by)
-VALUES('REPLACE_ADMIN_EMAIL','REPLACE_ADMIN_EMAIL','clinical_admin',1,
-       strftime('%Y-%m-%dT%H:%M:%fZ','now'),'REPLACE_OPERATOR',
-       strftime('%Y-%m-%dT%H:%M:%fZ','now'),'REPLACE_OPERATOR');
-INSERT INTO audit_logs VALUES(
- 'REPLACE_UNIQUE_EVENT_ID','user','REPLACE_ADMIN_EMAIL',NULL,'provision',NULL,
- '{"role":"clinical_admin","active":true}','REPLACE_OPERATOR',
- strftime('%Y-%m-%dT%H:%M:%fZ','now'),'Initial authorized account provisioning',
- strftime('%Y-%m-%dT%H:%M:%fZ','now'),'REPLACE_OPERATOR',
- strftime('%Y-%m-%dT%H:%M:%fZ','now'),'REPLACE_OPERATOR');
-```
-
-Provision calculator_user, regimen_editor and oncology_pharmacist similarly. Use lowercase email addresses verified by the selected Access login method (OTP for staging). Separate the author from the independent reviewer. Do not grant admin to all users. Run reviewed user provisioning/audit inserts together as one transaction using the Cloudflare D1 console.
-
-9. Deploy staging:
-
-```sh
-npm run deploy:staging:v3
-```
-
-10. Sign in from two separate browsers using allowlisted, real OTP inboxes and named staging D1 accounts. Run the checks listed in REQUIREMENT_MATRIX.md: identities and role denial; 142 seeded records; clone/save/review/publish; same content on both clients; hard max, IU and AUC golden checks; cache invalidation and offline banner; logout/session expiry and denied accounts. Use only synthetic patient parameters during UAT.
+1. Use Workers Free + staging D1 only. Stop if your Cloudflare account onboarding requires an unwanted payment method; the Free service allowance does not establish what Cloudflare will ask for during signup.
+2. In `v3/wrangler.jsonc`, replace `REPLACE_STAGING_D1_ID` with the real staging database ID. Do not fill staging Access AUD/team-domain fields: `AUTH_MODE=internal` replaces them. Production remains Cloudflare Access and must not be changed.
+3. After the local build and tests pass, apply `npx wrangler d1 migrations apply DB --config v3/wrangler.jsonc --env staging --remote` **only after authorization**. The 0004 migration adds the staging credential/session/login-audit schema and does not provision any account.
+4. An authorized operator runs `node v3/scripts/provision-staging.mjs <email> <role>` locally with masked password input, registers the generated TOTP secret directly with its intended tester and imports the confidential generated SQL **only into staging**. No bootstrap password or login secret goes into the repository.
+5. With explicit approval, `npm run deploy:staging:v3` will deploy the isolated staging Worker. This task does **not** execute the deployment.
+6. Before clinical UAT, validate mandatory two-factor login, unknown/inactive users, replay, lockout, HTTPS, role separation, logout, offline cache, audit log and Free-tier runtime limits; use synthetic patient parameters.
 
 ## GitHub CI
 

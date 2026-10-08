@@ -1,4 +1,4 @@
-const NAME='bhh-v3-shell-04261f76c875e8f5';
+const NAME='bhh-v3-shell-d8fd0e9153156c2e';
 const SHELL = [
   '/',
   '/index.html',

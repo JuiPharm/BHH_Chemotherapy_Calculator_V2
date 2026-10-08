@@ -27,14 +27,14 @@
       "workers_dev": true,
       "vars": {
         "APP_ENV": "staging",
-        "ACCESS_TEAM_DOMAIN": "REPLACE.cloudflareaccess.com",
-        "ACCESS_AUD": "REPLACE_STAGING_AUD"
+        "AUTH_MODE": "internal",
+        "PUBLIC_CALCULATOR": "true"
       },
       "d1_databases": [
         {
           "binding": "DB",
           "database_name": "bhh-chemo-staging",
-          "database_id": "REPLACE_STAGING_D1_ID",
+          "database_id": "3d936db6-eed1-4880-9561-1f22101cb27e",
           "migrations_dir": "migrations"
         }
       ]
@@ -50,6 +50,24 @@
           "binding": "DB",
           "database_name": "bhh-chemo-local",
           "database_id": "00000000-0000-0000-0000-000000000003",
+          "migrations_dir": "migrations"
+        }
+      ]
+    },
+    "production": {
+      "name": "bhh-chemotherapy-v3-production",
+      "workers_dev": true,
+      "vars": {
+        "APP_ENV": "production",
+        "AUTH_MODE": "internal",
+        "PUBLIC_CALCULATOR": "true",
+        "PRODUCTION_PUBLIC_PIN": "true"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "bhh-chemo-production",
+          "database_id": "REPLACE_PRODUCTION_D1_ID",
           "migrations_dir": "migrations"
         }
       ]

@@ -8,6 +8,7 @@ function db() {
     '0001_schema.sql',
     '0002_import.sql',
     '0003_governance_constraints.sql',
+    '0004_staging_internal_auth.sql',
   ])
     d.exec(fs.readFileSync(`v3/migrations/${p}`, 'utf8'));
   return d;
@@ -105,4 +106,11 @@ test('Import is reproducible and classifier never publishes ambiguous originals'
       ),
     ),
   );
+});
+
+test('staging authentication migration seeds no credentials or sessions', () => {
+  const d = db();
+  for (const table of ['staging_auth_credentials','staging_auth_sessions','staging_auth_limits','staging_auth_events'])
+    assert.equal(d.prepare(`SELECT count(*) n FROM ${table}`).get().n, 0);
+  assert.equal(d.prepare('PRAGMA foreign_key_check').all().length, 0);
 });

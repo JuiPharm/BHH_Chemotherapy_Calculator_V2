@@ -88,7 +88,7 @@ test('Clinical UI, blank patient, cancer typeahead, rounding, pastel results and
     fullPage: true,
   });
   await page.locator('[data-page=library]').click();
-  await expect(page.locator('#library-count')).toContainText('142 records');
+  await expect(page.locator('#library-count')).toContainText('142 sources');
   await page.locator('#library-search').fill('pembro');
   await expect(page.locator('#library-list')).toContainText('Pembrolizumab');
   await page.locator('#library-cancer').selectOption({ label: 'Breast' });
@@ -133,7 +133,7 @@ test('Browser clone, builder, save, submit, independent approve, publish and sec
   await ep.locator('[data-page=library]').click();
   await ep.locator('#library-search').fill('TCH');
   await ep.locator('[data-clone="BHH-BREAST-TCH-EVIQ53:1"]').click();
-  await expect(ep.locator('#builder-content')).toContainText('Draft');
+  await expect(ep.locator('#modal-builder')).toContainText('Draft');
   const title = 'BHH browser approved TCH ' + Date.now();
   await ep.locator('#builder-form [data-field=name]').first().fill(title);
   await ep
@@ -186,12 +186,15 @@ test('Browser clone, builder, save, submit, independent approve, publish and sec
   await expect(cp.locator('#matches')).toContainText(title);
   await cp.locator('#matches button').first().click();
   await patient(cp);
+  const invalid=await cp.locator('#patient-form').evaluate(f=>[...f.elements].filter(e=>e.willValidate&&!e.validity.valid).map(e=>({id:e.id,name:e.name,value:e.value,message:e.validationMessage})));
+  expect(invalid).toEqual([]);
   await cp.locator('#calculate').click();
   await expect(cp.locator('#result')).toContainText('690 mg');
   await cp.reload();
   await expect(cp.locator('#connection')).toContainText('Central protocols');
   await cp.locator('[data-page=registry]').click();
   await expect(cp.locator('#registry-list')).toContainText(title);
+  await ap.locator('#regimen-modal-close').click();
   await ap.locator('[data-page=audit]').click();
   await expect(ap.locator('#audit-list')).toContainText('publish');
   await expect(ap.locator('#audit-list')).toContainText('reviewer@local.test');
@@ -202,7 +205,7 @@ test('Browser clone, builder, save, submit, independent approve, publish and sec
   expect(errors).toEqual([]);
   for (const c of [editor, reviewer, admin, consumer]) await c.close();
 });
-test('Offline published snapshot calculation, writes disabled, reconnect and mobile layout', async ({
+test('Offline published snapshot read-only, Calculate blocked, reconnect and mobile layout', async ({
   browser,
 }) => {
   const ctx = await browser.newContext(),
@@ -218,22 +221,20 @@ test('Offline published snapshot calculation, writes disabled, reconnect and mob
   await expect(page.locator('#connection')).toContainText(
     'OFFLINE / CACHED PUBLISHED PROTOCOL',
   );
-  await page.locator('#calculate').click();
-  await expect(page.locator('#result')).toContainText('690 mg');
-  await expect(page.locator('#result')).toContainText(
-    'OFFLINE / CACHED PUBLISHED PROTOCOL',
-  );
+  await expect(page.locator('#calculate')).toBeDisabled();
+  await expect(page.locator('#result')).toBeEmpty();
   await expect(page.locator('#new-draft')).toBeDisabled();
   await page.reload();
   await expect(page.locator('#connection')).toContainText('OFFLINE');
   await expect(page.locator('[name=ageYears]')).toHaveValue('');
   await selectTCH(page);
   await patient(page);
-  await page.locator('#calculate').click();
-  await expect(page.locator('#result')).toContainText('690 mg');
+  await expect(page.locator('#calculate')).toBeDisabled();
   await ctx.setOffline(false);
   await expect(page.locator('#connection')).toContainText('Central protocols');
-  await expect(page.locator('#result')).toBeEmpty();
+  await expect(page.locator('#calculate')).toBeEnabled();
+  await page.locator('#calculate').click();
+  await expect(page.locator('#result')).toContainText('690 mg');
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(
@@ -245,4 +246,41 @@ test('Offline published snapshot calculation, writes disabled, reconnect and mob
     fullPage: true,
   });
   await ctx.close();
+});
+
+
+test('Two independent PCs see newly saved and edited Draft from shared D1 without refreshing', async ({browser})=>{
+  const ctxA=await browser.newContext(),ctxB=await browser.newContext();
+  try {
+    const a=await ctxA.newPage(),b=await ctxB.newPage();
+    await boot(a,'editor');
+    await boot(b,'editor');
+    await b.locator('[data-page=registry]').click();
+    const name='Multiclient D1 sync '+Date.now(), updated=name+' UPDATED';
+    const origin=new URL(a.url()).origin;
+    const headers={'Origin':origin,'X-Requested-With':'BHH-V3','X-Local-User':'editor@local.test'};
+    const created=await ctxA.request.post(origin+'/api/drafts',{
+      headers, data:{sourceVersionId:'BHH-BREAST-TCH-EVIQ53:1',
+        name,reason:'Cross-computer central database synchronization QA'}
+    });
+    expect(created.status()).toBe(201);
+    const version=(await created.json()).version;
+    // B is already open to Registry; do not click refresh or reload.
+    await expect(b.locator('#registry-list')).toContainText(name,{timeout:25000});
+    const doc=structuredClone(version.document);
+    doc.name=updated;
+    const saved=await ctxA.request.put(origin+'/api/versions/'+encodeURIComponent(version.id),{
+      headers,data:{document:doc,expectedRevision:version.revision,
+        reason:'Simulated editor updates from another workstation'}
+    });
+    expect(saved.status()).toBe(200);
+    await expect(b.locator('#registry-list')).toContainText(updated,{timeout:25000});
+    await expect(b.locator('#connection')).toContainText('Central protocols');
+    // Server-side optimistic lock prevents one PC overwriting older copy.
+    const outdated=await ctxB.request.put(origin+'/api/versions/'+encodeURIComponent(version.id),{
+      headers,data:{document:version.document,expectedRevision:version.revision,
+        reason:'Attempt stale overwrite must be rejected'}
+    });
+    expect(outdated.status()).toBe(409);
+  } finally {await Promise.all([ctxA.close(),ctxB.close()]);}
 });

@@ -3,7 +3,7 @@ on:
   push:
     branches: [production-v3-cloudflare]
   pull_request:
-    paths: ['v3/**', 'package*.json', '.github/workflows/v3-validate.yml']
+    paths: ['v3/**', '.devcontainer/**', 'package*.json', '.github/workflows/v3-validate.yml']
 permissions:
   contents: read
 jobs:
@@ -16,18 +16,52 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Block known high/critical npm advisories (not a full security certification)
+        run: |
+          npm audit --json > /tmp/bhh-npm-audit.json || true
+          node --input-type=module -e "import fs from 'node:fs'; const d=JSON.parse(fs.readFileSync('/tmp/bhh-npm-audit.json','utf8')); console.log('Audit totals:',JSON.stringify(d.metadata?.vulnerabilities)); for (const [name,v] of Object.entries(d.vulnerabilities||{})) console.log(JSON.stringify({name,severity:v.severity,isDirect:v.isDirect,range:v.range,via:v.via.map(x=>typeof x==='string'?x:{name:x.name,title:x.title,url:x.url,range:x.range}),fixAvailable:v.fixAvailable})); if ((d.metadata?.vulnerabilities?.high||0)+(d.metadata?.vulnerabilities?.critical||0)>0) process.exit(1);"
+      - name: Verify staging deployment configuration without deploying
+        run: npm run check:deploy:v3
       - name: Preserve V2 regression checks
         run: npm test
       - name: Reproduce import and check structured engine
         run: |
           npm run import:v3
           npm run build:v3
-          git diff --exit-code -- v3/migrations/0002_import.sql v3/docs/import-report.json v3/public/shared/clinical.js v3/public/sw.js
+          git diff --exit-code -- v3/migrations/0002_import.sql v3/docs/import-report.json v3/public/shared/clinical.js 
           npm run test:v3
       - name: Real local Worker and D1 API checks
         run: npm run test:api:v3
       - name: Browser workflow and offline tests
         run: npm run test:browser:v3
+      - name: Full staging-mode authentication in isolated local Worker + D1 + Chromium
+        run: npm run test:staging:v3
+      - name: Browser-only Codespaces preview smoke (no deployment)
+        run: |
+          CODESPACE_NAME=ci-bhh-synthetic bash .devcontainer/start-preview.sh
+          CODESPACE_NAME=ci-bhh-synthetic bash .devcontainer/start-preview.sh
+          test -s v3/.staging-secrets/CODESPACES_LOGIN.txt
+          grep -q 'calculator@staging-fixture.test' v3/.staging-secrets/CODESPACES_LOGIN.txt
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/login)" = '200'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/session)" = '200'
+          curl -sf http://127.0.0.1:8792/api/catalog | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const x=JSON.parse(s);if(x.catalog.length!==142 || x.catalog.filter(a=>a.status==='published').length!==6 || x.catalog.filter(a=>a.status==='reference_only').length!==136)process.exit(1)})"
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/registry)" = '403'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H 'Origin: http://127.0.0.1:8792' -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"pin":"1111111111"}' http://127.0.0.1:8792/api/auth/editor-pin)" = '401'
+          curl -s --max-time 5 -D /tmp/bhh-editor.headers -o /dev/null -H 'Origin: http://127.0.0.1:8792' -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"pin":"8342719056"}' http://127.0.0.1:8792/api/auth/editor-pin
+          grep -qi 'HttpOnly; Secure; SameSite=Strict' /tmp/bhh-editor.headers
+          cookie="$(grep -i '^set-cookie:' /tmp/bhh-editor.headers | tr -d '\r' | cut -d' ' -f2 | cut -d';' -f1)"
+          curl -sf -H "Cookie: $cookie" http://127.0.0.1:8792/api/session | grep -q '"authMode":"editor"'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Cookie: $cookie" http://127.0.0.1:8792/api/registry)" = '200'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Cookie: $cookie" http://127.0.0.1:8792/api/audit)" = '403'
+          target="https://ci-bhh-synthetic-8792.app.github.dev"
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Host: ci-bhh-synthetic-8792.app.github.dev" -H "Origin: $target" -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"email":"calculator@staging-fixture.test"}' http://127.0.0.1:8792/api/auth/salt)" = '200'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Host: ci-bhh-synthetic-8792.app.github.dev" -H "Origin: https://evil.example" -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"email":"calculator@staging-fixture.test"}' http://127.0.0.1:8792/api/auth/salt)" = '403'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H 'Host: ci-bhh-synthetic-8792.app.github.dev' -H 'Accept: text/html' http://127.0.0.1:8792/)" = '200'
+          echo "CODESPACES_PUBLIC_HOME_PASS"
+          TEST_BASE_URL=http://127.0.0.1:8792 node node_modules/@playwright/test/cli.js test --config v3/playwright.public.config.mjs
+          TEST_BASE_URL=http://127.0.0.1:8792 node v3/tests/staging-pin-publication.mjs
+          kill -TERM "$(cat v3/.staging-secrets/codespaces-preview.pid)"
+          echo "CODESPACES_LOCAL_PREVIEW_PASS"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
