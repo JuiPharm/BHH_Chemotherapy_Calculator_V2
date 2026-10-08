@@ -1,6 +1,6 @@
 # Production readiness report — V3 3.0.0-rc.1
 
-Baseline verification date: 7 October 2026. Staging OTP configuration revision: 8 October 2026. Baseline V2 main commit: `c085426c9853dc733f7d9d2988f3170285a8d96a`.
+Baseline verification date: 7 October 2026. Historical staging OTP configuration: 8 October 2026. Internal login proposal: 8 October 2026 (unverified staging candidate). Baseline V2 main commit: `c085426c9853dc733f7d9d2988f3170285a8d96a`.
 
 **Result: local production candidate verified; Cloudflare staging authorization and real-account UAT are pending. Do not label this as clinically released production and do not merge into main yet.**
 
@@ -35,14 +35,18 @@ During UAT, reconnect initially left an offline calculation visible when the rev
 
 Cloudflare Access **One-time PIN via approved email addresses** replaces Google Login for staging; no Google Cloud Console is needed. Wrangler staging permits a dedicated workers.dev hostname behind Cloudflare Access while root production remains workers_dev=false and custom-domain-only. The deployment guard has four dedicated local configuration test cases. See [STAGING_OTP.md](STAGING_OTP.md). The previously recorded 31 unit, 42 API and 3 Chromium local results are historical baseline results, **not re-execution evidence for these amendments**.
 
+## Unverified staging authentication branch
+
+The isolated branch `staging-internal-auth-v3` changes **staging only** from Cloudflare Access email OTP to D1-managed passwords + TOTP, opaque HttpOnly session cookies, rate limits and separate auth-event logs. Production retains the original Cloudflare Access JWT verification. See [STAGING_INTERNAL_LOGIN.md](STAGING_INTERNAL_LOGIN.md). CI results for this new branch must be separately collected; previous 31/42/3 test results refer to earlier code and must not be copied forward as proof of this authentication change. Staging and Production have **not** been deployed by this task.
+
 ## Remaining deployment gates
 
-1. Cloudflare account authorization, separate staging/production D1 IDs, exact staging workers.dev hostname (or staging custom domain), actual Access team domain/audience, named email-OTP allowlist and distinct production custom domain/identity decision.
-2. Provision named real users and verify Access email-OTP login, session expiry and role enforcement end-to-end against staging D1.
+1. Cloudflare account authorization and staging D1 ID, exact staging workers.dev hostname, named password+TOTP tester provisioning, verified TOTP enrollment and distinct production custom domain/Access identity decision.
+2. Provision named staging users and verify password/TOTP login, replay resistance, session expiry, brute-force throttling and role enforcement end-to-end against staging D1.
 3. Repeat the requirement matrix against deployed staging: two real clients, actual remote D1, JWT headers, cache/offline, audit and protocol workflow.
 4. Hospital clinical/IT release sign-off: validate preserved pilot source approval provenance, original reviewer/publication time when available, operational rounding policy, offline use and backup/incident ownership.
 
-Items 1–3 require account access and cannot be replaced by local tests. No remote staging deployment, OTP login or clinical clearance is claimed by this document. Staging OTP setup does not constitute production identity approval. All 136 unstructured source records remain review-gated; no automatic publication occurs.
+Items 1–3 require account access and cannot be replaced by local tests. No remote staging deployment, TOTP login or clinical clearance is claimed by this document. Staging OTP setup does not constitute production identity approval. All 136 unstructured source records remain review-gated; no automatic publication occurs.
 
 ## Deliberate boundaries
 
