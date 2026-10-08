@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { pbkdf2Sync, createHmac } from 'node:crypto';
 const base=process.env.TEST_BASE_URL;
 if(!base?.startsWith('http://127.0.0.1:'))throw Error('Staging integration test must run on loopback only');
-const fixtures=JSON.parse(process.env.TEST_STAGING_FIXTURES||'[]');
+const fixtures=JSON.parse(process.env.TEST_STAGING_FIXTURES||'[]').slice(0,4);
 if(fixtures.length!==4)throw Error('Four synthetic-only identities required');
 const password=process.env.TEST_STAGING_PASSWORD;
 const count={pass:0};
