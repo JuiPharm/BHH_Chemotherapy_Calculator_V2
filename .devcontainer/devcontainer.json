@@ -1,0 +1,22 @@
+{
+  "name": "BHH Chemotherapy V3 — No-PowerShell Test",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
+  "forwardPorts": [
+    8792
+  ],
+  "portsAttributes": {
+    "8792": {
+      "label": "BHH V3 Staging Test (synthetic only)",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "npm ci && npm run build:v3",
+  "postStartCommand": "bash .devcontainer/start-preview.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "remote.autoForwardPorts": true
+      }
+    }
+  }
+}
