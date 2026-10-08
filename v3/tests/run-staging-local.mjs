@@ -13,6 +13,7 @@ const pepper='LOCAL-TEST-ONLY-DO-NOT-USE-AS-SECRET-ABC123456789';
 const pass='Local-Staging-Only-Long-Password!2026';
 const env={...process.env,NODE_OPTIONS:`${process.env.NODE_OPTIONS||''} --require ${shim}`,WRANGLER_SEND_METRICS:'false'};
 const roles=['calculator_user','regimen_editor','oncology_pharmacist','clinical_admin'];
+const editorPin='8342719056'; // SYNTHETIC TEST ONLY; never real staff credential
 const q=x=>"'"+String(x).replaceAll("'","''")+"'";
 const b32=a=>{
   const alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -31,8 +32,11 @@ const sql=fixtures.flatMap(f=>[
   `INSERT INTO users VALUES(${q(f.id)},${q(f.email)},${q(f.role)},1,datetime('now'),'staging-fixture',datetime('now'),'staging-fixture');`,
   `INSERT INTO staging_auth_credentials(user_id,salt,password_hash,totp_secret,created_at) VALUES(${q(f.id)},${q(f.salt)},${q(f.hash)},${q(f.secret)},datetime('now'));`
 ]).join('\n');
+const pinHash=createHmac('sha256',pepper).update('bhh-editor-pin-v1:'+editorPin).digest('hex');
+const editor=fixtures.find(f=>f.role==='regimen_editor');
+const editorSql=`INSERT INTO staging_editor_pins(user_id,pin_hash,created_at,created_by) VALUES(${q(editor.id)},${q(pinHash)},datetime('now'),'staging-fixture');`;
 const seed=join(temp,'staging-test-users.sql');
-writeFileSync(seed,sql,{mode:0o600});
+writeFileSync(seed,sql+'\n'+editorSql+'\n',{mode:0o600});
 const PORT=8792,base=`http://127.0.0.1:${PORT}`;
 function execute(args,options={}){
   return new Promise((resolve,reject)=>{
@@ -57,16 +61,17 @@ try{
     '--var','CODESPACES_PREVIEW:true',
     '--var',`CODESPACES_PREVIEW_ORIGIN:${forwardOrigin}`,
   ] : [];
+  const publicVar=process.argv.includes('--serve')?'true':'false';
   worker=spawn(process.execPath,['node_modules/wrangler/bin/wrangler.js','dev',...common,
     '--port',String(PORT),'--ip',codespace?'0.0.0.0':'127.0.0.1',
-    '--var',`STAGING_PASSWORD_PEPPER:${pepper}`,...extra],{env,stdio:['ignore','pipe','pipe']});
+    '--var',`STAGING_PASSWORD_PEPPER:${pepper}`,'--var',`PUBLIC_CALCULATOR:${publicVar}`,...extra],{env,stdio:['ignore','pipe','pipe']});
   let output='';
   worker.stdout.on('data',x=>output+=x);
   worker.stderr.on('data',x=>output+=x);
   worker.on('error',e=>output+=String(e));
   let ready=false;
   for(let i=0;i<160;i++){
-    try{const res=await fetch(base+'/api/session',{redirect:'manual'});if(res.status===401){ready=true;break;}}catch{}
+    try{const res=await fetch(base+'/api/session',{redirect:'manual'});if(res.status===(process.argv.includes('--serve')?200:401)){ready=true;break;}}catch{}
     if(worker.exitCode!==null)break;
     await new Promise(r=>setTimeout(r,200));
   }
@@ -75,6 +80,7 @@ try{
     console.log('\nBHH STAGING LOCAL PREVIEW (synthetic identities only)\n');
     console.log('Open '+(forwardOrigin || base)+'/login');
     console.log('LOCAL-TEST PASSWORD (not for real accounts): '+pass);
+    console.log('EDITOR Confirm PIN (synthetic test only): '+editorPin);
     console.log('Add each user to an Authenticator app with the listed test-only TOTP seed:');
     for(const f of fixtures.slice(0,4))
       console.log(f.role+' | '+f.email+' | TOTP secret: '+f.secret);
