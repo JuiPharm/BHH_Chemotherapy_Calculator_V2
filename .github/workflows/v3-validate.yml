@@ -59,6 +59,7 @@ jobs:
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H 'Host: ci-bhh-synthetic-8792.app.github.dev' -H 'Accept: text/html' http://127.0.0.1:8792/)" = '200'
           echo "CODESPACES_PUBLIC_HOME_PASS"
           TEST_BASE_URL=http://127.0.0.1:8792 node node_modules/@playwright/test/cli.js test --config v3/playwright.public.config.mjs
+          TEST_BASE_URL=http://127.0.0.1:8792 node v3/tests/staging-pin-publication.mjs
           kill -TERM "$(cat v3/.staging-secrets/codespaces-preview.pid)"
           echo "CODESPACES_LOCAL_PREVIEW_PASS"
       - uses: actions/upload-artifact@v4
