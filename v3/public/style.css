@@ -432,3 +432,12 @@ footer button {
 .verification {
   width: auto;
 }
+
+/* Personal PIN management, separate from routine public chemotherapy calculation. */
+#pin-dialog{border:1px solid var(--line);border-radius:14px;max-width:440px;width:calc(100% - 32px);padding:28px;background:white;box-shadow:0 12px 50px #102e5155;}
+#pin-dialog::backdrop{background:#102e517f;}
+#pin-dialog label{display:block;font-weight:700;margin-top:16px;}
+#pin-dialog input{margin-top:8px;letter-spacing:3px;}
+#pin-error{color:#a62234;font-weight:bold;min-height:20px;}
+#manage-pin{color:#fff;background:#264f77;border-color:#729bbd;}
+#account a{display:block;color:#0f62a2;margin-top:5px;}
