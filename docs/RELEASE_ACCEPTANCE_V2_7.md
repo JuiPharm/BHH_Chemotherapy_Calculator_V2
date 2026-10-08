@@ -15,10 +15,11 @@
 
 ## Regression evidence at release candidate stage
 - `node tests/production-smoke.mjs` — six structured pilot fixtures, 136 master files, unit rounding and clinical cap fixtures.
+- `node tests/ckd-epi-2021.mjs` — five renal checks: NKF 2021 male/female formula branches, BSA indexation, legacy method parity, invalid SCr and Calvert de-indexation.
 - `node tests/production-safety.mjs` — 12 security/schema/reference/D1 checks.
 - `node tests/rounding-security.mjs` — 5 rounding/auth checks.
 - `node tests/runtime-startup-static.mjs` — UI contract checks.
-- `node tests/browser-production-flow.mjs` — 8 real Chrome user-flow assertions.
+- `node tests/browser-production-flow.mjs` — 11 real Chrome user-flow assertions, including CKD-EPI indexed/de-indexed live preview, browser arithmetic and Cockcroft-Gault selection continuity.
 
 ## Production gate — not yet independently confirmed
 - Cloudflare Pages actual deployment, Pages Functions bundling, APPROVE_PIN secret, REGIMENS_DB binding, D1 SQL migration, WAF PIN rate limiting, and D1 backup.
@@ -27,3 +28,9 @@
 - Product-owner acceptance of mobile UI and workflow. Shared-PIN attribution remains generic unless supplemented by institutional identity controls.
 
 **Do not merge this branch or use as a patient-care medication ordering source until these external checks are completed.** GitHub Pages remains the unchanged baseline while PR #5 is under review.
+
+## CKD-EPI 2021 (Race-free) addition
+- Adult SCr-based 2021 race-free method with IDMS-standardized creatinine; indexed eGFR (mL/min/1.73 m²) and BSA de-indexed eGFR (mL/min) displayed separately.
+- Original CG/Measured GFR/Lab eGFR pathways retained. Method selection is explicit; CG default unchanged.
+- Prominent warning: eviQ/ADDIKD Carboplatin clinical calculator uses CKD-EPI 2009 rather than 2021. The oncology team must verify protocol choice before patient dosing.
+- Source equation and behavior: [CKD-EPI clinical notes](RENAL_CKD_EPI_2021.md).
