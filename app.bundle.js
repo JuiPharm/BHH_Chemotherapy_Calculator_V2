@@ -84,10 +84,10 @@ function statusBadge(item) {return item.structured?.status==='published'&&item.s
 function referenceDetails(item) {
   const r=item.guidelineReference;
   if (!r) return '';
-  const raw=String(r.reference_url||'').trim();
+  const raw=String(r.reference_url||r.references?.[0]?.url||r.references?.[0]?.label||'').trim();
   let safeLink='';
   try {const u=new URL(raw);if(['https:','http:'].includes(u.protocol)) safeLink=u.href;} catch {}
-  const source=safeLink?`<a href="${esc(safeLink)}" target="_blank" rel="noopener noreferrer">${esc(r.protocol||r.source||safeLink)}</a>`:esc(raw||r.protocol||r.source||'ไม่ระบุเอกสารอ้างอิง');
+  const source=safeLink?`<a href="${esc(safeLink)}" target="_blank" rel="noopener noreferrer">${esc(r.protocol||r.source||r.references?.[0]?.label||safeLink)}</a>`:esc(raw||r.protocol||r.source||r.references?.[0]?.label||'ไม่ระบุเอกสารอ้างอิง');
   return `<div class="micro">${esc(r.catalog_id)} · ${source}</div><div class="micro">${esc(r.note||'')}</div>`;
 }
 
