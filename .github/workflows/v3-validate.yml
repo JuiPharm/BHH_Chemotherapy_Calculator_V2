@@ -38,11 +38,17 @@ jobs:
         run: npm run test:staging:v3
       - name: Browser-only Codespaces preview smoke (no deployment)
         run: |
-          bash .devcontainer/start-preview.sh
+          CODESPACE_NAME=ci-bhh-synthetic bash .devcontainer/start-preview.sh
+          CODESPACE_NAME=ci-bhh-synthetic bash .devcontainer/start-preview.sh
           test -s v3/.staging-secrets/CODESPACES_LOGIN.txt
           grep -q 'calculator@staging-fixture.test' v3/.staging-secrets/CODESPACES_LOGIN.txt
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/login)" = '200'
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/session)" = '401'
+          target="https://ci-bhh-synthetic-8792.app.github.dev"
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Host: ci-bhh-synthetic-8792.app.github.dev" -H "Origin: $target" -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"email":"calculator@staging-fixture.test"}' http://127.0.0.1:8792/api/auth/salt)" = '200'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Host: ci-bhh-synthetic-8792.app.github.dev" -H "Origin: https://evil.example" -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"email":"calculator@staging-fixture.test"}' http://127.0.0.1:8792/api/auth/salt)" = '403'
+          test "$(curl -s --max-time 5 -D /tmp/codespaces-redirect.headers -o /dev/null -w '%{http_code}' -H 'Host: ci-bhh-synthetic-8792.app.github.dev' -H 'Accept: text/html' http://127.0.0.1:8792/)" = '303'
+          grep -qi "^location: $target/login" /tmp/codespaces-redirect.headers
           kill -TERM "$(cat v3/.staging-secrets/codespaces-preview.pid)"
           echo "CODESPACES_LOCAL_PREVIEW_PASS"
       - uses: actions/upload-artifact@v4
