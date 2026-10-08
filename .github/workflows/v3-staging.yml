@@ -1,4 +1,4 @@
-name: Deploy V3 Staging — Public Calculator and PIN Editor
+name: Deploy V3 — Isolated Staging or Production (manual only)
 on:
   workflow_dispatch:
     inputs:
@@ -123,4 +123,109 @@ jobs:
           const blocked=await fetch(origin+'/api/registry');
           if(blocked.status!==403)throw Error('Unauthenticated registry must remain forbidden');
           console.log('STAGING LIVE SOURCE-CATALOG SMOKE PASS: minimum 6 Published; reference-only still protected; registry 403');
+          "
+
+  production:
+    name: New dedicated V3 PRODUCTION (not legacy bhh Worker)
+    if: github.ref_name == 'production-v3-live' && inputs.approval == 'DEPLOY_PRODUCTION_ONLY'
+    runs-on: ubuntu-latest
+    environment: cloudflare-production
+    concurrency:
+      group: bhh-chemotherapy-v3-production-deploy
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 3229fd47f39f8ca1809f92d4282b5ab5
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      PRODUCTION_PASSWORD_PEPPER: ${{ secrets.PRODUCTION_PASSWORD_PEPPER }}
+      PRODUCTION_EDITOR_PIN: ${{ secrets.PRODUCTION_EDITOR_PIN }}
+      PRODUCTION_REVIEWER_PIN: ${{ secrets.PRODUCTION_REVIEWER_PIN }}
+      PRODUCTION_EDITOR_EMAIL: ${{ inputs.editor_email }}
+      PRODUCTION_REVIEWER_EMAIL: ${{ vars.PRODUCTION_REVIEWER_EMAIL }}
+      PRODUCTION_D1_UUID: ${{ vars.PRODUCTION_D1_UUID }}
+      PRODUCTION_CLINICAL_APPROVAL_REF: ${{ vars.PRODUCTION_CLINICAL_APPROVAL_REF }}
+      PRODUCTION_SECURITY_APPROVAL_REF: ${{ vars.PRODUCTION_SECURITY_APPROVAL_REF }}
+      WRANGLER_SEND_METRICS: 'false'
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Fail closed without distinct Production credentials and accountable signoffs
+        run: |
+          node --input-type=module -e "
+          const e=process.env,pin=x=>/^[0-9]{10}$/.test(x||'');
+          const mail=x=>/^[^@ ]+@[^@ ]+[.][^@ ]+$/.test(x||'');
+          if(!e.CLOUDFLARE_API_TOKEN||!e.PRODUCTION_PASSWORD_PEPPER||e.PRODUCTION_PASSWORD_PEPPER.length<40||
+           !pin(e.PRODUCTION_EDITOR_PIN)||!pin(e.PRODUCTION_REVIEWER_PIN)||
+           e.PRODUCTION_EDITOR_PIN===e.PRODUCTION_REVIEWER_PIN||
+           !mail(e.PRODUCTION_EDITOR_EMAIL)||!mail(e.PRODUCTION_REVIEWER_EMAIL)||
+           e.PRODUCTION_EDITOR_EMAIL.toLowerCase()===e.PRODUCTION_REVIEWER_EMAIL.toLowerCase()||
+           !e.PRODUCTION_CLINICAL_APPROVAL_REF||e.PRODUCTION_CLINICAL_APPROVAL_REF.length<6||
+           !e.PRODUCTION_SECURITY_APPROVAL_REF||e.PRODUCTION_SECURITY_APPROVAL_REF.length<6){
+            console.error('Production blocked: dedicated credentials, distinct named professionals, independent clinical + IT release approvals required. No remote operation performed.');
+            process.exit(1);
+          }
+          console.log('Production release prerequisites present; proceeding to tests');
+          "
+      - run: npm ci
+      - name: Verify full regression/security/Browser QA before Production remote changes
+        run: |
+          npm audit --audit-level=high
+          npm test
+          npm run import:v3
+          npm run build:v3
+          npm run test:v3
+          npm run test:api:v3
+          npm run test:browser:v3
+          npm run test:staging:v3
+          CODESPACE_NAME=production-preflight bash .devcontainer/start-preview.sh
+          trap 'kill -TERM "$(cat v3/.staging-secrets/codespaces-preview.pid)" 2>/dev/null || true' EXIT
+          TEST_BASE_URL=http://127.0.0.1:8792 node node_modules/@playwright/test/cli.js test --config v3/playwright.public.config.mjs
+          TEST_BASE_URL=http://127.0.0.1:8792 node v3/tests/staging-pin-publication.mjs
+      - name: Bootstrap ONLY dedicated Production D1 and resolve UUID on runner
+        run: node v3/scripts/bootstrap-production-d1-ci.mjs
+      - name: Validate resolved Production Worker and D1 (no staging or legacy overwrite)
+        run: npm run check:deploy:production:v3
+      - name: Apply schema to isolated Production D1 ONLY
+        run: npx wrangler d1 migrations apply DB --config v3/wrangler.jsonc --env production --remote
+      - name: Deploy isolated Production Worker on NEW workers.dev hostname
+        run: npm run deploy:production:v3
+      - name: Install Production-only PIN HMAC pepper (never Stage Secret)
+        run: |
+          printf '%s' "$PRODUCTION_PASSWORD_PEPPER" | npx wrangler secret put PRODUCTION_PASSWORD_PEPPER --config v3/wrangler.jsonc --env production
+      - name: Provision distinct named Production Editor and Oncology Reviewer
+        run: |
+          trap 'rm -f "$RUNNER_TEMP/bhh-production-named-operators.sql"' EXIT
+          node v3/scripts/provision-production-staff-ci.mjs
+          npx wrangler d1 execute DB --config v3/wrangler.jsonc --env production --remote --file "$RUNNER_TEMP/bhh-production-named-operators.sql"
+      - name: Live Production smoke and named PIN roles (synthetic browsing only)
+        run: |
+          node --input-type=module -e "
+          const origin='https://bhh-chemotherapy-v3-production.juipharm.workers.dev';
+          const e=process.env;
+          const session=await fetch(origin+'/api/session');
+          if(!session.ok||(await session.json()).authMode!=='public')throw Error('Production public calculator session failed');
+          const cat=await fetch(origin+'/api/catalog');
+          if(!cat.ok)throw Error('Production published catalog unavailable');
+          const rows=(await cat.json()).catalog;
+          if(rows.filter(x=>x.status==='published').length<6 ||
+             rows.some(x=>!['published','reference_only'].includes(x.status)))
+            throw Error('Production catalog published-status check failed');
+          const denied=await fetch(origin+'/api/registry');
+          if(denied.status!==403)throw Error('Production unauthorized Registry exposed');
+          for(const [pin,role] of [[e.PRODUCTION_EDITOR_PIN,'regimen_editor'],
+                                   [e.PRODUCTION_REVIEWER_PIN,'oncology_pharmacist']]){
+            const login=await fetch(origin+'/api/auth/editor-pin',{
+              method:'POST',headers:{Origin:origin,'Content-Type':'application/json','X-Requested-With':'BHH-V3'},
+              body:JSON.stringify({pin})
+            });
+            if(!login.ok||(await login.json()).role!==role)
+              throw Error('Production named PIN identity smoke failed: '+role);
+            const cookie=login.headers.get('set-cookie')?.split(';')[0];
+            const s=await fetch(origin+'/api/session',{headers:{Cookie:cookie}});
+            if(!s.ok||(await s.json()).user.role!==role)
+              throw Error('Production role session invalid: '+role);
+          }
+          console.log('NEW ISOLATED PRODUCTION LIVE SMOKE PASS: public calculator + published-only + distinct staff PIN roles. Not clinical dose certification.');
           "
