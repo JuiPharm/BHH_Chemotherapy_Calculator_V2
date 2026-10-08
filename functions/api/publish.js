@@ -1,4 +1,4 @@
-import { verifyPin, validateRegimen, json, ensureDatabase } from './_shared.js';
+import { verifyPin, validateRegimen, json, ensureDatabase } from '../../src/server/clinical.js';
 
 export async function onRequestPost({ request, env }) {
   try {
