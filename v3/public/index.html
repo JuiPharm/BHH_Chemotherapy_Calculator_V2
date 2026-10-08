@@ -21,10 +21,25 @@
     <nav aria-label="Main navigation">
       <button data-page="calculator" class="active">Calculator</button
       ><button data-page="library">All Regimens Library</button
-      ><button data-page="registry">Regimen Registry</button
-      ><button data-page="builder">Regimen Builder</button
+      ><button data-page="registry" id="registry-tab" hidden>Regimen Registry</button
+      ><button data-page="builder" id="builder-tab" hidden>Regimen Builder</button
+      ><button id="manage-pin" type="button" hidden>Manage Regimen · Confirm PIN</button
       ><button data-page="audit" id="audit-tab" hidden>Audit Log</button>
     </nav>
+    <dialog id="pin-dialog" aria-labelledby="pin-heading">
+      <form id="pin-form">
+        <h2 id="pin-heading">Manage Regimen · Confirm PIN</h2>
+        <p>ใช้ PIN ส่วนบุคคล 10 หลักเพื่อสร้างหรือแก้ไข Draft เท่านั้น การอนุมัติและ Publish ต้องใช้บัญชี Reviewer แยกต่างหาก</p>
+        <label>Confirm PIN
+          <input id="editor-pin" name="pin" type="password" inputmode="numeric" autocomplete="off" pattern="[0-9]{10}" maxlength="10" minlength="10" required />
+        </label>
+        <p id="pin-error" role="alert" aria-live="polite"></p>
+        <div class="actions">
+          <button class="primary" type="submit" id="pin-submit">Confirm PIN</button>
+          <button type="button" id="pin-cancel">Cancel</button>
+        </div>
+      </form>
+    </dialog>
     <main>
       <section id="calculator">
         <div class="heading">
