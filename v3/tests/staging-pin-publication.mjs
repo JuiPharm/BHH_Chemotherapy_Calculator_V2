@@ -15,7 +15,8 @@ const reviewerPin=extract('REVIEWER Confirm PIN (synthetic test only)');
 assert.notEqual(editorPin,reviewerPin);
 const call=async(path,method='GET',body,cookie)=>{
  const res=await fetch(base+'/api'+path,{method,headers:{
-  ...(method!=='GET'?{Origin:base,'Content-Type':'application/json','X-Requested-With':'BHH-V3'}:{}),
+  ...(method!=='GET'?{Origin:base,'Content-Type':'application/json','X-Requested-With':'BHH-V3',
+   'CF-Connecting-IP':'198.51.100.80'}:{}), // synthetic per-IP fixture, local loopback only
   ...(cookie?{Cookie:cookie}:{}),
  },body:body===undefined?undefined:JSON.stringify(body)});
  let data={};try{data=await res.json()}catch{}
