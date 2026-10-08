@@ -109,8 +109,9 @@
               <span>Kidney function method <b>*</b></span>
               <select id="kidney-method" required>
                 <option value="cockcroft_gault_legacy" selected>Cockcroft-Gault CrCl</option>
+                <option value="ckd_epi_2021_cr">CKD-EPI 2021 (Race-free) — คำนวณจาก SCr</option>
                 <option value="measured_gfr">Measured GFR</option>
-                <option value="bsa_adjusted_egfr">BSA-adjusted CKD-EPI eGFR</option>
+                <option value="bsa_adjusted_egfr">Lab eGFR (mL/min/1.73 m²) → BSA-adjusted</option>
               </select>
             </label>
             <label id="scr-wrap" class="field">
@@ -122,6 +123,8 @@
               <input id="kidney-value" type="number" min="1" max="250" step="0.1">
             </label>
           </div>
+          <div id="renal-preview" class="note-box" role="status" aria-live="polite">เลือกวิธีประเมินไต แล้วกรอกข้อมูลผู้ป่วยเพื่อแสดงผล</div>
+          <p class="micro">CKD-EPI 2021 ใช้ Serum Creatinine ที่มาตรฐาน IDMS สำหรับผู้ใหญ่ และแตกต่างจาก CKD-EPI 2009 ที่ eviQ/ADDIKD ใช้สำหรับ Carboplatin โปรดเลือกวิธีตาม Protocol ที่ผ่านการรับรอง</p>
 
           <div class="button-row">
             <button type="submit" id="calculate-btn" class="primary">Calculate</button>
@@ -262,7 +265,8 @@
 
   <script src="./cleanup.js?v=2.3.0" defer></script>
   <script src="./publish-manager.js?v=2.7.0" defer></script>
-  <script src="./app.bundle.js?v=2.7.0" defer></script>
+  <script src="./renal-equations.js?v=2.7.1" defer></script>
+  <script src="./app.bundle.js?v=2.7.1" defer></script>
   <script src="./regimen-builder.js?v=2.7.0" defer></script>
   <script src="./legacy-validator.js?v=2.7.0" defer></script>
 </body>
