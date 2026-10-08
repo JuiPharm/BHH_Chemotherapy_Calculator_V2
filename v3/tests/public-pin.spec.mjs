@@ -4,7 +4,7 @@ test('public calculator needs no login, only published available and PIN unlocks
  page.on('pageerror',e=>errors.push(e.message));
  await page.goto('/');
  await expect(page.locator('#connection')).toContainText('Central protocols');
- await expect(page.locator('#library-count')).toContainText('6 records');
+ await expect(page.locator('#library-count')).toContainText('142');
  await expect(page.locator('#registry-tab')).toBeHidden();
  await expect(page.locator('#builder-tab')).toBeHidden();
  await expect(page.locator('#manage-pin')).toBeVisible();
