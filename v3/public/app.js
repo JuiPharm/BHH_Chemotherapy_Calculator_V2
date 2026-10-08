@@ -74,6 +74,10 @@ function failure(e) {
 function renderAccount(session) {
   const selectedLocal=$('#local-user')?.value||'calculator@local.test';
   state.authMode=session.authMode;
+  if($('#environment-label'))
+    $('#environment-label').textContent=session.environment==='production'
+      ? 'V3 · Production'
+      : session.environment==='staging'?'V3 · UAT Staging':'V3 · Local QA';
   state.user=session.user;
   state.local=session.local;
   const editor=['regimen_editor','oncology_pharmacist','clinical_admin'].includes(session.user?.role);
@@ -88,7 +92,7 @@ function renderAccount(session) {
     : session.authMode==='internal'
     ? '<button type="button" id="staging-logout">Sign out</button>'
     : session.authMode==='public'
-    ? '<a href="/login">Reviewer / Admin sign in</a>'
+    ? (session.environment==='production' ? '' : '<a href="/login">Reviewer / Admin sign in</a>')
     : '';
   const selector=session.local?'<label>LOCAL TEST identity<select id="local-user"><option value="calculator@local.test">Calculator user</option><option value="editor@local.test">Regimen editor</option><option value="reviewer@local.test">Oncology pharmacist</option><option value="admin@local.test">Clinical admin</option></select></label>':'';
   $('#account').innerHTML=label+end+selector;
