@@ -204,6 +204,7 @@ async function dispatch(request, env) {
       local: who.local,
       revision: revision.revision,
       authMode: who.guest ? 'public' : who.pin ? (who.pinRole==='oncology_pharmacist'?'reviewer_pin':'editor') : isInternalStaging(env) ? 'internal' : 'access',
+      environment: env.APP_ENV,
     });
   if (path === '/api/revision' && request.method === 'GET')
     return response(revision);
