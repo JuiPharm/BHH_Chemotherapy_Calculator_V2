@@ -74,7 +74,7 @@ function renderAccount(session) {
   state.user=session.user;
   state.local=session.local;
   const editor=['regimen_editor','oncology_pharmacist','clinical_admin'].includes(session.user?.role);
-  $('#registry-tab').hidden=!editor;
+  $('#registry-tab').hidden=!editor && !session.local;
   $('#builder-tab').hidden=!editor;
   $('#manage-pin').hidden=!['public','editor'].includes(session.authMode);
   $('#audit-tab').hidden=session.user?.role!=='clinical_admin';
@@ -414,7 +414,7 @@ function updateClinicalInputs() {
     .join('');
 }
 function go(page) {
-  if(['registry','builder','audit'].includes(page) && !canEdit()){
+  if(['registry','builder','audit'].includes(page) && !canEdit() && !(page==='registry' && state.local)){
     note('Manage Regimen: Confirm PIN required');
     return;
   }
