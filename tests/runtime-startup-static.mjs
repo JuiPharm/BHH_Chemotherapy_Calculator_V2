@@ -7,6 +7,13 @@ assert(app.includes('loadJson'));
 assert(html.includes('app.bundle.js?v=2.7.0'));
 assert(html.includes('publish-manager.js'));
 assert(html.includes('regimen-builder.js'));
+assert(html.includes('renal-equations.js'));
+assert(html.includes('value="ckd_epi_2021_cr"'));
+assert(html.includes('id="renal-preview"'));
+assert(app.includes('ckd_epi_2021_cr'));
+assert(app.includes('updateRenalPreview()'));
+assert(app.includes('indexedEgfr'));
+
 assert(html.includes('legacy-validator.js'));
 assert(html.includes('id="pin-auth-form"'));
 assert(html.includes('id="calc-form"'));
