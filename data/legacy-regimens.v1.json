@@ -2608,17 +2608,17 @@
     {
       "ชื่อสูตรยา": "Carboplatin-Paclitaxel regimen",
       "ชนิดของมะเร็ง": "มะเร็งปากมดลูก (Cervical Cancer)",
-      "รอบการรักษา": "6 รอบการรักษา",
+      "รอบการรักษา": "Every 21 days, up to 6 cycles (BC Cancer GOCXCAT)",
       "รายการยา": [
         {
           "ชื่อยา": "Carboplatin",
-          "ขนาดยา": "AUC 5 IV day 1",
+          "ขนาดยา": "AUC 6 IV day 1 (AUC 5 for extensive prior radiotherapy, per BC Cancer GOCXCAT)",
           "ความถี่ในการให้": "ทุก 21 วัน",
           "maximum_dose": "900 mg"
         },
         {
           "ชื่อยา": "Paclitaxel",
-          "ขนาดยา": "135 mg/m² IV day 1",
+          "ขนาดยา": "175 mg/m² IV day 1 (BC Cancer standard; reduced doses 155 or 135 mg/m² only when clinically indicated)",
           "ความถี่ในการให้": "ทุก 21 วัน",
           "maximum_dose": null
         }
@@ -2973,7 +2973,7 @@
     {
       "ชื่อสูตรยา": "Atezolizumab + Carboplatin + Etoposide regimen",
       "ชนิดของมะเร็ง": "มะเร็งปอด (SCLC)",
-      "รอบการรักษา": "4 cycles",
+      "รอบการรักษา": "Every 21 days × 4 induction cycles; then atezolizumab maintenance every 21 days (BC Cancer LUSCATPE; carboplatin variant)",
       "รายการยา": [
         {
           "ชื่อยา": "Atezolizumab",
@@ -3088,7 +3088,7 @@
     {
       "ชื่อสูตรยา": "Bevacizumab + Oxaliplatin + Capecitabine regimen",
       "ชนิดของมะเร็ง": "มะเร็งลำไส้ใหญ่ (mCRC)",
-      "รอบการรักษา": "Until progression",
+      "รอบการรักษา": "Every 21 days until progression or unacceptable toxicity (BC Cancer GICOXB)",
       "รายการยา": [
         {
           "ชื่อยา": "Bevacizumab",
@@ -3104,7 +3104,7 @@
         },
         {
           "ชื่อยา": "Capecitabine",
-          "ขนาดยา": "850 mg/m² PO BID days 1-14",
+          "ขนาดยา": "1000 mg/m² PO twice daily days 1–14 (every 21 days; BC Cancer GICOXB)",
           "ความถี่ในการให้": "ทุก 21 วัน",
           "maximum_dose": null,
           "structured_dose": {
