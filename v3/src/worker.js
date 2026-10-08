@@ -211,11 +211,11 @@ async function dispatch(request, env) {
         headers: { ...headers, ETag: tag },
       });
     const catalogSql = who.guest
-      ? "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords,r.source_record FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' OR (v.status='draft' AND v.id LIKE 'BHH-CATALOG-%:1' AND r.source_record IS NOT NULL) ORDER BY r.name"
+      ? "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords,r.source_record FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' OR (v.id LIKE 'BHH-CATALOG-%:1' AND r.source_record IS NOT NULL AND NOT EXISTS(SELECT 1 FROM regimen_versions p WHERE p.regimen_id=v.regimen_id AND p.status='published')) ORDER BY r.name"
       : "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' OR (v.status<>'published' AND NOT EXISTS(SELECT 1 FROM regimen_versions p WHERE p.regimen_id=v.regimen_id AND p.status='published') AND v.rowid=(SELECT MAX(x.rowid) FROM regimen_versions x WHERE x.regimen_id=v.regimen_id)) ORDER BY r.name";
     const { results } = await db.prepare(catalogSql).all();
     return response(
-      { revision: revision.revision, policies, catalog: results.map(v=>who.guest && v.status==='draft' ? referenceCompact(v) : compact(v)) },
+      { revision: revision.revision, policies, catalog: results.map(v=>who.guest && v.status!=='published' ? referenceCompact(v) : compact(v)) },
       200,
       { ETag: tag, 'Cache-Control': 'private, max-age=0, must-revalidate' },
     );
@@ -243,7 +243,7 @@ async function dispatch(request, env) {
     const v = await version(db, decodeURIComponent(detail[1]));
     if (who.guest && v.status !== 'published') {
       // Whitelist ONLY immutable original sourceRecord, never modified draft data.
-      if (v.status!=='draft' || !/^BHH-CATALOG-[0-9]{3}:1$/.test(v.id))
+      if (v.status==='published' || !/^BHH-CATALOG-[0-9]{3}:1$/.test(v.id))
         error('Editor access required',403);
       const r=await dbQuery(db,'SELECT source_record FROM regimens WHERE id=?',v.regimen_id).first();
       if(!r?.source_record)error('Editor access required',403);
