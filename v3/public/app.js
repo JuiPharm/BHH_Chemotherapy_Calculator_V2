@@ -294,6 +294,24 @@ function search() {
       )
       .join('') || '<div class="empty">ไม่พบสูตรยา</div>';
 }
+function openRegimenModal(title, mode='view') {
+  const dialog=$('#regimen-modal');
+  if(dialog.open)dialog.close();
+  $('#regimen-modal-title').textContent=title;
+  for(const id of ['modal-view','review-detail','modal-builder'])
+    $('#'+id).hidden = id !== (mode==='review'?'review-detail':mode==='edit'?'modal-builder':'modal-view');
+  dialog.showModal();
+}
+$('#regimen-modal-close').onclick=()=>$('#regimen-modal').close();
+$('#regimen-modal').addEventListener('close',()=>{state.editorModal=false;});
+async function viewRegimen(id) {
+  const d=await getDetail(id);
+  const isPublished=d.version.status==='published';
+  $('#modal-view').innerHTML=protocolHtml(d)+
+    (isPublished?'<div class="actions"><button type="button" data-use="'+esc(id)+'" class="primary">Use in Calculator</button></div>':
+    '<div class="blocked">Reference only: not eligible for patient-dose calculation. Clinical review required.</div>');
+  openRegimenModal(d.version.document.name,'view');
+}
 function renderLibrary() {
   const q = $('#library-search').value,
     c = $('#library-cancer').value,
