@@ -725,6 +725,7 @@ async function clone(id, same = false) {
     }),
   });
   state.draft = v.version;
+  state.editConflict = false;
   state.editorModal = true;
   go('builder');
   openRegimenModal(v.version.document.name+' — Edit/Clone','edit');
@@ -735,6 +736,7 @@ async function edit(id) {
   const d = await getDetail(id);
   if (d.version.status !== 'draft') throw Error('Only draft can be edited');
   state.draft = structuredClone(d.version);
+  state.editConflict = false;
   state.editorModal = true;
   go('builder');
   openRegimenModal(d.version.document.name+' — Edit Draft','edit');
@@ -975,6 +977,7 @@ $('#new-draft').onclick = async () => {
       }),
     });
     state.draft = r.version;
+  state.editConflict = false;
     renderBuilder();
   } catch (e) {
     failure(e);
