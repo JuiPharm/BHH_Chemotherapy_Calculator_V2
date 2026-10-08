@@ -59,7 +59,7 @@ const canEdit = () =>
 const canReview = () =>
   state.online &&
   ['oncology_pharmacist', 'clinical_admin'].includes(state.user?.role);
-const canPublish = () => state.online && state.user?.role === 'clinical_admin';
+const canPublish = () => state.online && (state.user?.role === 'clinical_admin' || (state.authMode === 'reviewer_pin' && state.user?.role === 'oncology_pharmacist'));
 function note(message, error = true) {
   $('#notice').textContent = message;
   $('#notice').hidden = false;
@@ -79,12 +79,12 @@ function renderAccount(session) {
   const editor=['regimen_editor','oncology_pharmacist','clinical_admin'].includes(session.user?.role);
   $('#registry-tab').hidden=!editor && !session.local;
   $('#builder-tab').hidden=!editor;
-  $('#manage-pin').hidden=!['public','editor'].includes(session.authMode);
+  $('#manage-pin').hidden=!['public','editor','reviewer_pin'].includes(session.authMode);
   $('#audit-tab').hidden=session.user?.role!=='clinical_admin';
   const label=session.authMode==='public'?'Public calculator':
     esc(session.user.email)+'<small>'+esc(session.user.role)+'</small>';
-  const end=session.authMode==='editor'
-    ? '<button type="button" id="editor-logout">Exit editor</button>'
+  const end=['editor','reviewer_pin'].includes(session.authMode)
+    ? '<button type="button" id="editor-logout">Exit PIN session</button>'
     : session.authMode==='internal'
     ? '<button type="button" id="staging-logout">Sign out</button>'
     : session.authMode==='public'
@@ -509,7 +509,7 @@ async function review(id) {
     actions.push(['start-review', 'Start Clinical Review']);
   if (canReview() && v.status === 'clinical_review_required')
     actions.push(
-      ['approve', 'Approve'],
+      [canPublish() ? 'approve-publish' : 'approve', canPublish() ? 'Approve & Publish' : 'Approve'],
       ['request-revision', 'Request Revision'],
       ['reject', 'Reject'],
     );
@@ -527,17 +527,32 @@ async function review(id) {
         (x) =>
           `<tr><td>${esc(x.action)}</td><td>${esc(x.created_by)}</td><td>${esc(x.created_at)}</td><td>${esc(x.comment)}</td></tr>`,
       ),
-    )}${actions.length ? `<label>Review / change comment<textarea id="review-comment" required placeholder="ระบุเหตุผลและผลการทบทวน"></textarea></label><div class="actions">${actions.map(([a, label]) => `<button data-transition="${a}" class="${a === 'approve' || a === 'publish' ? 'primary' : ''}">${label}</button>`).join('')}</div>` : ''}</div>`;
+    )}${actions.length ? `<label>Review / change comment<textarea id="review-comment" required placeholder="ระบุ Clinical Reference, dose, route, days/cycle และผลทบทวน"></textarea></label>${actions.some(([a])=>a==='approve-publish') ? '<label class="clinical-attestation"><input id="clinical-attestation" type="checkbox" /> ข้าพเจ้าเป็นผู้ทบทวนคนละคนกับผู้สร้างสูตร และได้ตรวจสอบขนาดยา Schedule, Clinical Reference และความถูกต้องทางคลินิกแล้ว</label>' : ''}<div class="actions">${actions.map(([a, label]) => `<button data-transition="${a}" class="${['approve','publish','approve-publish'].includes(a) ? 'primary' : ''}">${label}</button>`).join('')}</div>` : ''}</div>`;
   openRegimenModal(v.document.name + ' — Clinical review','review');
 }
 async function transition(action) {
   if (!state.online) throw Error('Offline writes are disabled');
   const v = state.reviewing.version,
     reason = $('#review-comment').value;
-  await api(`/versions/${encodeURIComponent(v.id)}/${action}`, {
-    method: 'POST',
-    body: JSON.stringify({ expectedRevision: v.revision, reason }),
-  });
+  if (action==='approve-publish') {
+    if (!canPublish() || !canReview()) throw Error('Independent named Oncology Reviewer access required');
+    if (!$('#clinical-attestation')?.checked) throw Error('ยืนยันการตรวจสอบขนาดยา ตารางให้ยา และแหล่งอ้างอิงก่อน Published');
+    // Two authorized transitions. If publication fails, Approved remains retryable and visible.
+    const approval=await api(`/versions/${encodeURIComponent(v.id)}/approve`,{
+      method:'POST',body:JSON.stringify({expectedRevision:v.revision,reason})
+    });
+    await api(`/versions/${encodeURIComponent(v.id)}/publish`,{
+      method:'POST',body:JSON.stringify({
+        expectedRevision:approval.version.revision,
+        reason:'Independent reviewer verified protocol and authorized publication: '+reason
+      })
+    });
+  } else {
+    await api(`/versions/${encodeURIComponent(v.id)}/${action}`, {
+      method: 'POST',
+      body: JSON.stringify({ expectedRevision: v.revision, reason }),
+    });
+  }
   state.details.clear();
   await sync();
   await registry();
@@ -766,8 +781,15 @@ $('#pin-form').onsubmit=async(e)=>{
     const session=await api('/session');
     renderAccount(session);
     await sync();
-    go('builder');
-    note('Editor permission confirmed. Every Draft needs independent clinical review.',false);
+    if(session.authMode==='reviewer_pin'){
+      go('registry');
+      $('#registry-status').value='submitted';
+      renderRegistry();
+      note('Oncology Reviewer PIN verified. Review submitted regimen before Approve & Publish.',false);
+    }else{
+      go('builder');
+      note('Editor permission confirmed. Every Draft needs independent clinical review.',false);
+    }
   }catch(err){
     $('#pin-error').textContent=err.status===429?'Too many PIN attempts; try later':err.message;
   }finally{btn.disabled=false;$('#editor-pin').value='';}
