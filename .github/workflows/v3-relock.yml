@@ -1,0 +1,28 @@
+name: V3 staging lockfile repair evidence
+on:
+  pull_request:
+    paths:
+      - package.json
+      - .github/workflows/v3-relock.yml
+permissions:
+  contents: read
+jobs:
+  relock:
+    if: github.head_ref == 'staging-internal-auth-v3'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Resolve patched transitive sharp version
+        run: npm install --package-lock-only --ignore-scripts --no-audit
+      - name: Test patched lockfile installation
+        run: npm ci
+      - name: Recheck advisories
+        run: |
+          npm audit --json > /tmp/bhh-security-report.json || true
+          node --input-type=module -e "import fs from 'node:fs'; const d=JSON.parse(fs.readFileSync('/tmp/bhh-security-report.json','utf8')); console.log('Audited vulnerabilities:',JSON.stringify(d.metadata?.vulnerabilities)); for (const [n,v] of Object.entries(d.vulnerabilities||{})) console.log(n,v.severity,JSON.stringify(v.fixAvailable));"
+      - name: Emit generated public lockfile for reviewed commit
+        run: |
+          node --input-type=module -e "import fs from 'node:fs'; const s=fs.readFileSync('package-lock.json').toString('base64'); console.log('BHH_LOCK_BEGIN'); for(const c of s.match(/.{1,950}/g)) console.log('BHH_LOCK:'+c); console.log('BHH_LOCK_END');"
