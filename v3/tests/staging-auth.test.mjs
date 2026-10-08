@@ -3,12 +3,13 @@ import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { identity } from '../src/auth.js';
-import { stagingIdentity, stagingLogin, stagingLogout, passwordDigest, totpAt } from '../src/staging-auth.js';
+import { stagingIdentity, stagingLogin, stagingLogout, stagingSalt, passwordDigest, credentialDigest, totpAt } from '../src/staging-auth.js';
 import worker from '../src/worker.js';
 
 const host = 'https://bhh-staging.example.workers.dev';
 const secret = 'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ'; // RFC 6238 test-only seed
 const password = 'A-long-private-staging-password';
+const pepper = 'unit-test-only-pepper-not-a-real-secret-32-chars';
 const fixedNow = 1760000000000;
 function fixture() {
   const d = new DatabaseSync(':memory:');
@@ -26,7 +27,7 @@ function fixture() {
       }};
     },
   };
-  return { d, env: { APP_ENV:'staging', AUTH_MODE:'internal', DB,
+  return { d, env: { APP_ENV:'staging', AUTH_MODE:'internal', STAGING_PASSWORD_PEPPER:pepper, DB,
     ASSETS: { async fetch(req) {
       return new Response(req.url.includes('login') ? 'Public login' : 'PRIVATE ASSET', {
         headers:{'Content-Type':req.url.endsWith('.js')?'text/javascript':'text/html'},
@@ -42,7 +43,8 @@ function post(endpoint, body, extra = {}) {
   });
 }
 async function register(d) {
-  const hash=await passwordDigest(password,'aabbccddeeff00112233445566778899');
+  const prehash=await passwordDigest(password,'aabbccddeeff00112233445566778899');
+  const hash=await credentialDigest(prehash,pepper);
   d.prepare("INSERT INTO users VALUES('user1','tester@example.org','calculator_user',1,'now','test','now','test')").run();
   d.prepare("INSERT INTO staging_auth_credentials(user_id,salt,password_hash,totp_secret,created_at) VALUES(?,?,?,?,?)")
     .run('user1','aabbccddeeff00112233445566778899',hash,secret,'now');
@@ -73,9 +75,13 @@ test('password plus non-replayable TOTP grant a revocable HttpOnly staging sessi
     const { d,env }=fixture();
     await register(d);
     const code=await totpAt(secret,Math.floor(fixedNow/30000));
-    await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',password,totp:'000000'}, {Origin:'https://evil.example'}),env),/Same-origin/);
-    await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',password:'wrong',totp:code}),env),/Invalid credentials/);
-    const response=await stagingLogin(post('/api/auth/login',{email:'TESTER@example.org',password,totp:code}),env);
+    const saltResult=await stagingSalt(post('/api/auth/salt',{email:'tester@example.org'}),env);
+    assert.equal((await saltResult.json()).salt,'aabbccddeeff00112233445566778899');
+    const prehash=await passwordDigest(password,'aabbccddeeff00112233445566778899');
+    const incorrect=await passwordDigest('incorrect-password','aabbccddeeff00112233445566778899');
+    await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',prehash,totp:'000000'}, {Origin:'https://evil.example'}),env),/Same-origin/);
+    await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',prehash:incorrect,totp:code}),env),/Invalid credentials/);
+    const response=await stagingLogin(post('/api/auth/login',{email:'TESTER@example.org',prehash,totp:code}),env);
     assert.equal(response.status,200);
     const setCookie=response.headers.get('set-cookie');
     assert.match(setCookie,/HttpOnly; Secure; SameSite=Strict/);
@@ -88,7 +94,7 @@ test('password plus non-replayable TOTP grant a revocable HttpOnly staging sessi
     const app = await worker.fetch(new Request(host+'/app.js',{headers:{Cookie:pair}}),env);
     assert.equal(app.status,200);
     assert.match(await app.text(),/PRIVATE ASSET/);
-    await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',password,totp:code}),env),/Invalid credentials/);
+    await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',prehash,totp:code}),env),/Invalid credentials/);
     const signedOut=await stagingLogout(post('/api/auth/logout',{}, {Cookie:pair}),env);
     assert.equal(signedOut.status,200);
     assert.match(signedOut.headers.get('set-cookie'),/Max-Age=0/);
@@ -102,7 +108,7 @@ test('repeated invalid sign-ins are rate-limited in D1; no self-registration', a
   await register(d);
   let attempts=0;
   for (let i=0;i<7;i++) {
-    try { await stagingLogin(post('/api/auth/login',{email:'tester@example.org',password:'bad',totp:'000000'}),env); }
+    try { await stagingLogin(post('/api/auth/login',{email:'tester@example.org',prehash:'0'.repeat(64),totp:'000000'}),env); }
     catch(err){ attempts++; if(i>=5)assert.equal(err.status,429); }
   }
   assert.equal(attempts,7);
@@ -113,6 +119,13 @@ test('production never accepts staging session or staging login', async () => {
   const production={...env,APP_ENV:'production',ACCESS_TEAM_DOMAIN:'REPLACE.cloudflareaccess.com',ACCESS_AUD:'REPLACE'};
   await assert.rejects(()=>stagingIdentity(new Request(host),production),/unavailable/);
   await assert.rejects(()=>identity(new Request(host,{headers:{'X-Local-User':'admin@local.test'}}),production),/Access configuration required/);
-  const r=await worker.fetch(post('/api/auth/login',{email:'a@b.com',password:'x',totp:'000000'}),production);
+  const r=await worker.fetch(post('/api/auth/login',{email:'a@b.com',prehash:'0'.repeat(64),totp:'000000'}),production);
   assert.notEqual(r.status,200);
+});
+
+test('Staging fails closed when HMAC secret is missing', async () => {
+  const {env}=fixture();
+  delete env.STAGING_PASSWORD_PEPPER;
+  await assert.rejects(()=>stagingSalt(post('/api/auth/salt',{email:'tester@example.org'}),env),/credential secret required/);
+  await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',prehash:'0'.repeat(64),totp:'123456'}),env),/credential secret required/);
 });
