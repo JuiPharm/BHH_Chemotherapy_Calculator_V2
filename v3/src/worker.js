@@ -1,5 +1,6 @@
 import { sameOrigin } from './preview-origin.js';
 import { identity } from './auth.js';
+import { publicCalculator, confirmEditorPin, logoutEditorPin } from './editor-pin.js';
 import { isInternalStaging, stagingLogin, stagingLogout, stagingSalt } from './staging-auth.js';
 import { validateDefinition, policies } from '../shared/clinical.js';
 import { projections } from '../shared/projections.js';
@@ -119,6 +120,8 @@ async function dispatch(request, env) {
     if (path === '/api/auth/salt') return stagingSalt(request, env);
     if (path === '/api/auth/login') return stagingLogin(request, env);
     if (path === '/api/auth/logout') return stagingLogout(request, env);
+    if (path === '/api/auth/editor-pin') return confirmEditorPin(request, env);
+    if (path === '/api/auth/editor-logout') return logoutEditorPin(request, env);
     const publicAsset = {
       '/login': '/login',
       '/login.html': '/login',
@@ -138,12 +141,18 @@ async function dispatch(request, env) {
       return new Response(a.body, { status: a.status, headers: h });
     }
   }
-  const who = await identity(request, env);
-  const user = await dbQuery(
-    db,
-    'SELECT * FROM users WHERE email=? AND active=1',
-    who.email,
-  ).first();
+  // Anonymous callers can only read Published clinical protocols in explicit STAGING mode.
+  // Every write, draft, registry, approval, and audit still requires an individual identity.
+  let who;
+  try { who = await identity(request, env); }
+  catch(e) {
+    if (publicCalculator(env) && e.status === 401 && request.method === 'GET')
+      who = { email:'anonymous-viewer@public.invalid',local:false,guest:true };
+    else throw e;
+  }
+  const user = who.guest ?
+    {id:'anonymous-calculator',email:who.email,role_code:'calculator_user'} :
+    await dbQuery(db,'SELECT * FROM users WHERE email=? AND active=1',who.email).first();
   if (!user)
     error('Account is not provisioned. Contact clinical administrator.', 403);
   if (!path.startsWith('/api/')) {
@@ -153,6 +162,8 @@ async function dispatch(request, env) {
       if (k !== 'Content-Type') h.set(k, v);
     return new Response(asset.body, { status: asset.status, headers: h });
   }
+  if (who.guest && !(['/api/session','/api/revision','/api/catalog'].includes(path) ||
+      /^\/api\/versions\/[^/]+$/.test(path))) error('Editor access required', 403);
   if (!['GET', 'POST', 'PUT'].includes(request.method))
     error('Method not allowed', 405);
   if (request.method !== 'GET') {
@@ -173,7 +184,8 @@ async function dispatch(request, env) {
       user: { id: user.id, email: user.email, role: user.role_code },
       local: who.local,
       revision: revision.revision,
-      authMode: isInternalStaging(env) ? 'internal' : 'access',
+      authMode: who.guest ? 'public' : publicCalculator(env) && user.role_code==='regimen_editor' ?
+        'editor' : isInternalStaging(env) ? 'internal' : 'access',
     });
   if (path === '/api/revision' && request.method === 'GET')
     return response(revision);
@@ -184,11 +196,10 @@ async function dispatch(request, env) {
         status: 304,
         headers: { ...headers, ETag: tag },
       });
-    const { results } = await db
-      .prepare(
-        "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' OR (v.status<>'published' AND NOT EXISTS(SELECT 1 FROM regimen_versions p WHERE p.regimen_id=v.regimen_id AND p.status='published') AND v.rowid=(SELECT MAX(x.rowid) FROM regimen_versions x WHERE x.regimen_id=v.regimen_id)) ORDER BY r.name",
-      )
-      .all();
+    const catalogSql = who.guest
+      ? "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' ORDER BY r.name"
+      : "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' OR (v.status<>'published' AND NOT EXISTS(SELECT 1 FROM regimen_versions p WHERE p.regimen_id=v.regimen_id AND p.status='published') AND v.rowid=(SELECT MAX(x.rowid) FROM regimen_versions x WHERE x.regimen_id=v.regimen_id)) ORDER BY r.name";
+    const { results } = await db.prepare(catalogSql).all();
     return response(
       { revision: revision.revision, policies, catalog: results.map(compact) },
       200,
@@ -216,13 +227,14 @@ async function dispatch(request, env) {
   const detail = path.match(/^\/api\/versions\/([^/]+)$/);
   if (detail && request.method === 'GET') {
     const v = await version(db, decodeURIComponent(detail[1]));
+    if (who.guest && v.status !== 'published') error('Editor access required',403);
     const tag = `"${v.id}-${v.revision}-${revision.revision}"`;
     if (request.headers.get('If-None-Match') === tag)
       return new Response(null, {
         status: 304,
         headers: { ...headers, ETag: tag },
       });
-    const history = await dbQuery(
+    const history = who.guest ? {results:[]} : await dbQuery(
       db,
       'SELECT * FROM approval_history WHERE version_id=? ORDER BY rowid',
       v.id,
