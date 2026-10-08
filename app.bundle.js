@@ -458,7 +458,7 @@ function bindAdminPin() {
   form?.addEventListener('submit', (e) => {
     e.preventDefault();
     const pin = input.value.trim();
-    if (pin === '1234' || pin === '9999' || pin === '2567' || pin.length >= 4) {
+    if (pin === '1234' || pin === '9999' || pin === '2567') {
       isAdminUnlocked = true;
       sessionStorage.setItem('bhh_pharmacist_pin_unlocked', 'true');
       updateAdminUi();

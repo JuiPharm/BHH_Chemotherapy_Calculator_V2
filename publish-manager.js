@@ -161,7 +161,7 @@
       const inputToken = $('review-publish-token').value.trim();
       if(inputToken) token=inputToken;
       if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยันการอนุมัติ (ค่าเริ่มต้น: 1234)');
-      if(token !== '1234' && token !== '9999' && token !== '2567' && token.length < 4) {
+      if(token !== '1234' && token !== '9999' && token !== '2567') {
         throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง (ค่าเริ่มต้น: 1234)');
       }
       busy=true;
@@ -326,7 +326,7 @@
       const t=$('bhh-bulk-token').value.trim();
       if(t) token=t;
       if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยัน (ค่าเริ่มต้น: 1234)');
-      if(token !== '1234' && token !== '9999' && token !== '2567' && token.length < 4) {
+      if(token !== '1234' && token !== '9999' && token !== '2567') {
         throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง (ค่าเริ่มต้น: 1234)');
       }
       busy=true;
