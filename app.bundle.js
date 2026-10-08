@@ -75,12 +75,12 @@ function getGuidelineRecord(catalogId) {
 }
 function displayStatus(item) {
   if (item.structuredLink) return 'APPROVED · PILOT';
-  if (item.status==='approved_published') return 'APPROVED · PUBLISHED';
+  if (item.status==='approved_published') return item.structured?.status==='published'?'APPROVED · PUBLISHED':'REVIEWED · STRUCTURED REQUIRED';
   if (item.status==='blocked') return 'BLOCKED · REVIEW';
   if (item.status==='published_review') return 'PUBLISHED · REVIEW';
   return 'CATALOG MASTER';
 }
-function statusBadge(item) {return item.structuredLink||item.status==='approved_published'?'badge-ok':'badge-neutral';}
+function statusBadge(item) {return item.structured?.status==='published'&&item.structured?.localApproval?'badge-ok':'badge-neutral';}
 function referenceDetails(item) {
   const r=item.guidelineReference;
   if (!r) return '';
@@ -414,7 +414,7 @@ let centralOnline = false;
 let centralVersion = '';
 function applyCentralRegimen(r) {
   if (!r || r.status!=='published' || !r.localApproval || !Array.isArray(r.phases) || !r.phases.length) return;
-  const existing = catalog.find(c=>c.structured?.id===r.id || c.master?.catalog_id===r.catalog_id);
+  const existing = catalog.find(c=>c.structured?.id===r.id || (c.master && (c.master.catalog_id===r.id || (r.catalog_id && c.master.catalog_id===r.catalog_id))));
   if (existing) {
     const changed=existing.structured?.revision!==r.revision || existing.structured?.version!==r.version;
     existing.structured = r;
@@ -636,7 +636,7 @@ function populateRegimenOptionsForType(type, selectedKey = null) {
       const o = document.createElement('option');
       o.value = x.key;
       const typePrefix = !type ? `[${typeLabel(x.cancerType)}] ` : '';
-      o.textContent = `${x.structured || x.status === 'approved_published' ? '✓ ' : ''}${typePrefix}${x.name} — ${x.indication}`;
+      o.textContent = `${x.structured?.status==='published'&&x.structured?.localApproval ? '✓ ' : ''}${typePrefix}${x.name} — ${x.indication}`;
       sel.appendChild(o);
     }
     sel.disabled = false;
@@ -958,7 +958,7 @@ function filteredCatalog() {
 }
 function renderLibrary() {
   const items=filteredCatalog();
-  $('#library-summary').innerHTML=`พบ <strong>${items.length}</strong> Regimens · Approved + Published <strong>${items.filter(x=>x.structured||x.status==='approved_published').length}</strong> · Calculator Ready <strong>${items.filter(x=>x.structured).length}</strong> · Review <strong>${items.filter(x=>!x.structured&&x.status!=='approved_published'&&x.status!=='blocked').length}</strong> · Blocked <strong>${items.filter(x=>x.status==='blocked').length}</strong>`;
+  $('#library-summary').innerHTML=`พบ <strong>${items.length}</strong> Regimens · Approved + Published <strong>${items.filter(x=>x.structured?.status==='published'&&x.structured?.localApproval).length}</strong> · Calculator Ready <strong>${items.filter(x=>x.structured?.status==='published'&&x.structured?.localApproval).length}</strong> · Review <strong>${items.filter(x=>!x.structured&&x.status!=='approved_published'&&x.status!=='blocked').length}</strong> · Blocked <strong>${items.filter(x=>x.status==='blocked').length}</strong>`;
   const groups=TYPE_ORDER.map(t=>[t,items.filter(x=>x.cancerType===t)]).filter(([,arr])=>arr.length);
   $('#library-list').innerHTML=groups.map(([type,arr])=>`<section class="cancer-group"><h3>${esc(typeLabel(type))} <span class="micro">(${arr.length})</span></h3><div class="registry-grid">${
     arr.map(x=>`<article class="regimen-card"><div><span class="badge ${statusBadge(x)}">${displayStatus(x)}</span></div>
