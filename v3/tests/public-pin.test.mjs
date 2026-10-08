@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
 import worker from '../src/worker.js';
-import {pinHash} from '../src/editor-pin.js';
+import {pinHash,verifySubmitPin} from '../src/editor-pin.js';
 const base='https://bhh-chemotherapy-v3-staging.example.workers.dev';
 const pepper='test-only-very-long-32-characters-pepper!';
 const pin='8342719056'; // synthetic only
@@ -81,4 +81,43 @@ test('guest access strictly staging opt-in, never production or V2 local',async(
    const res=await worker.fetch(new Request(base+'/api/session'),{...env,...altered});
    assert.notEqual(res.status,200);
  }
+});
+
+test('fresh personal PIN is mandatory before Submit Review even with active editor session',async()=>{
+ const {sql,env}=fixture();
+ sql.prepare("INSERT INTO users VALUES('ed','named@staging.test','regimen_editor',1,'now','fixture','now','fixture')").run();
+ sql.prepare("INSERT INTO staging_editor_pins VALUES('ed',?,'now','fixture')").run(await pinHash(pin,pepper));
+ const req=request('/api/versions/any/submit',{});
+ await assert.rejects(()=>verifySubmitPin(env,'named@staging.test',undefined,req),{status:403});
+ await assert.rejects(()=>verifySubmitPin(env,'named@staging.test','0000000000',req),{status:403});
+ assert.equal(await verifySubmitPin(env,'named@staging.test',pin,req),true);
+ await assert.rejects(()=>verifySubmitPin(env,'outsider@staging.test',pin,req),{status:403});
+});
+test('guest source-only legacy detail never returns mutable unpublished draft fields',async()=>{
+ const {sql,env}=fixture();
+ const source={
+  'ชื่อสูตรยา':'Unverified source protocol',
+  'ชนิดของมะเร็ง':'Lung',
+  'รอบการรักษา':'Multiple cycles',
+  'รายการยา':[{'ชื่อยา':'TestDrug','ขนาดยา':'AUC 5-6 IV day 1','ความถี่ในการให้':'21 days'}],
+ };
+ sql.prepare("INSERT INTO regimens VALUES(?,?,?,?,?,?,?,?,?,?)").run(
+  'BHH-CATALOG-001','Modified confidential draft','Lung','Lung','[]',JSON.stringify(source),'now','fixture','now','fixture');
+ sql.prepare("INSERT INTO regimen_versions(id,regimen_id,version,status,document,created_at,created_by,updated_at,updated_by) VALUES(?,?,?,?,?,?,?,?,?)")
+  .run('BHH-CATALOG-001:1','BHH-CATALOG-001','1','draft',
+       JSON.stringify({id:'BHH-CATALOG-001',name:'PRIVATE UNSUBMITTED EDIT',phases:[],references:[]}),
+       'now','fixture','now','fixture');
+ const catalog=await worker.fetch(new Request(base+'/api/catalog'),env);
+ const list=(await catalog.json()).catalog;
+ assert.equal(list.length,1);assert.equal(list[0].status,'reference_only');
+ assert.equal(list[0].name,'Unverified source protocol');
+ const detail=await worker.fetch(new Request(base+'/api/versions/BHH-CATALOG-001%3A1'),env);
+ assert.equal(detail.status,200);
+ const v=(await detail.json()).version;
+ assert.equal(v.status,'reference_only');
+ assert.deepEqual(v.document.phases,[]);
+ assert.equal(v.document.sourceRecord['รายการยา'][0]['ขนาดยา'],'AUC 5-6 IV day 1');
+ assert.equal(JSON.stringify(v).includes('PRIVATE UNSUBMITTED EDIT'),false);
+ const denied=await worker.fetch(new Request(base+'/api/versions/random-private-id'),env);
+ assert.notEqual(denied.status,200);
 });
