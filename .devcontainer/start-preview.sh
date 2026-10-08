@@ -24,7 +24,7 @@ if [[ "$(probe)" != "401" ]]; then
     echo "BHH: npm dependencies missing; see Codespaces creation log."
     exit 1
   fi
-  nohup node v3/tests/run-staging-local.mjs --serve >"$log" 2>&1 </dev/null &
+  nohup node v3/tests/run-staging-local.mjs --serve 9>&- >"$log" 2>&1 </dev/null &
   server_pid=$!
   printf '%s\n' "$server_pid" > "$pidfile"
   ready=0
