@@ -33,7 +33,7 @@
         {
           "binding": "DB",
           "database_name": "bhh-chemo-staging",
-          "database_id": "REPLACE_STAGING_D1_ID",
+          "database_id": "3d936db6-eed1-4880-9561-1f22101cb27e",
           "migrations_dir": "migrations"
         }
       ]
