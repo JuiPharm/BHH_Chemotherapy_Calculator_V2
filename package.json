@@ -15,7 +15,8 @@
     "dev:v3": "wrangler dev --config v3/wrangler.jsonc --env local",
     "setup:local:v3": "wrangler d1 migrations apply DB --config v3/wrangler.jsonc --env local --local && wrangler d1 execute DB --config v3/wrangler.jsonc --env local --local --file v3/scripts/local-users.sql",
     "check:deploy:v3": "node v3/scripts/check-deploy.mjs staging",
-    "deploy:staging:v3": "npm run build:v3 && node v3/scripts/check-deploy.mjs staging && wrangler deploy --config v3/wrangler.jsonc --env staging"
+    "deploy:staging:v3": "npm run build:v3 && node v3/scripts/check-deploy.mjs staging && wrangler deploy --config v3/wrangler.jsonc --env staging",
+    "test:staging:v3": "node v3/tests/run-staging-local.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
