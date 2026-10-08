@@ -741,6 +741,8 @@ async function submitDraftForReview(pin){
 }
 $('#manage-pin').onclick=()=>{
   if(canEdit()){go('builder');return;}
+  state.pendingSubmit=false;
+  $('#pin-heading').textContent='Manage Regimen · Confirm PIN';
   $('#pin-error').textContent='';
   $('#pin-form').reset();
   $('#pin-dialog').showModal();
