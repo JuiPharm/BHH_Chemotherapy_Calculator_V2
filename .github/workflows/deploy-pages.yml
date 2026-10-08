@@ -31,6 +31,7 @@ jobs:
 
       - name: Run production clinical and D1 safety tests
         run: node tests/production-safety.mjs
+          node tests/rounding-security.mjs
 
       - name: Syntax-check new modules
         run: |
