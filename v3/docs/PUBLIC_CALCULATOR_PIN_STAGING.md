@@ -38,3 +38,18 @@ The deploy remains **manual**, staging-only, isolated from `bhh.juipharm.workers
 - PIN grants at most `regimen_editor` from an active, individually provisioned user. Server stores a pepper-keyed HMAC, not plaintext PIN. Rate-limited to 5 attempts/15 minutes per IP and 100 total/15 minutes. Session cookie is Secure + HttpOnly + SameSite=Strict, expires after one hour; logout revokes DB session.
 - PIN-based editor entry **requires independent hospital IT assessment before a public Internet release**. Unrestricted public information access to chemotherapy protocols must also be approved under the hospital's publication policy.
 - Reviewer/Admin remain separate password+TOTP roles; approval refuses self-review by the submitter. No PIN automatically publishes regimens.
+
+## Troubleshooting: Cloudflare API invalid token 9109 (run 37732394006)
+
+The first automatically triggered **staging-only** workflow passed application, clinical, API, authentication and browser checks, but stopped at the **read-only remote D1 identity preflight**, without applying migrations or deploying:
+`Authentication error [10000]` / `Invalid access token [9109]`.
+
+The Cloudflare credential in GitHub Actions `CLOUDFLARE_API_TOKEN` is nonempty, but not accepted by Cloudflare. **Do not paste tokens into issues, PRs or chat.**
+
+1. Cloudflare Dashboard → intended account → Manage Account → API Tokens. Create a **new account-owned API Token**, not the global API Key, with appropriate D1 read/edit and Workers permissions. A *new* staging Worker requires **Admin** at Workers product scope; editing an existing staging Worker needs Editor for that Worker. Restrict to the intended Cloudflare account wherever possible.
+2. GitHub repo → Settings → Secrets and variables → Actions → overwrite `CLOUDFLARE_API_TOKEN` with the **raw token value only**, without `Bearer `, quote marks, spaces or line breaks. Also inspect `Settings → Environments → cloudflare-staging → Environment secrets`: if a secret with the same name exists, that environment-level value overrides the repository secret for this workflow.
+3. Confirm the token is from Cloudflare account `3229fd47f39f8ca1809f92d4282b5ab5` and can access the existing D1 UUID `3d936db6-eed1-4880-9561-1f22101cb27e`.
+4. Retry only **Deploy V3 Staging — Public Calculator and PIN Editor** on `staging-internal-auth-v3` with explicit `DEPLOY_STAGING_ONLY` and a real named **staging** Editor email. Do not retry the unrelated GitHub Pages workflow. Alternatively notify the project maintainer to re-run the failed staging-only workflow after the secret is fixed.
+5. The manual staging workflow now performs an early read-only account D1 API authentication check **before** lengthy QA and does not retain any automatic push-to-deploy trigger.
+
+This check does **not** establish Workers Free CPU compatibility or clinical Production release readiness; those require live UAT and approval after successful isolated Staging deployment.
