@@ -27,7 +27,8 @@
       "workers_dev": true,
       "vars": {
         "APP_ENV": "staging",
-        "AUTH_MODE": "internal"
+        "AUTH_MODE": "internal",
+        "PUBLIC_CALCULATOR": "true"
       },
       "d1_databases": [
         {
