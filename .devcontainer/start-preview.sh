@@ -13,7 +13,7 @@ probe() { curl -sS --max-time 4 -o /dev/null -w '%{http_code}' http://127.0.0.1:
 if [[ "$(probe)" != "401" ]]; then
   if [[ -f "$pidfile" ]]; then
     oldpid="$(cat "$pidfile" || true)"
-    if [[ "$oldpid" =~ ^[0-9]+$ ]] && kill -0 "$oldpid" 2>/dev/null; then
+    if [[ "$oldpid" =~ ^[0-9]+$ ]] && kill -0 "$oldpid" 2>/dev/null &&\n       ps -o args= -p "$oldpid" 2>/dev/null | grep -Fq "v3/tests/run-staging-local.mjs --serve"; then
       kill "$oldpid" 2>/dev/null || true
       sleep 1
     fi
