@@ -1,4 +1,4 @@
-import { json, ensureDatabase, verifyPin } from './_shared.js';
+import { json, ensureDatabase, verifyPin } from '../../src/server/clinical.js';
 
 // Public: only centrally published, structured and approved regimen snapshots.
 export async function onRequestGet({ env }) {
