@@ -4,7 +4,7 @@ if (!['staging', 'production'].includes(stage))
   throw Error('Only staging and production deployments are supported');
 const c = JSON.parse(fs.readFileSync('v3/wrangler.jsonc', 'utf8'));
 const e = stage === 'production' ? c : c.env?.staging;
-if (!e || e.vars?.APP_ENV !== stage || e.vars.LOCAL_TEST_AUTH)
+if (!e || e.vars?.APP_ENV !== stage || e.vars.LOCAL_TEST_AUTH || e.vars.CODESPACES_PREVIEW || e.vars.CODESPACES_PREVIEW_ORIGIN)
   throw Error('Invalid deployed authentication environment');
 if (c.workers_dev !== false || c.assets?.run_worker_first !== true)
   throw Error('Production default must disable workers.dev and authenticate all assets through the Worker');
