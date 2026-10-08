@@ -11,7 +11,7 @@ function fixture(){
  const sql=new DatabaseSync(':memory:');
  for(const path of ['v3/migrations/0001_schema.sql','v3/migrations/0004_staging_internal_auth.sql','v3/migrations/0005_editor_pin.sql'])
    sql.exec(readFileSync(path,'utf8'));
- const DB={prepare(q){return {bind(...a){const s=sql.prepare(q);return {
+ const DB={prepare(q){return {async all(){return {results:sql.prepare(q).all()}},bind(...a){const s=sql.prepare(q);return {
    async first(){return s.get(...a)||null},async all(){return {results:s.all(...a)}},
    async run(){const x=s.run(...a);return {meta:{changes:x.changes}}}
  }}}}};
