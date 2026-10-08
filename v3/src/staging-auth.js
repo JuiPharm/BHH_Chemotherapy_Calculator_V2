@@ -38,6 +38,44 @@ export async function passwordDigest(password, saltHex, rounds = PASSWORD_ROUNDS
     name: 'PBKDF2', hash: 'SHA-256', salt: unhex(saltHex), iterations: rounds,
   }, key, 256)));
 }
+// Split password stretching: PBKDF2 is performed by the user's browser, NOT by
+// the 10ms-CPU Workers Free request. A secret server-side HMAC pepper protects
+// stored verifiers from an offline D1-only compromise. A submitted prehash is
+// password-equivalent, so TLS and TOTP are mandatory. STAGING ONLY.
+export async function credentialDigest(prehashHex, pepper) {
+  if (!/^[a-f0-9]{64}$/i.test(prehashHex) ||
+      typeof pepper !== 'string' || pepper.length < 32)
+    throw Error('Staging credential pepper/configuration required');
+  const key = await crypto.subtle.importKey(
+    'raw', enc.encode(pepper), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  return hex(new Uint8Array(await crypto.subtle.sign(
+    'HMAC', key, unhex(prehashHex))));
+}
+function requirePepper(env) {
+  if (typeof env.STAGING_PASSWORD_PEPPER !== 'string' || env.STAGING_PASSWORD_PEPPER.length < 32)
+    throw fail('Staging credential secret required', 503);
+  return env.STAGING_PASSWORD_PEPPER;
+}
+export async function stagingSalt(request, env) {
+  if (!isInternalStaging(env)) throw fail('Not found', 404);
+  requirePost(request);
+  const pepper = requirePepper(env);
+  const raw = await request.text();
+  if (raw.length > 1024) throw fail('Request too large', 413);
+  let input;
+  try { input = JSON.parse(raw); } catch { throw fail('Invalid JSON', 400); }
+  const email = typeof input.email === 'string' ? input.email.trim().toLowerCase() : '';
+  if (!/^[^\\s@]{1,120}@[^\\s@]{1,180}$/.test(email)) throw fail('Email required', 400);
+  const db = env.DB;
+  const now = Math.floor(Date.now()/1000);
+  const ipFingerprint = await digest(request.headers.get('CF-Connecting-IP') || 'unknown-ip');
+  if (!await rate(db, 'salt-ip:'+ipFingerprint, 80, now)) throw fail('Too many requests', 429);
+  const record = await db.prepare(
+    'SELECT c.salt FROM staging_auth_credentials c JOIN users u ON u.id=c.user_id WHERE u.email=? AND u.active=1'
+  ).bind(email).first();
+  const fake = await digest('staging-unknown:'+pepper+':'+email);
+  return json({ salt: record?.salt || fake.slice(0,32), iterations: PASSWORD_ROUNDS });
+}
 function base32decode(str) {
   const clean = str.toUpperCase().replace(/=+$/, '');
   if (!/^[A-Z2-7]{32,}$/.test(clean)) throw Error('Invalid authenticator secret');
@@ -110,11 +148,12 @@ export async function stagingLogin(request, env) {
   let input;
   try { input = JSON.parse(raw); } catch { throw fail('Invalid JSON', 400); }
   const email = typeof input.email === 'string' ? input.email.trim().toLowerCase() : '';
-  const password = input.password, code = input.totp;
+  const prehash = input.prehash, code = input.totp;
   if (!/^[^\s@]{1,120}@[^\s@]{1,180}$/.test(email) ||
-      typeof password !== 'string' || password.length < 1 || password.length > 256 ||
+      typeof prehash !== 'string' || !/^[a-f0-9]{64}$/i.test(prehash) ||
       typeof code !== 'string' || !/^\d{6}$/.test(code))
     throw fail('Invalid credentials or authenticator code', 401);
+  const pepper = requirePepper(env);
   const now = Math.floor(Date.now()/1000);
   const fingerprint = await digest(email);
   const ipFingerprint = await digest(request.headers.get('CF-Connecting-IP') || 'unknown-ip');
@@ -129,9 +168,9 @@ export async function stagingLogin(request, env) {
   const account = await env.DB.prepare(`SELECT u.id,u.email,c.salt,c.password_hash,c.totp_secret,c.last_totp_step
     FROM users u JOIN staging_auth_credentials c ON c.user_id=u.id
     WHERE u.email=? AND u.active=1`).bind(email).first();
-  // Hash even unknown users, to avoid a quick account-existence response.
-  const salt = account?.salt || '00000000000000000000000000000000';
-  const calculated = await passwordDigest(password, salt);
+  // Fixed-cost HMAC verification on Worker Free; password stretch happens on client.
+  // Always compute for unknown users too, without revealing account existence.
+  const calculated = await credentialDigest(prehash, pepper);
   const digestMatches = account && timingEqual(unhex(calculated), unhex(account.password_hash));
   let acceptedStep = null;
   if (digestMatches) {
