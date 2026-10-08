@@ -1,0 +1,30 @@
+name: Production Safety PR Verification
+on:
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  safety:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Syntax verification
+        run: |
+          node --check app.bundle.js
+          node --check publish-manager.js
+          node --check regimen-builder.js
+          node --check legacy-validator.js
+          node --check functions/api/publish.js
+          node --check functions/api/regimens.js
+          node --check functions/api/verify-pin.js
+          node --check src/server/clinical.js
+      - name: Clinical and runtime regression
+        run: |
+          node tests/production-smoke.mjs
+          node tests/production-safety.mjs
+          node tests/runtime-startup-static.mjs
