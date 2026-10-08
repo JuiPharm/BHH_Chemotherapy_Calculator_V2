@@ -247,3 +247,40 @@ test('Offline published snapshot read-only, Calculate blocked, reconnect and mob
   });
   await ctx.close();
 });
+
+
+test('Two independent PCs see newly saved and edited Draft from shared D1 without refreshing', async ({browser})=>{
+  const ctxA=await browser.newContext(),ctxB=await browser.newContext();
+  try {
+    const a=await ctxA.newPage(),b=await ctxB.newPage();
+    await boot(a,'editor');
+    await boot(b,'editor');
+    await b.locator('[data-page=registry]').click();
+    const name='Multiclient D1 sync '+Date.now(), updated=name+' UPDATED';
+    const origin=new URL(a.url()).origin;
+    const headers={'Origin':origin,'X-Requested-With':'BHH-V3','X-Local-User':'editor@local.test'};
+    const created=await ctxA.request.post(origin+'/api/drafts',{
+      headers, data:{sourceVersionId:'BHH-BREAST-TCH-EVIQ53:1',
+        name,reason:'Cross-computer central database synchronization QA'}
+    });
+    expect(created.status()).toBe(201);
+    const version=(await created.json()).version;
+    // B is already open to Registry; do not click refresh or reload.
+    await expect(b.locator('#registry-list')).toContainText(name,{timeout:25000});
+    const doc=structuredClone(version.document);
+    doc.name=updated;
+    const saved=await ctxA.request.put(origin+'/api/versions/'+encodeURIComponent(version.id),{
+      headers,data:{document:doc,expectedRevision:version.revision,
+        reason:'Simulated editor updates from another workstation'}
+    });
+    expect(saved.status()).toBe(200);
+    await expect(b.locator('#registry-list')).toContainText(updated,{timeout:25000});
+    await expect(b.locator('#connection')).toContainText('Central protocols');
+    // Server-side optimistic lock prevents one PC overwriting older copy.
+    const outdated=await ctxB.request.put(origin+'/api/versions/'+encodeURIComponent(version.id),{
+      headers,data:{document:version.document,expectedRevision:version.revision,
+        reason:'Attempt stale overwrite must be rejected'}
+    });
+    expect(outdated.status()).toBe(409);
+  } finally {await Promise.all([ctxA.close(),ctxB.close()]);}
+});
