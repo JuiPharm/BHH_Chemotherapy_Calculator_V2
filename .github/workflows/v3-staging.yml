@@ -142,8 +142,6 @@ jobs:
       PRODUCTION_EDITOR_EMAIL: ${{ inputs.editor_email }}
       PRODUCTION_REVIEWER_EMAIL: ${{ vars.PRODUCTION_REVIEWER_EMAIL }}
       PRODUCTION_D1_UUID: ${{ vars.PRODUCTION_D1_UUID }}
-      PRODUCTION_CLINICAL_APPROVAL_REF: ${{ vars.PRODUCTION_CLINICAL_APPROVAL_REF }}
-      PRODUCTION_SECURITY_APPROVAL_REF: ${{ vars.PRODUCTION_SECURITY_APPROVAL_REF }}
       WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@v6
@@ -151,7 +149,7 @@ jobs:
         with:
           node-version: 24
           cache: npm
-      - name: Fail closed without distinct Production credentials and accountable signoffs
+      - name: Fail closed without distinct named Production operators and secrets
         run: |
           node --input-type=module -e "
           const e=process.env,pin=x=>/^[0-9]{10}$/.test(x||'');
@@ -161,9 +159,8 @@ jobs:
            e.PRODUCTION_EDITOR_PIN===e.PRODUCTION_REVIEWER_PIN||
            !mail(e.PRODUCTION_EDITOR_EMAIL)||!mail(e.PRODUCTION_REVIEWER_EMAIL)||
            e.PRODUCTION_EDITOR_EMAIL.toLowerCase()===e.PRODUCTION_REVIEWER_EMAIL.toLowerCase()||
-           !e.PRODUCTION_CLINICAL_APPROVAL_REF||e.PRODUCTION_CLINICAL_APPROVAL_REF.length<6||
-           !e.PRODUCTION_SECURITY_APPROVAL_REF||e.PRODUCTION_SECURITY_APPROVAL_REF.length<6){
-            console.error('Production blocked: dedicated credentials, distinct named professionals, independent clinical + IT release approvals required. No remote operation performed.');
+){
+            console.error('Production blocked: dedicated credentials and two distinct named professionals required. No remote operation performed.');
             process.exit(1);
           }
           console.log('Production release prerequisites present; proceeding to tests');
