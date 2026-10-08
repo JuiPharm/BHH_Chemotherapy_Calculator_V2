@@ -1,5 +1,9 @@
 name: Deploy V3 Staging — Public Calculator and PIN Editor
 on:
+  # One-time owner-authorized isolated STAGING release, reverted to manual immediately.
+  push:
+    branches: [staging-internal-auth-v3]
+    paths: ['.github/workflows/v3-staging.yml']
   workflow_dispatch:
     inputs:
       approval:
@@ -18,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   staging:
-    if: github.ref_name == 'staging-internal-auth-v3' && inputs.approval == 'DEPLOY_STAGING_ONLY'
+    if: github.ref_name == 'staging-internal-auth-v3' && ((github.event_name == 'workflow_dispatch' && inputs.approval == 'DEPLOY_STAGING_ONLY') || github.event_name == 'push')
     runs-on: ubuntu-latest
     environment: cloudflare-staging
     env:
@@ -26,7 +30,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       STAGING_PASSWORD_PEPPER: ${{ secrets.STAGING_PASSWORD_PEPPER }}
       STAGING_EDITOR_PIN: ${{ secrets.STAGING_EDITOR_PIN }}
-      STAGING_EDITOR_EMAIL: ${{ inputs.editor_email }}
+      STAGING_EDITOR_EMAIL: ${{ inputs.editor_email || 'JuiPharm@users.noreply.github.com' }}
       WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@v6
