@@ -2,6 +2,16 @@
 
 **Branch:** `staging-internal-auth-v3` · Draft PR #2. No production merge, no remote D1 migration, no Cloudflare deployment.
 
+## Local preview (no Cloudflare account or deploy required)
+
+Run `npm ci` and `npm run build:v3`, then:
+
+```sh
+npm run preview:staging:v3
+```
+
+Open `http://127.0.0.1:8792/login`. The terminal prints a **temporary synthetic password**, four fake role emails and their test-only TOTP enrollment seeds. Add a selected fake user's seed to your Authenticator app to obtain a six-digit code, then sign in and test Library, Calculator, Registry, Builder, role controls, and Logout. The script uses `--local` for every D1 command, has no `--remote` or deploy step, and deletes all temporary account data on Ctrl+C. **Never enter real staff passwords, actual TOTP secrets or patient records into this preview.**
+
 ## 1. Run tests safely on Windows, Linux or macOS
 
 Use **Node.js 24 LTS** and source code from the exact branch above. In a terminal at the repository root:
