@@ -138,9 +138,9 @@ test('CPU-sensitive password stretching happens in browser, not Worker login rou
   assert.match(frontend,/PBKDF2/);
   assert.match(frontend,/600000/);
   assert.match(frontend,/prehash/);
-  assert.doesNotMatch(frontend,/password:\\s*String\\(fields.get/);
-  assert.doesNotMatch(login,/await passwordDigest\\(/);
-  assert.match(login,/await credentialDigest\\(prehash, pepper\\)/);
+  assert.ok(!frontend.includes('password: String(fields.get'));
+  assert.ok(!login.includes('await passwordDigest('));
+  assert.ok(login.includes('await credentialDigest(prehash, pepper)'));
 });
 test('Salt endpoint protects account existence and enforces same-origin requests', async () => {
   const {env}=fixture();
