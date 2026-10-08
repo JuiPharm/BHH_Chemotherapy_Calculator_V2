@@ -17,7 +17,9 @@
     "check:deploy:v3": "node v3/scripts/check-deploy.mjs staging",
     "deploy:staging:v3": "npm run build:v3 && node v3/scripts/check-deploy.mjs staging && wrangler deploy --config v3/wrangler.jsonc --env staging",
     "test:staging:v3": "node v3/tests/run-staging-local.mjs",
-    "preview:staging:v3": "node v3/tests/run-staging-local.mjs --serve"
+    "preview:staging:v3": "node v3/tests/run-staging-local.mjs --serve",
+    "check:deploy:production:v3": "node v3/scripts/check-deploy.mjs production",
+    "deploy:production:v3": "npm run build:v3 && node v3/scripts/check-deploy.mjs production && wrangler deploy --config v3/wrangler.jsonc --env production"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
