@@ -12,6 +12,10 @@ export async function onRequestPost({ request, env }) {
     const supplied = body.regimen;
     const issues = validateRegimen(supplied, action === 'publish');
     if (issues.length) return json({ success: false, message: 'Regimen validation failed', issues }, 422);
+    if (action==='draft') {
+      const existing=await db.prepare('SELECT status FROM regimens WHERE id=?').bind(supplied.id).first();
+      if (existing?.status==='published') return json({success:false,message:'Published regimen cannot be overwritten by a draft. Clone it to a new ID first.'},409);
+    }
     const expected = Number(body.expectedRevision ?? 0);
     if (!Number.isSafeInteger(expected) || expected < 0) return json({ success: false, message: 'Invalid expected revision' }, 400);
     const now = new Date().toISOString();
