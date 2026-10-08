@@ -13,8 +13,7 @@ const h=createHmac('sha256',pepper).update('bhh-editor-pin-v1:'+pin).digest('hex
 const id=randomUUID();
 const q=t=>"'"+String(t).replaceAll("'","''")+"'";
 const stamp="strftime('%Y-%m-%dT%H:%M:%fZ','now')";
-const sql=`-- Staging only. Never commit or log.
-BEGIN TRANSACTION;
+const sql=`-- Staging only. Never commit or log. Wrangler D1 execute manages its own transaction.
 INSERT INTO users(id,email,role_code,active,created_at,created_by,updated_at,updated_by)
 VALUES(${q(id)},${q(email)},'regimen_editor',1,${stamp},'staging-uat-setup',${stamp},'staging-uat-setup')
 ON CONFLICT(email) DO NOTHING;
@@ -22,7 +21,7 @@ INSERT INTO staging_editor_pins(user_id,pin_hash,created_at,created_by)
 SELECT id,${q(h)},${stamp},'staging-uat-setup'
 FROM users WHERE email=${q(email)} AND active=1 AND role_code='regimen_editor'
 ON CONFLICT(user_id) DO UPDATE SET pin_hash=excluded.pin_hash;
-COMMIT;`;
+`;
 const output=join(process.env.RUNNER_TEMP,'bhh-staging-editor-pin.sql');
 writeFileSync(output,sql,{flag:'wx',mode:0o600});
 console.log('Generated staging-only editor grant SQL securely in runner temp (credentials not printed).');
