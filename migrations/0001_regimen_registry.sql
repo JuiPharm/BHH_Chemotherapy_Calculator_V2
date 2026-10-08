@@ -15,3 +15,10 @@ CREATE TABLE IF NOT EXISTS regimen_audit (
   happened_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS idx_regimen_audit_regimen ON regimen_audit(regimen_id,id);
+
+CREATE TABLE IF NOT EXISTS app_settings (
+  key TEXT PRIMARY KEY,
+  revision INTEGER NOT NULL CHECK(revision > 0),
+  document TEXT NOT NULL CHECK(json_valid(document)),
+  updated_at TEXT NOT NULL
+);
