@@ -129,3 +129,24 @@ test('Staging fails closed when HMAC secret is missing', async () => {
   await assert.rejects(()=>stagingSalt(post('/api/auth/salt',{email:'tester@example.org'}),env),/credential secret required/);
   await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',prehash:'0'.repeat(64),totp:'123456'}),env),/credential secret required/);
 });
+
+test('CPU-sensitive password stretching happens in browser, not Worker login route', () => {
+  const frontend=readFileSync('v3/public/login.js','utf8');
+  const server=readFileSync('v3/src/staging-auth.js','utf8');
+  const login=server.split('export async function stagingLogin(request, env) {')[1]
+    .split('export async function stagingLogout')[0];
+  assert.match(frontend,/PBKDF2/);
+  assert.match(frontend,/600000/);
+  assert.match(frontend,/prehash/);
+  assert.doesNotMatch(frontend,/password:\\s*String\\(fields.get/);
+  assert.doesNotMatch(login,/await passwordDigest\\(/);
+  assert.match(login,/await credentialDigest\\(prehash, pepper\\)/);
+});
+test('Salt endpoint protects account existence and enforces same-origin requests', async () => {
+  const {env}=fixture();
+  const known=await stagingSalt(post('/api/auth/salt',{email:'unknown@example.org'}),env);
+  const payload=await known.json();
+  assert.match(payload.salt,/^[a-f0-9]{32}$/);
+  assert.equal(payload.iterations,600000);
+  await assert.rejects(()=>stagingSalt(post('/api/auth/salt',{email:'tester@example.org'},{Origin:'https://evil.example'}),env),/Same-origin/);
+});
