@@ -14,8 +14,8 @@
 - HTTPS workers.dev is mandatory in remote staging. Do not configure a public fallback path, a cross-origin API or `LOCAL_TEST_AUTH` on staging.
 
 ## Account and D1 setup
-1. In Cloudflare Workers & Pages choose Workers Free and note your `workers.dev` subdomain. Whether the current Cloudflare signup process demands a payment method depends on account onboarding; **stop rather than adding billing details if the account requires them**.
-2. The user's Cloudflare account identifier was provided as `3229fd47f39f8ca1809f92d4282b5ab5`; their D1 staging UUID is `3d936db6-eed1-4880-9561-1f22101cb27e`. The linked D1 Metrics page does **not** establish a Workers subdomain. Do not infer one. **The D1 staging database already exists: do not run `d1 create` again.** The operator may confirm account and database identity with read-only CLI commands when authorized:
+1. The operator supplied `https://bhh.juipharm.workers.dev`: the Cloudflare account subdomain is **`juipharm.workers.dev`**, while `bhh` is a separate Worker hostname. The isolated V3 staging Worker is named `bhh-chemotherapy-v3-staging` in `v3/wrangler.jsonc` and, **if deployed later** with `workers_dev=true` under this subdomain, its expected URL is **`https://bhh-chemotherapy-v3-staging.juipharm.workers.dev`**. Do not rename staging to `bhh` or modify that existing Worker. This is an expected URL only, not evidence that V3 staging is live. Whether Cloudflare account onboarding demands a payment method depends on the account; stop rather than adding billing details if required.
+2. The user's Cloudflare account identifier was provided as `3229fd47f39f8ca1809f92d4282b5ab5`; their D1 staging UUID is `3d936db6-eed1-4880-9561-1f22101cb27e`. The previously linked D1 Metrics page does not establish a Workers subdomain; the separately supplied Worker URL above establishes the naming pattern. **The D1 staging database already exists: do not run `d1 create` again.** The operator may confirm account and database identity with read-only CLI commands when authorized:
    ```sh
    npx wrangler login
    npx wrangler d1 list
