@@ -39,6 +39,14 @@ Cloudflare Access **One-time PIN via approved email addresses** replaces Google 
 
 The isolated branch `staging-internal-auth-v3` changes **staging only** from Cloudflare Access email OTP to D1-managed passwords + TOTP, opaque HttpOnly session cookies, rate limits and separate auth-event logs. Production retains the original Cloudflare Access JWT verification. See [STAGING_INTERNAL_LOGIN.md](STAGING_INTERNAL_LOGIN.md). CI results for this new branch must be separately collected; previous 31/42/3 test results refer to earlier code and must not be copied forward as proof of this authentication change. Staging and Production have **not** been deployed by this task.
 
+## Staging Workers Free and dependency hardening (8 October 2026)
+
+- Operator-provided Cloudflare account context: account ID `3229fd47f39f8ca1809f92d4282b5ab5`; staging D1 UUID `3d936db6-eed1-4880-9561-1f22101cb27e`. These are configuration identifiers, **not** proof of a remote DB connection or domain; Workers subdomain remains unknown.
+- Original staging server PBKDF2 (600,000 iterations) risked exceeding Cloudflare Workers Free's **10ms/request CPU** allowance. Proposed mitigation: PBKDF2 remains at 600,000 iterations in the browser; staging Worker verifies a peppered SHA-256 HMAC of the client prehash with required `STAGING_PASSWORD_PEPPER` Worker Secret and the existing independent TOTP factor. This design avoids server-side high-cost password stretching but must be security-reviewed because the client prehash is password-equivalent and remote CPU usage is unverified.
+- The `wrangler → miniflare → sharp` development dependency inherited **CVE-2026-96889** affecting `sharp <0.35.5`. This branch pins an override and regenerated lockfile to `sharp 0.35.5` and upgraded prebuilt libvips packages. The CI lockfile regeneration job reported **0 vulnerabilities**; ongoing CI now fails on npm audit High/Critical. This does not guarantee freedom from all vulnerabilities.
+- Main V2, original V3 Production Access authentication and production D1 placeholders have not been deployed or changed by this work. No remote D1 migrations, credential provisioning, Cloudflare secrets, Workers subdomain, or real user login are verified.
+- **BLOCKED pending:** independent authentication/security review, real Workers Free per-request CPU measurement on actual staging (error 1102/Exceeded CPU), TOTP enrolment, negative UAT and documented hospital IT/clinical approval. Use only synthetic patient data.
+
 ## Remaining deployment gates
 
 1. Cloudflare account authorization and staging D1 ID, exact staging workers.dev hostname, named password+TOTP tester provisioning, verified TOTP enrollment and distinct production custom domain/Access identity decision.
