@@ -1,3 +1,4 @@
+import { pinIdentity } from './editor-pin.js';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { isInternalStaging, stagingIdentity } from './staging-auth.js';
 const keysets = new Map();
@@ -12,7 +13,11 @@ export async function identity(request, env) {
       request.headers.get('X-Local-User') || 'calculator@local.test';
     return { email, local: true };
   }
-  if (isInternalStaging(env)) return stagingIdentity(request, env);
+  if (isInternalStaging(env)) {
+    const editor=await pinIdentity(request,env);
+    if(editor)return editor;
+    return stagingIdentity(request,env);
+  }
   if (env.LOCAL_TEST_AUTH === 'true')
     throw Object.assign(
       Error(
