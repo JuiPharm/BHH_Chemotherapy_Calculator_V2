@@ -1,0 +1,26 @@
+# Minimal GitHub Actions UI launcher. This file does not deploy anything on main.
+# Run with "Use workflow from: staging-internal-auth-v3" to execute the staging branch's
+# full vetted staging deployment workflow. Main never contains staging deployment steps.
+name: Deploy V3 Staging — Public Calculator and PIN Editor
+on:
+  workflow_dispatch:
+    inputs:
+      approval:
+        description: 'Type DEPLOY_STAGING_ONLY (select staging-internal-auth-v3 branch)'
+        required: true
+        type: string
+      editor_email:
+        description: 'Named STAGING Regimen Editor email'
+        required: true
+        type: string
+        default: 'editor.staging@example.invalid'
+permissions:
+  contents: read
+jobs:
+  wrong-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fail closed; main never deploys staging
+        run: |
+          echo "::error::No staging deployment is permitted from main. In Run workflow, select 'staging-internal-auth-v3' first."
+          exit 1
