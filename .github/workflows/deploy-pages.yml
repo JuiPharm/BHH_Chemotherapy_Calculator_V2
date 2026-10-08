@@ -29,6 +29,18 @@ jobs:
       - name: Run production smoke tests
         run: node tests/production-smoke.mjs
 
+      - name: Run production clinical and D1 safety tests
+        run: node tests/production-safety.mjs
+
+      - name: Syntax-check new modules
+        run: |
+          node --check regimen-builder.js
+          node --check legacy-validator.js
+          node --check functions/api/publish.js
+          node --check functions/api/regimens.js
+          node --check functions/api/verify-pin.js
+          node --check src/server/clinical.js
+
       - name: Parse-check browser runtime
         run: node --check app.bundle.js
 
@@ -71,7 +83,7 @@ jobs:
       - name: Assemble static site
         run: |
           mkdir -p _site/data
-          cp index.html styles.css publish-manager.css publish-manager.js manifest.json cleanup.js app.bundle.js 404.html .nojekyll _site/
+          cp index.html styles.css publish-manager.css publish-manager.js regimen-builder.js legacy-validator.js manifest.json cleanup.js app.bundle.js 404.html .nojekyll _site/
           cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json data/guideline-status.v2.4.json _site/data/
           test -s _site/data/guideline-status.v2.4.json
 
