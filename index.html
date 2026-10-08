@@ -26,9 +26,12 @@
       <button class="active" data-tab="calculator">Calculator</button>
       <button class="admin-tab hidden" data-tab="library">Regimen Library</button>
       <button class="admin-tab hidden" data-tab="manager">Regimen Manager</button>
+        <button class="admin-tab hidden" data-tab="builder">Regimen Builder</button>
+        <button class="admin-tab hidden" data-tab="legacy">Legacy Validator</button>
       <button class="admin-tab hidden" data-tab="rounding">Rounding Policy</button>
       <button class="admin-tab hidden" data-tab="about">About</button>
-      <button id="admin-pin-toggle-btn" class="pin-toggle-btn" type="button" style="margin-left:auto;">🔒 เภสัชกร (PIN)</button>
+      <span id="sync-status" class="micro" aria-live="polite">Checking central sync…</span>
+        <button id="admin-pin-toggle-btn" class="pin-toggle-btn" type="button" style="margin-left:auto;">🔒 เภสัชกร (PIN)</button>
     </nav>
 
     <main>
@@ -158,8 +161,8 @@
       <section id="tab-manager" class="tab-panel hidden">
         <div class="card">
           <h2>Regimen Manager</h2>
-          <p>ข้อมูล Regimen ที่ใช้ร่วมกันทุกเครื่องถูกเก็บเป็น Central Master ใน Repository นี้ การแก้ไข Central Master แล้ว Deploy สำเร็จจะเปลี่ยนข้อมูลสำหรับผู้ใช้ทุกเครื่อง ไม่ใช้ browser-local data สำหรับ Regimen Master</p>
-          <div class="manager-actions">
+          <p>ข้อมูลที่ Publish ผ่าน Pharmacist PIN จะบันทึกใน Cloudflare D1 และซิงก์ข้ามเครื่องโดยอัตโนมัติ ไม่ต้องใช้ GitHub Token ส่วน Legacy Master เป็นข้อมูลสำหรับ Review เท่านั้น</p>
+          <div class="manager-actions"><button class="primary" type="button" data-tab="builder">+ New / Edit Structured Regimen</button>
             <a class="primary link-button" href="https://github.com/JuiPharm/BHH_Chemotherapy_Calculator_V2/edit/main/data/legacy-regimens.v1.json" target="_blank" rel="noopener noreferrer">Edit Central Regimen Master</a>
             <a class="secondary link-button" href="https://github.com/JuiPharm/BHH_Chemotherapy_Calculator_V2/edit/main/data/regimens.published.json" target="_blank" rel="noopener noreferrer">Edit Approved Structured Regimens</a>
             <a class="secondary link-button" href="https://github.com/JuiPharm/BHH_Chemotherapy_Calculator_V2/edit/main/data/rounding-profiles.json" target="_blank" rel="noopener noreferrer">Edit Global Rounding Policy</a>
@@ -167,9 +170,42 @@
           <div class="manager-grid">
             <div class="manager-kpi"><span>Central Master</span><strong id="manager-master-count">136</strong><small>Regimens</small></div>
             <div class="manager-kpi"><span>Approved Structured</span><strong id="manager-approved-count">6</strong><small>Regimens</small></div>
-            <div class="manager-kpi"><span>Global Update</span><strong>GitHub Pages</strong><small>Deploy after commit</small></div>
+            <div class="manager-kpi"><span>Global Update</span><strong>Cloudflare D1</strong><small>near-real-time central sync</small></div>
           </div>
-          <div class="note-box"><strong>หมายเหตุ:</strong> หากต้องการแก้ Regimen จากหน้าเว็บโดยตรงและมี User/Role/Audit trail แบบหลายผู้ใช้ ควรย้าย Central Master ไป Supabase; GitHub Pages เพียงอย่างเดียวไม่ควรเก็บสิทธิ์เขียนหรือ token ของ Admin ใน browser</div>
+          <div class="note-box"><strong>สำคัญ:</strong> GitHub Pages ใช้ดูข้อมูลแบบ Static เท่านั้น หากต้องการ Approve &amp; Publish ให้เปิดเว็บไซต์ Cloudflare Pages ที่ผูก D1 และ APPROVE_PIN แล้ว ใช้ Regimen Builder เพื่อตรวจข้อมูล Structured ก่อนเผยแพร่</div>
+        </div>
+      </section>
+
+      <section id="tab-builder" class="tab-panel hidden">
+        <div class="card">
+          <div class="section-heading">
+            <div><h2>Zero-code Regimen Builder</h2><p>สร้าง/แก้สูตรยา Structured แบบหลาย Phase แล้วบันทึก Draft หรือ Approve &amp; Publish ผ่าน Pharmacist PIN</p></div>
+            <button id="builder-new" type="button" class="secondary">+ New Draft</button>
+          </div>
+          <div id="builder-message" class="alert alert-info" role="status" aria-live="polite">เริ่มจากเลือก Regimen ใน Library แล้วกด Build Structured หรือสร้างสูตรใหม่</div>
+          <div id="builder-content"></div>
+          <div class="card" style="padding:16px;margin-top:20px">
+            <label class="field"><span>Pharmacist PIN — ใช้ยืนยันกับ Cloudflare Server ไม่เก็บใน Browser</span>
+              <input id="builder-pin" type="password" autocomplete="off" placeholder="PIN" maxlength="40"></label>
+            <label class="field"><input id="builder-attest" type="checkbox"> ยืนยันว่าทบทวนชื่อยา ขนาดยา หน่วย Route ตารางให้ยา และรอบยาเทียบกับเอกสารทางคลินิกแล้ว</label>
+            <div class="button-row" style="flex-wrap:wrap">
+              <button type="button" class="secondary" id="builder-save">Save Draft</button>
+              <button type="button" class="primary" id="builder-publish">Approve &amp; Publish</button>
+              <button type="button" class="secondary" id="builder-export">Export JSON</button>
+              <button type="button" class="secondary" id="builder-load">Load Central Drafts</button>
+            </div>
+          </div>
+          <div id="builder-drafts" class="button-row" style="flex-wrap:wrap"></div>
+        </div>
+      </section>
+      <section id="tab-legacy" class="tab-panel hidden">
+        <div class="card">
+          <h2>Legacy Validator</h2>
+          <p>ตรวจ Dose ข้อความเดิมเท่านั้น ไม่อนุญาตให้คำนวณหรือ Publish โดยอัตโนมัติ</p>
+          <label class="file-button">Choose Legacy JSON <input id="legacy-file" type="file" accept=".json,application/json"></label>
+          <button id="legacy-export" type="button" class="secondary">Export Migration Report CSV</button>
+          <div id="legacy-summary" class="summary-strip"></div>
+          <div id="legacy-results" class="table-wrap"></div>
         </div>
       </section>
 
@@ -225,6 +261,8 @@
 
   <script src="./cleanup.js?v=2.3.0" defer></script>
   <script src="./publish-manager.js?v=2.6.3" defer></script>
-  <script src="./app.bundle.js?v=2.5.0" defer></script>
+  <script src="./app.bundle.js?v=2.7.0" defer></script>
+  <script src="./regimen-builder.js?v=2.7.0" defer></script>
+  <script src="./legacy-validator.js?v=2.7.0" defer></script>
 </body>
 </html>
