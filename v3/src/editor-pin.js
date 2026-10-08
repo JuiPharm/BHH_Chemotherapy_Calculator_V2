@@ -1,5 +1,5 @@
-// Staging public-calculator mode only. Individual high-entropy PIN grants EDIT-DRAFT rights,
-// never Oncology Review, Approve, Publish or Admin. No shared/config hard-coded PIN.
+// Individual STAGING PINs: Editor can draft/submit; a DIFFERENT named Oncology
+// Reviewer can independently approve and publish validated protocols. No Admin PIN.
 import { sameOrigin } from './preview-origin.js';
 const enc=new TextEncoder();
 const COOKIE='__Host-bhh_regimen_editor';
@@ -41,12 +41,12 @@ export async function pinIdentity(request,env){
   if(!publicCalculator(env))return null;
   const token=getToken(request);
   if(!token)return null;
-  const row=await env.DB.prepare(`SELECT u.email FROM staging_editor_sessions s
+  const row=await env.DB.prepare(`SELECT u.email,u.role_code FROM staging_editor_sessions s
     JOIN staging_editor_pins p ON p.user_id=s.user_id
     JOIN users u ON u.id=s.user_id
-    WHERE s.token_hash=? AND s.expires_at>? AND u.active=1 AND u.role_code='regimen_editor'`)
+    WHERE s.token_hash=? AND s.expires_at>? AND u.active=1 AND u.role_code IN ('regimen_editor','oncology_pharmacist')`)
    .bind(await sha(token),Math.floor(Date.now()/1000)).first();
-  return row?{email:row.email.toLowerCase(),local:false,pin:true}:null;
+  return row?{email:row.email.toLowerCase(),local:false,pin:true,pinRole:row.role_code}:null;
 }
 export async function confirmEditorPin(request,env){
  if(!publicCalculator(env))throw fail('Not found',404);
@@ -65,9 +65,9 @@ export async function confirmEditorPin(request,env){
  ]);
  if(!allowIp||!allowGlobal)throw fail('Too many PIN attempts',429);
  const candidate=await pinHash(body.pin,secret);
- const record=await db.prepare(`SELECT u.id,u.email FROM staging_editor_pins p
+ const record=await db.prepare(`SELECT u.id,u.email,u.role_code FROM staging_editor_pins p
  JOIN users u ON u.id=p.user_id
- WHERE p.pin_hash=? AND u.active=1 AND u.role_code='regimen_editor'`).bind(candidate).first();
+ WHERE p.pin_hash=? AND u.active=1 AND u.role_code IN ('regimen_editor','oncology_pharmacist')`).bind(candidate).first();
  if(!record){
   await db.prepare('INSERT INTO staging_auth_events(id,user_id,fingerprint,action,at) VALUES(?,?,?,?,?)')
     .bind(crypto.randomUUID(),null,ip,'denied',now).run();
@@ -78,7 +78,7 @@ export async function confirmEditorPin(request,env){
  const token=hexb(crypto.getRandomValues(new Uint8Array(32)));
  await db.prepare('INSERT INTO staging_editor_sessions(token_hash,user_id,created_at,expires_at) VALUES(?,?,?,?)')
   .bind(await sha(token),record.id,now,now+3600).run();
- return reply({ok:true,role:'regimen_editor'},200,{'Set-Cookie':cookie(token,3600)});
+ return reply({ok:true,role:record.role_code},200,{'Set-Cookie':cookie(token,3600)});
 }
 export async function logoutEditorPin(request,env){
  if(!publicCalculator(env))throw fail('Not found',404);
