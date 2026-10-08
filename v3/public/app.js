@@ -68,6 +68,41 @@ function clearNote() {
 function failure(e) {
   note(e.message);
 }
+function renderAccount(session) {
+  state.authMode=session.authMode;
+  state.user=session.user;
+  state.local=session.local;
+  const editor=['regimen_editor','oncology_pharmacist','clinical_admin'].includes(session.user?.role);
+  $('#registry-tab').hidden=!editor;
+  $('#builder-tab').hidden=!editor;
+  $('#manage-pin').hidden=!['public','editor'].includes(session.authMode);
+  $('#audit-tab').hidden=session.user?.role!=='clinical_admin';
+  const label=session.authMode==='public'?'Public calculator':
+    esc(session.user.email)+'<small>'+esc(session.user.role)+'</small>';
+  const end=session.authMode==='editor'
+    ? '<button type="button" id="editor-logout">Exit editor</button>'
+    : session.authMode==='internal'
+    ? '<button type="button" id="staging-logout">Sign out</button>'
+    : session.authMode==='public'
+    ? '<a href="/login">Reviewer / Admin sign in</a>'
+    : '';
+  const selector=session.local?'<label>LOCAL TEST identity<select id="local-user"><option value="calculator@local.test">Calculator user</option><option value="editor@local.test">Regimen editor</option><option value="reviewer@local.test">Oncology pharmacist</option><option value="admin@local.test">Clinical admin</option></select></label>':'';
+  $('#account').innerHTML=label+end+selector;
+  if($('#staging-logout'))$('#staging-logout').onclick=stagingSignOut;
+  if($('#editor-logout'))$('#editor-logout').onclick=async()=>{
+    try{
+      await api('/auth/editor-logout',{method:'POST',body:'{}'});
+      await clearPrivateClientState();
+      window.location.replace('/');
+    }catch(e){failure(e)}
+  };
+  if($('#local-user'))$('#local-user').onchange=async()=>{
+    state.details.clear();state.selected=null;state.draft=null;
+    state.catalog=[];await sync();
+    if(!$('#registry').hidden)await registry();
+    renderLibrary();
+  };
+}
 function connection() {
   const v = state.selected?.version;
   $('#connection').className = state.online ? '' : 'offline';
@@ -155,8 +190,11 @@ async function sync() {
   try {
     const reconnect = !state.online;
     const session = await api('/session');
-    state.user = session.user;
-    state.local = session.local;
+    const previousRole=state.user?.role, previousMode=state.authMode;
+    if(previousRole!==session.user?.role || previousMode!==session.authMode) {
+      state.catalog=[];state.details.clear();state.draft=null;
+      renderAccount(session);
+    } else {state.user=session.user;state.local=session.local;}
     state.online = true;
     const r = await api('/revision');
     if (reconnect || r.revision !== state.revision || !state.catalog.length) {
