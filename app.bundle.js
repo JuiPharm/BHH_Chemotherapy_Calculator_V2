@@ -404,6 +404,8 @@ async function init() {
   bindLibrary();
   bindRounding();
   setInterval(syncCentralRegimens, 10000);
+  syncCentralRounding();
+  setInterval(syncCentralRounding, 10000);
   $('#manager-master-count').textContent=BHH_MASTER.length;
   $('#manager-approved-count').textContent=catalog.filter(x=>x.structured).length;
   $('#app-loading').classList.add('hidden');
@@ -982,45 +984,84 @@ function useFromLibrary(key) {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+let roundingDraft=null;
+let roundingRevision=0;
 function loadRounding() {
-  try {
-    const v=JSON.parse(localStorage.getItem(ROUNDING_KEY)||'null');
-    if (Array.isArray(v)&&v.length) return Object.fromEntries(v.map(x=>[x.id,x]));
-  } catch {}
+  // Published profile only. Browser localStorage must never affect patient-care calculations.
   return Object.fromEntries(clone(BHH_ROUNDING_DEFAULTS).map(x=>[x.id,x]));
 }
-function roundingArray() {return Object.values(roundingProfiles);}
-function bindRounding() {
-  $('#rounding-save').addEventListener('click',saveRounding);
-  $('#rounding-reset').addEventListener('click',()=>{localStorage.removeItem(ROUNDING_KEY);roundingProfiles=Object.fromEntries(clone(BHH_ROUNDING_DEFAULTS).map(x=>[x.id,x]));renderRounding();});
-  $('#rounding-export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(roundingArray(),null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='BHH-rounding-policy.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),500);});
-  $('#rounding-import').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const v=JSON.parse(await f.text());if(!Array.isArray(v))throw new Error('Invalid policy');roundingProfiles=Object.fromEntries(v.map(x=>[x.id,x]));localStorage.setItem(ROUNDING_KEY,JSON.stringify(v));renderRounding();}catch(err){$('#rounding-message').innerHTML=`<div class="alert alert-error">${esc(err.message)}</div>`;}e.target.value='';});
+async function syncCentralRounding(){
+  try{
+    const res=await fetch('/api/rounding',{cache:'no-store'});
+    if(!res.ok)return;
+    const data=await res.json();
+    if(Array.isArray(data.profiles) && data.revision!==roundingRevision){
+      roundingProfiles=Object.fromEntries(data.profiles.map(x=>[x.id,x]));
+      roundingRevision=data.revision;
+      invalidateCalculation();
+      if(!roundingDraft)renderRounding();
+    }
+  }catch{}
 }
-function renderRounding() {
-  const local=Boolean(localStorage.getItem(ROUNDING_KEY));
-  $('#rounding-status').innerHTML=`<span class="badge ${local?'badge-warning':'badge-ok'}">${local?'LOCAL TEST OVERRIDE':'GLOBAL DEFAULT'}</span>`;
-  $('#rounding-policy-list').innerHTML=roundingArray().map((p,i)=>`<article class="rounding-card" data-rp-card="${esc(p.id)}"><strong>${esc(p.label)}</strong><div class="form-grid compact-grid">
+function roundingArray(){return Object.values(roundingDraft||roundingProfiles);}
+function bindRounding(){
+  $('#rounding-save').addEventListener('click',saveRounding);
+  $('#rounding-reset').addEventListener('click',()=>{
+    roundingDraft=Object.fromEntries(clone(BHH_ROUNDING_DEFAULTS).map(x=>[x.id,x]));
+    renderRounding();
+  });
+  $('#rounding-export').addEventListener('click',()=>{
+    const blob=new Blob([JSON.stringify(roundingArray(),null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='BHH-rounding-policy.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),500);
+  });
+  $('#rounding-import').addEventListener('change',async event=>{
+    const file=event.target.files?.[0];if(!file)return;
+    try{
+      const values=JSON.parse(await file.text());
+      if(!Array.isArray(values) || !values.length)throw Error('Invalid rounding data');
+      roundingDraft=Object.fromEntries(values.map(x=>[x.id,x]));
+      renderRounding();
+    }catch(err){$('#rounding-message').textContent='Import failed: '+err.message;}
+    event.target.value='';
+  });
+}
+function renderRounding(){
+  $('#rounding-status').textContent=roundingDraft?'UNSAVED DRAFT — no patient dose affected':'GLOBAL POLICY · revision '+roundingRevision;
+  $('#rounding-policy-list').innerHTML=roundingArray().map(p=>`<article class="rounding-card" data-rp-card="${esc(p.id)}"><strong>${esc(p.label)}</strong><div class="form-grid compact-grid">
     <label class="field"><span>Increment (${esc(p.unit)})</span><input data-rp="increment" type="number" step="any" min="0.000001" value="${p.increment}" ${p.method==='none'?'disabled':''}></label>
     <label class="field"><span>Max difference (%)</span><input data-rp="maxPercentDifference" type="number" step="0.01" min="0" max="100" value="${p.maxPercentDifference}" ${p.method==='none'?'disabled':''}></label>
     <label class="field"><span>Max absolute difference</span><input data-rp="maxAbsoluteDifference" type="number" step="any" min="0" value="${p.maxAbsoluteDifference??''}" ${p.method==='none'?'disabled':''}></label>
     </div></article>`).join('');
 }
-function saveRounding() {
-  document.querySelectorAll('[data-rp-card]').forEach(card=>{
-    const p=roundingProfiles[card.dataset.rpCard]; if(!p||p.method==='none')return;
-    card.querySelectorAll('[data-rp]').forEach(input=>{
-      const k=input.dataset.rp; const v=input.value.trim();
-      if (k==='maxAbsoluteDifference'&&v==='') delete p[k]; else p[k]=Number(v);
-    });
-  });
-  for (const p of roundingArray()) {
-    if (!(p.increment>0) || !(p.maxPercentDifference>=0&&p.maxPercentDifference<=100)) {
-      $('#rounding-message').innerHTML='<div class="alert alert-error">Invalid rounding policy.</div>'; return;
+async function saveRounding(){
+  if(!roundingDraft)roundingDraft=Object.fromEntries(clone(roundingArray()).map(p=>[p.id,p]));
+  for(const card of document.querySelectorAll('[data-rp-card]')){
+    const p=roundingDraft[card.dataset.rpCard];if(!p||p.method==='none')continue;
+    for(const input of card.querySelectorAll('[data-rp]')){
+      const k=input.dataset.rp,v=input.value.trim();
+      if(k==='maxAbsoluteDifference'&&!v)delete p[k];else p[k]=Number(v);
     }
   }
-  localStorage.setItem(ROUNDING_KEY,JSON.stringify(roundingArray()));
-  $('#rounding-message').innerHTML='<div class="alert alert-success">Local test override saved.</div>';
-  renderRounding();
+  const profiles=roundingArray();
+  if(profiles.some(x=>!(x.increment>0)||!(x.maxPercentDifference>=0&&x.maxPercentDifference<=100))){
+    $('#rounding-message').textContent='Invalid rounding profile';return;
+  }
+  const pin=$('#rounding-pin').value.trim();
+  if(!pin){$('#rounding-message').textContent='กรุณากรอก Pharmacist PIN';return;}
+  const btn=$('#rounding-save');btn.disabled=true;
+  try{
+    const response=await fetch('/api/rounding',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({pin,expectedRevision:roundingRevision,profiles})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||data.success!==true)throw Error(data.message||'Server could not save rounding policy');
+    roundingRevision=data.revision;
+    roundingProfiles=Object.fromEntries(data.profiles.map(x=>[x.id,x]));
+    roundingDraft=null;
+    invalidateCalculation();
+    renderRounding();
+    $('#rounding-message').textContent='Global Rounding Policy saved on Server · revision '+roundingRevision;
+  }catch(err){$('#rounding-message').textContent='ไม่สำเร็จ: '+err.message;}
+  finally{$('#rounding-pin').value='';btn.disabled=false;}
 }
 
 // Global hook for publish-manager.js updates
