@@ -416,7 +416,11 @@ function applyCentralRegimen(r) {
   if (!r || r.status!=='published' || !r.localApproval || !Array.isArray(r.phases) || !r.phases.length) return;
   const existing = catalog.find(c=>c.structured?.id===r.id || c.master?.catalog_id===r.catalog_id);
   if (existing) {
+    const changed=existing.structured?.revision!==r.revision || existing.structured?.version!==r.version;
     existing.structured = r;
+    existing.name = r.name;
+    existing.indication = r.indication;
+    if (changed && selectedItem?.key===existing.key) invalidateCalculation();
     existing.status = 'approved_published';
     existing.guidelineReference = r;
   } else {
@@ -960,9 +964,13 @@ function renderLibrary() {
     arr.map(x=>`<article class="regimen-card"><div><span class="badge ${statusBadge(x)}">${displayStatus(x)}</span></div>
       <h4>${esc(x.name)}</h4><p>${esc(x.indication)}</p><div class="micro">${esc(x.master?.cycle_text||`${x.structured?.cycleIntervalDays||''} days/cycle`)}</div>${referenceDetails(x)}
       ${x.master?.drugs?.length?`<details><summary>Drug details</summary><div class="drug-list">${x.master.drugs.map(d=>`<div class="drug-row"><strong>${esc(d['ชื่อยา'])}</strong><span>${esc(d['ขนาดยา'])}</span></div>`).join('')}</div></details>`:''}
-      <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button>${x.master?`<button type="button" class="secondary" data-review-regimen="${esc(x.key)}">Review / Publish</button>`:''}</div></article>`).join('')
+      <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button>${x.master?`<button type="button" class="secondary" data-review-regimen="${esc(x.key)}">Review / Publish</button><button type="button" class="secondary" data-builder-regimen="${esc(x.key)}">Build Structured</button>`:''}</div></article>`).join('')
   }</div></section>`).join('');
   document.querySelectorAll('[data-use-regimen]').forEach(b=>b.addEventListener('click',()=>useFromLibrary(b.dataset.useRegimen)));
+  document.querySelectorAll('[data-builder-regimen]').forEach(b=>b.addEventListener('click',()=>{
+    const item=catalog.find(x=>x.key===b.dataset.builderRegimen);
+    if(item)window.BHH_BUILDER?.open(item);
+  }));
   document.querySelectorAll('[data-review-regimen]').forEach(b=>b.addEventListener('click',()=>{
     const item=catalog.find(x=>x.key===b.dataset.reviewRegimen);
     if(item&&window.BHH_PUBLISH)window.BHH_PUBLISH.open(item);
