@@ -68,7 +68,13 @@ export async function confirmEditorPin(request,env){
  const record=await db.prepare(`SELECT u.id,u.email FROM staging_editor_pins p
  JOIN users u ON u.id=p.user_id
  WHERE p.pin_hash=? AND u.active=1 AND u.role_code='regimen_editor'`).bind(candidate).first();
- if(!record)throw fail('Invalid PIN',401);
+ if(!record){
+  await db.prepare('INSERT INTO staging_auth_events(id,user_id,fingerprint,action,at) VALUES(?,?,?,?,?)')
+    .bind(crypto.randomUUID(),null,ip,'denied',now).run();
+  throw fail('Invalid PIN',401);
+ }
+ await db.prepare('INSERT INTO staging_auth_events(id,user_id,fingerprint,action,at) VALUES(?,?,?,?,?)')
+  .bind(crypto.randomUUID(),record.id,ip,'login',now).run();
  const token=hexb(crypto.getRandomValues(new Uint8Array(32)));
  await db.prepare('INSERT INTO staging_editor_sessions(token_hash,user_id,created_at,expires_at) VALUES(?,?,?,?)')
   .bind(await sha(token),record.id,now,now+3600).run();
