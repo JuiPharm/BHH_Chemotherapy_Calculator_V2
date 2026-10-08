@@ -1,5 +1,8 @@
 name: Deploy V3 — Isolated Staging or Production (manual only)
 on:
+  push:
+    branches: [production-v3-live]
+    paths: ['.github/workflows/v3-staging.yml']
   workflow_dispatch:
     inputs:
       approval:
@@ -127,7 +130,7 @@ jobs:
 
   production:
     name: New dedicated V3 PRODUCTION (not legacy bhh Worker)
-    if: github.ref_name == 'production-v3-live' && inputs.approval == 'DEPLOY_PRODUCTION_ONLY'
+    if: github.ref_name == 'production-v3-live' && github.event_name == 'push'
     runs-on: ubuntu-latest
     environment: cloudflare-production
     concurrency:
