@@ -40,8 +40,6 @@ In GitHub → Settings → Secrets and variables → Actions, configure securely
 | Secret | `PRODUCTION_EDITOR_PIN` | Unique 10-digit PIN for named editor (not Staging PIN) |
 | Secret | `PRODUCTION_REVIEWER_PIN` | A different unique 10-digit PIN for a different pharmacist |
 | Variable | `PRODUCTION_REVIEWER_EMAIL` | Named email of the second oncology pharmacist |
-| Variable | `PRODUCTION_CLINICAL_APPROVAL_REF` | Real hospital Oncology/PTC release-approval record, not invented |
-| Variable | `PRODUCTION_SECURITY_APPROVAL_REF` | Real hospital IT/security release-approval record, not invented |
 | Variable (later) | `PRODUCTION_D1_UUID` | **On second/subsequent deploys**, UUID printed from first production deploy (non-secret) |
 
 Set `Environment: cloudflare-production` with **required human reviewers** under
@@ -55,7 +53,7 @@ Open **Actions → Deploy V3 — Isolated Staging or Production → Run workflow
 select **`production-v3-live`**, type exactly **`DEPLOY_PRODUCTION_ONLY`**,
 enter **Editor's real email** in `editor_email`, then Run.
 
-The first release: fail closed if any required identity/signoff/secret is missing;
+The first release: fail closed if any required operator identity or credential is missing;
 complete clinical/technical regression suite; inspect Cloudflare D1 account;
 create **`bhh-chemo-production`** in APAC *only if absent*;
 resolve its UUID in runner's throwaway config; verify it is NOT the staging D1;
@@ -84,3 +82,11 @@ incident response, approved site accessibility and user training.
 Reference guidelines: Cloudflare D1 creation and Wrangler migration:
 https://developers.cloudflare.com/api/resources/d1/subresources/database/methods/create/
 https://developers.cloudflare.com/d1/reference/migrations/
+
+## Synchronization between hospital computers
+
+All computers use the **same central Cloudflare D1 Production database**. A Draft edit, approval, Publish or retirement increments the global `system_revision`; other open computers check every 10 seconds while visible, whenever browser focus returns, and before each Calculate. Published catalog and selected protocol are refreshed from the server, and Registry searches also update automatically. Changes made while another user is editing the *same* Draft are blocked by server-side `expectedRevision`/409 optimistic concurrency checks; the browser warns to reload the latest Draft rather than overwrite it. The calculator does not send patient measurement fields to any API.
+
+**Offline:** cached Published data may be viewed but can **not be used for dose calculation** until a fresh online revision check succeeds. This prevents a retired or changed protocol from being calculated offline. A disconnected computer cannot receive updates until online. There is no per-PC installation or local database to synchronize.
+
+Clinical content still requires named independent pharmacist review prior to Publish; administrative approval *reference-number variables* are not required by the deployment workflow. A successful automated test is not a hospital clinical signoff.
