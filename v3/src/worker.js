@@ -119,8 +119,8 @@ async function dispatch(request, env) {
     if (path === '/api/auth/login') return stagingLogin(request, env);
     if (path === '/api/auth/logout') return stagingLogout(request, env);
     const publicAsset = {
-      '/login': '/login.html',
-      '/login.html': '/login.html',
+      '/login': '/login',
+      '/login.html': '/login',
       '/login.js': '/login.js',
       '/login.css': '/login.css',
       '/logo.png': '/logo.png',
