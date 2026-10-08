@@ -26,12 +26,43 @@ const server = http.createServer((req, res) => {
     res.end('[]');
     return;
   }
+  const TEST_APPROVE_PIN = '8888';
+
+  if (urlPath === '/api/verify-pin' && req.method === 'POST') {
+    let body = '';
+    req.on('data', chunk => body += chunk);
+    req.on('end', () => {
+      try {
+        const { pin } = JSON.parse(body);
+        if (pin === TEST_APPROVE_PIN) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, valid: true }));
+        } else {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, valid: false, message: 'รหัส PIN ไม่ถูกต้อง' }));
+        }
+      } catch {
+        res.writeHead(400); res.end();
+      }
+    });
+    return;
+  }
   if (urlPath === '/api/publish' && req.method === 'POST') {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
-      res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ success: true, message: 'Mock Cloudflare Publish Success' }));
+      try {
+        const { pin } = JSON.parse(body);
+        if (pin === TEST_APPROVE_PIN) {
+          res.writeHead(200, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: true, message: 'Mock Cloudflare Publish Success' }));
+        } else {
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ success: false, message: 'รหัส PIN สำหรับอนุมัติไม่ถูกต้อง' }));
+        }
+      } catch {
+        res.writeHead(400); res.end();
+      }
     });
     return;
   }
@@ -179,9 +210,21 @@ async function runBrowserTests() {
   console.log('Wrong PIN shows error:', errorVisible);
   if (!errorVisible) throw new Error('Wrong PIN should display an error');
 
-  // Enter correct PIN (1234)
+  // Verify 1234 is REJECTED (no longer valid default PIN)
+  console.log('Testing that old default PIN 1234 is rejected...');
   await evaluate(`
     document.getElementById('pin-auth-input').value = '1234';
+    document.getElementById('pin-auth-form').dispatchEvent(new Event('submit', { cancelable: true }));
+  `);
+  await new Promise(r => setTimeout(r, 300));
+  const oldPinRejected = await evaluate(`!document.getElementById('pin-auth-error').classList.contains('hidden')`);
+  console.log('Old default PIN 1234 rejected:', oldPinRejected);
+  if (!oldPinRejected) throw new Error('Old default PIN 1234 should be rejected');
+
+  // Enter new Cloudflare APPROVE_PIN (8888)
+  console.log('Testing that new APPROVE_PIN (8888) unlocks...');
+  await evaluate(`
+    document.getElementById('pin-auth-input').value = '8888';
     document.getElementById('pin-auth-form').dispatchEvent(new Event('submit', { cancelable: true }));
   `);
   await new Promise(r => setTimeout(r, 300));
@@ -189,7 +232,7 @@ async function runBrowserTests() {
   const adminTabsVisible = await evaluate(`
     Array.from(document.querySelectorAll('.admin-tab')).every(el => !el.classList.contains('hidden'))
   `);
-  console.log('Admin tabs unlocked and visible after PIN 1234:', adminTabsVisible);
+  console.log('Admin tabs unlocked and visible after new PIN 8888:', adminTabsVisible);
   if (!adminTabsVisible) throw new Error('Admin tabs should be visible after correct PIN');
 
   // Test 3: Regimen Library & Review / Publish Flow WITHOUT Guideline URL
@@ -220,7 +263,7 @@ async function runBrowserTests() {
     document.getElementById('review-publish-url').value = '';
     document.getElementById('review-publish-source').value = '';
     document.getElementById('review-publish-attest').checked = true;
-    document.getElementById('review-publish-token').value = '1234';
+    document.getElementById('review-publish-token').value = '8888';
   `);
   await new Promise(r => setTimeout(r, 300));
 

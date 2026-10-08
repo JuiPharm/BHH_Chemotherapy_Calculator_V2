@@ -62,11 +62,11 @@ The current registry intentionally retains `localApproval: true` for the include
    - **KV namespace**: เลือก namespace ที่สร้างไว้ (เช่น `BHH_REGIMENS_DATA`)
 5. กด **Save**
 
-### ขั้นตอนที่ 4: กำหนดรหัส PIN ใน Environment Variables (ตัวเลือกเสริม)
+### ขั้นตอนที่ 4: กำหนดรหัส PIN ใน Environment Variables (จำเป็น)
 1. ที่แท็บ **Settings** → **Environment variables**
 2. กด **Add variable**:
-   - **Variable name**: `APPROVE_PIN`
-   - **Value**: `1234` *(หรือรหัส PIN เภสัชกรตามที่ต้องการ)*
+   - **Variable name**: `APPROVE_PIN` *(ตรงตามชื่อตัวแปรที่ระบบเรียกใช้)*
+   - **Value**: กำหนดรหัส PIN ของฝ่ายเภสัชกรรมตามต้องการ (ระบบยกเลิกรหัส Default 1234 แล้ว เพื่อความปลอดภัยสูงสุด)
 3. กด **Save**
 
 ### ขั้นตอนที่ 5: Redeploy ให้การตั้งค่ามีผล

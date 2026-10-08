@@ -4,7 +4,13 @@ export async function onRequestPost(context) {
     const body = await request.json();
     const { pin, regimen } = body;
 
-    const CORRECT_PIN = (env && env.APPROVE_PIN) ? String(env.APPROVE_PIN).trim() : '1234';
+    const CORRECT_PIN = (env && env.APPROVE_PIN) ? String(env.APPROVE_PIN).trim() : null;
+    if (!CORRECT_PIN) {
+      return new Response(JSON.stringify({ success: false, message: 'ระบบ Cloudflare ยังไม่ได้ตั้งค่าตัวแปร APPROVE_PIN ใน Environment variables' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
     if (!pin || String(pin).trim() !== CORRECT_PIN) {
       return new Response(JSON.stringify({ success: false, message: 'รหัส PIN สำหรับอนุมัติไม่ถูกต้อง' }), {
         status: 401,

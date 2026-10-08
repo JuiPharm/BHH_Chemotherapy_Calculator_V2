@@ -52,8 +52,8 @@
       '<label>หมายเหตุผลการตรวจสอบ<textarea id="review-publish-notes" rows="2" placeholder="แก้ไขข้อมูลใด / มีเงื่อนไขการใช้เพิ่มเติม"></textarea></label>' +
       '<label class="review-publish-check"><input id="review-publish-attest" type="checkbox" required /> <span>ยืนยันว่าตรวจชนิดมะเร็ง ข้อบ่งใช้ ยา ขนาดยา หน่วย วันให้ยา และรอบยาเทียบกับ Guideline ฉบับจริงแล้ว</span></label>' +
       '<div class="review-publish-token"><p><strong>สิทธิ์ในการอนุมัติและเผยแพร่ (Pharmacist PIN)</strong> — ใส่รหัส PIN เพื่อยืนยันสิทธิ์ในการ Approve & Publish</p>' +
-      '<label>รหัส PIN อนุมัติ (Pharmacist PIN)<input id="review-publish-token" type="password" autocomplete="off" placeholder="กรอกรหัส PIN (เช่น 1234)" style="font-size:1.15rem;letter-spacing:3px;text-align:center;" required /></label>' +
-      '<small>ใส่รหัส PIN เพื่อยืนยันความถูกต้องและเปิดใช้งานการคำนวณสูตรยานี้ในระบบ (ค่าเริ่มต้น: 1234)</small></div>' +
+      '<label>รหัส PIN อนุมัติ (Pharmacist PIN)<input id="review-publish-token" type="password" autocomplete="off" placeholder="กรอกรหัส PIN" style="font-size:1.15rem;letter-spacing:3px;text-align:center;" required /></label>' +
+      '<small>ใส่รหัส PIN เพื่อยืนยันความถูกต้องและเปิดใช้งานการคำนวณสูตรยานี้ในระบบ (APPROVE_PIN)</small></div>' +
       '<p id="review-publish-message" role="status" aria-live="polite"></p></div>' +
       '<div class="review-publish-actions"><button type="button" id="review-publish-queue">เพิ่มเข้าชุดอนุมัติ</button><button type="button" id="review-publish-save">บันทึกข้อมูล (รอตรวจต่อ)</button><button type="submit" id="review-publish-confirm" class="primary">Approve & Publish</button></div>' +
       '<p class="review-publish-foot">Published = เปิดแสดงสูตรและเปิดใช้งานการคำนวณอัตโนมัติบนระบบทันที</p></form>';
@@ -109,8 +109,10 @@
     $('review-publish-url').value = saved?.reference_url || item.guidelineReference?.reference_url || '';
     $('review-publish-notes').value = saved?.review_note || item.guidelineReference?.review_note || '';
     $('review-publish-attest').checked = false;
-    $('review-publish-token').value = '';
-    $('review-publish-token').placeholder = token ? 'รหัส PIN ผ่านการยืนยันแล้ว' : 'กรอกรหัส PIN (เช่น 1234)';
+    const savedPin = sessionStorage.getItem('bhh_pharmacist_pin_token') || '';
+    if (!token && savedPin) token = savedPin;
+    $('review-publish-token').value = token || '';
+    $('review-publish-token').placeholder = token ? 'รหัส PIN ผ่านการยืนยันแล้ว' : 'กรอกรหัส PIN';
     $('review-publish-message').textContent = '';
     $('review-publish-error').hidden=true;
     $('review-publish-error').textContent='';
@@ -160,10 +162,7 @@
       const fields = readForm();
       const inputToken = $('review-publish-token').value.trim();
       if(inputToken) token=inputToken;
-      if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยันการอนุมัติ (ค่าเริ่มต้น: 1234)');
-      if(token !== '1234' && token !== '9999' && token !== '2567') {
-        throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง (ค่าเริ่มต้น: 1234)');
-      }
+      if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยันการอนุมัติ');
       busy=true;
       $('review-publish-confirm').disabled=true;
       $('review-publish-save').disabled=true;
@@ -198,14 +197,25 @@
         console.warn('LocalStorage error:', err);
       }
 
-      // 2. Cloudflare API synchronization
+      // 2. Cloudflare API synchronization & verification
       try {
-        await fetch('/api/publish', {
+        const cfRes = await fetch('/api/publish', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ pin: token, regimen: replacement })
         });
-      } catch (err) {}
+        if (!cfRes.ok && cfRes.status === 401) {
+          const errData = await cfRes.json().catch(() => ({}));
+          throw Error(errData.message || 'รหัส PIN สำหรับอนุมัติไม่ถูกต้อง');
+        } else if (!cfRes.ok && cfRes.status === 500) {
+          const errData = await cfRes.json().catch(() => ({}));
+          throw Error(errData.message || 'ระบบยังไม่ได้ตั้งค่าตัวแปร APPROVE_PIN ใน Cloudflare');
+        }
+      } catch (err) {
+        if (err.message && (err.message.includes('PIN') || err.message.includes('APPROVE_PIN'))) {
+          throw err;
+        }
+      }
 
       // 3. Update memory model and notify application
       reviewItem.status = replacement.status;
@@ -273,7 +283,7 @@
       '<p>อนุมัติเฉพาะสูตรที่คุณเปิด Review ตรวจครบ และกด “เพิ่มเข้าชุดอนุมัติ” แล้ว</p>' +
       '<div id="bhh-bulk-list"></div>' +
       '<label>รหัส PIN อนุมัติ (Pharmacist PIN)' +
-      '<input id="bhh-bulk-token" type="password" autocomplete="off" placeholder="กรอกรหัส PIN (เช่น 1234)" style="font-size:1.15rem;letter-spacing:3px;text-align:center;" required/></label>' +
+      '<input id="bhh-bulk-token" type="password" autocomplete="off" placeholder="กรอกรหัส PIN" style="font-size:1.15rem;letter-spacing:3px;text-align:center;" required/></label>' +
       '<label class="review-publish-check"><input type="checkbox" id="bhh-bulk-attest"/>' +
       '<span>ยืนยันว่าตรวจทุกสูตรในรายการนี้เทียบกับ Guideline แล้ว และอนุมัติการเผยแพร่พร้อมกัน</span></label>' +
       '<p id="bhh-bulk-result" role="status" aria-live="polite"></p></div>' +
@@ -313,8 +323,10 @@
     addBatchUI(); renderBatchList();
     $('bhh-bulk-attest').checked=false;
     $('bhh-bulk-result').textContent='';
-    $('bhh-bulk-token').value='';
-    $('bhh-bulk-token').placeholder=token?'รหัส PIN พร้อมใช้งานแล้ว':'กรอกรหัส PIN (เช่น 1234)';
+    const savedPin = sessionStorage.getItem('bhh_pharmacist_pin_token') || '';
+    if (!token && savedPin) token = savedPin;
+    $('bhh-bulk-token').value=token || '';
+    $('bhh-bulk-token').placeholder=token?'รหัส PIN พร้อมใช้งานแล้ว':'กรอกรหัส PIN';
     $('bhh-bulk-dialog').showModal();
   }
 
@@ -325,9 +337,23 @@
         throw Error('โปรดยืนยันการตรวจทานทุกรายการก่อนกด Publish');
       const t=$('bhh-bulk-token').value.trim();
       if(t) token=t;
-      if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยัน (ค่าเริ่มต้น: 1234)');
-      if(token !== '1234' && token !== '9999' && token !== '2567') {
-        throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง (ค่าเริ่มต้น: 1234)');
+      if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยัน');
+
+      try {
+        const vRes = await fetch('/api/verify-pin', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin: token })
+        });
+        if (!vRes.ok && vRes.status === 401) {
+          throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง');
+        } else if (!vRes.ok && vRes.status === 500) {
+          throw Error('ระบบยังไม่ได้ตั้งค่าตัวแปร APPROVE_PIN ใน Cloudflare');
+        }
+      } catch (err) {
+        if (err.message && (err.message.includes('PIN') || err.message.includes('APPROVE_PIN'))) {
+          throw err;
+        }
       }
       busy=true;
       $('bhh-bulk-confirm').disabled=true;

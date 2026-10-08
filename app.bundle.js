@@ -455,18 +455,69 @@ function bindAdminPin() {
   closeBtn?.addEventListener('click', closeDialog);
   cancelBtn?.addEventListener('click', closeDialog);
 
-  form?.addEventListener('submit', (e) => {
+  form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const pin = input.value.trim();
-    if (pin === '1234' || pin === '9999' || pin === '2567') {
+    if (!pin) return;
+
+    err.classList.add('hidden');
+    err.textContent = '';
+
+    try {
+      // Verify via Cloudflare Serverless Function (/api/verify-pin)
+      const res = await fetch('/api/verify-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.valid) {
+          isAdminUnlocked = true;
+          sessionStorage.setItem('bhh_pharmacist_pin_unlocked', 'true');
+          sessionStorage.setItem('bhh_pharmacist_pin_token', pin);
+          updateAdminUi();
+          closeDialog();
+          return;
+        }
+      } else if (res.status === 401) {
+        const data = await res.json().catch(() => ({}));
+        err.textContent = data.message || 'รหัส PIN ไม่ถูกต้อง';
+        err.classList.remove('hidden');
+        input.select();
+        return;
+      } else if (res.status === 500) {
+        const data = await res.json().catch(() => ({}));
+        err.textContent = data.message || 'ระบบยังไม่ได้ตั้งค่าตัวแปร APPROVE_PIN ใน Cloudflare';
+        err.classList.remove('hidden');
+        input.select();
+        return;
+      }
+    } catch (netErr) {
+      // Offline / static host fallback
+    }
+
+    // Static fallback: check localStorage configured PIN if offline / static host
+    const localPin = localStorage.getItem('bhh_approve_pin');
+    if (localPin) {
+      if (pin === localPin) {
+        isAdminUnlocked = true;
+        sessionStorage.setItem('bhh_pharmacist_pin_unlocked', 'true');
+        sessionStorage.setItem('bhh_pharmacist_pin_token', pin);
+        updateAdminUi();
+        closeDialog();
+      } else {
+        err.textContent = 'รหัส PIN ไม่ถูกต้อง';
+        err.classList.remove('hidden');
+        input.select();
+      }
+    } else {
+      localStorage.setItem('bhh_approve_pin', pin);
       isAdminUnlocked = true;
       sessionStorage.setItem('bhh_pharmacist_pin_unlocked', 'true');
+      sessionStorage.setItem('bhh_pharmacist_pin_token', pin);
       updateAdminUi();
       closeDialog();
-    } else {
-      err.textContent = 'รหัส PIN ไม่ถูกต้อง (ค่าเริ่มต้น: 1234)';
-      err.classList.remove('hidden');
-      input.select();
     }
   });
 
