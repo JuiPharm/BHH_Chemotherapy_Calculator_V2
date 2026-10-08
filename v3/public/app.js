@@ -798,10 +798,13 @@ $('#patient-form').onsubmit = (e) => {
       selections,
     );
     const v = state.selected.version;
+    const phase=v.document.phases.find(x=>Number(p.cycle)>=x.cycleStart&&Number(p.cycle)<=x.cycleEnd);
+    const protocolDoses=new Map((phase?.orders||[]).map(o=>[o.id,doseText(o.dose)]));
     $('#result').innerHTML =
       `<div class="panel"><h3>Calculation result · ${esc(v.document.name)} · v${esc(v.version)}</h3>${!state.online ? '<div class="warning">OFFLINE / CACHED PUBLISHED PROTOCOL — verify current protocol before administration.</div>' : ''}<small>Published ${esc(v.published_at)} · revision ${state.revision} · ${esc(r.phase)}</small><div class="metrics"><span>BSA ${fmt(r.bsa)} m²</span>${r.kidney !== undefined ? `<span>${esc($('#kidney-method option:checked').textContent)}: ${fmt(r.kidney)} mL/min</span>` : ''}</div>${table(
         [
           'Drug / Schedule',
+          'Protocol Dose',
           'Calculated Dose',
           'Clinical Dose',
           'Recommended Dose',
@@ -810,7 +813,7 @@ $('#patient-form').onsubmit = (e) => {
         ],
         r.rows.map(
           (x) =>
-            `<tr><td><strong>${esc(x.drug)}</strong><small>${esc(x.route)} · days ${x.schedule.days.join(', ')}${x.schedule.continuousInfusionHours ? ` · ${x.schedule.continuousInfusionHours} h infusion` : ''}<br>Per administration · ${x.administrations} administration(s)/cycle</small></td><td class="calc">${fmt(x.base)} ${x.unit}</td><td class="clinical">${fmt(x.clinical)} ${x.unit}</td><td class="recommended">${fmt(x.recommended)} ${x.unit}</td><td class="diff">${fmt(x.difference)} ${x.unit}<small>${fmt(x.differencePct)}%</small></td><td>${x.notes.map((n) => `<small>${esc(n)}</small>`).join('')}${x.warnings.map((w) => `<div class="warning">${esc(w)}</div>`).join('')}</td></tr>`,
+            `<tr><td><strong>${esc(x.drug)}</strong><small>${esc(x.route)} · days ${x.schedule.days.join(', ')}${x.schedule.continuousInfusionHours ? ` · ${x.schedule.continuousInfusionHours} h infusion` : ''}<br>Per administration · ${x.administrations} administration(s)/cycle</small></td><td class="protocol-dose">${esc(protocolDoses.get(x.id)||"—")}</td><td class="calc">${fmt(x.base)} ${x.unit}</td><td class="clinical">${fmt(x.clinical)} ${x.unit}</td><td class="recommended">${fmt(x.recommended)} ${x.unit}</td><td class="diff">${fmt(x.difference)} ${x.unit}<small>${fmt(x.differencePct)}%</small></td><td>${x.notes.map((n) => `<small>${esc(n)}</small>`).join('')}${x.warnings.map((w) => `<div class="warning">${esc(w)}</div>`).join('')}</td></tr>`,
         ),
       )}<p>เภสัชกรต้องตรวจสอบขนาดยา ตารางให้ยา และความเหมาะสมทางคลินิกก่อนบริหารยา</p><label><input type="checkbox" id="verification" class="verification"> Pharmacist verification completed (this calculation only)</label></div>`;
     $('#result').scrollIntoView({ behavior: 'smooth', block: 'start' });
