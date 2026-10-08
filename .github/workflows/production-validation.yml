@@ -27,6 +27,7 @@ jobs:
         run: |
           node tests/production-smoke.mjs
           node tests/production-safety.mjs
+          node tests/rounding-security.mjs
           node tests/runtime-startup-static.mjs
       - name: Real browser workflow (headless Chrome)
         run: node tests/browser-production-flow.mjs
