@@ -16,6 +16,16 @@
     'eviQ': ['eviq.org.au'],
     'NCI US': ['cancer.gov'],
   };
+
+  const SUGGESTED_PROTOCOLS = {
+    'BHH-CATALOG-039': {
+      source: 'eviQ',
+      id: 'eviQ 168 — R-CVP',
+      url: 'https://www.eviq.org.au/haematology/lymphoma/other-b-cell-lymphoma/168-r-cvp-rituximab-cyclophosphamide-vincristine',
+      warning: 'สูตรเดิมใช้ Prednisone 100 mg วันที่ 1–5 แต่ eviQ 168 ใช้ Prednisolone 40 mg/m² วันที่ 1–5 โปรดตรวจและเลือก protocol variant ก่อนรับรอง ห้ามอนุมัติจากการใส่ลิงก์อย่างเดียว',
+    },
+  };
+
   let token = '';
   let reviewItem = null;
   let busy = false;
@@ -33,13 +43,13 @@
     d.innerHTML = '<div class="review-publish-head"><h2 id="review-publish-heading">Review → Approve & Publish</h2><button id="review-publish-close" type="button" aria-label="Close">✕</button></div>' +
       '<form id="review-publish-form" novalidate><div class="review-publish-content">' +
       '<p class="review-publish-help">แก้ไขข้อมูลที่จำเป็น ตรวจสอบกับ Guideline ฉบับจริง แล้วกด <strong>Approve & Publish</strong> เพื่อบันทึกลง GitHub Production</p>' +
-      '<p id="review-publish-error" role="alert" aria-live="assertive" hidden></p><div id="review-publish-name"></div>' +
-      '<label>ข้อบ่งใช้ (Indication)<textarea id="review-publish-indication" rows="2" required></textarea></label>' +
-      '<label>รอบการรักษา (Cycle schedule)<input id="review-publish-cycle" required /></label>' +
-      '<div id="review-publish-orders"></div>' +
+      '<p id="review-publish-error" role="alert" aria-live="assertive" hidden></p><div id="review-publish-name"></div><div id="review-reference-suggestion" hidden></div>' +
       '<div class="review-publish-two"><label>แหล่งอ้างอิง<select id="review-publish-source" required><option value="">เลือก Guideline</option><option>NCCN</option><option>NCI Thailand</option><option>ASCO</option><option>BC Cancer</option><option>eviQ</option><option>NCI US</option></select></label>' +
       '<label>Protocol ID / Version (ถ้ามี)<input id="review-publish-protocol" placeholder="เช่น GICOXB / 2026" /></label></div>' +
       '<label>ลิงก์ Guideline ที่ใช้ตรวจสอบ<input id="review-publish-url" type="url" placeholder="https://..." required /></label>' +
+      '<label>ข้อบ่งใช้ (Indication)<textarea id="review-publish-indication" rows="2" required></textarea></label>' +
+      '<label>รอบการรักษา (Cycle schedule)<input id="review-publish-cycle" required /></label>' +
+      '<div id="review-publish-orders"></div>' +
       '<label>หมายเหตุผลการตรวจสอบ<textarea id="review-publish-notes" rows="2" placeholder="แก้ไขข้อมูลใด / มีเงื่อนไขการใช้เพิ่มเติม"></textarea></label>' +
       '<label class="review-publish-check"><input id="review-publish-attest" type="checkbox" required /> <span>ยืนยันว่าตรวจชนิดมะเร็ง ข้อบ่งใช้ ยา ขนาดยา หน่วย วันให้ยา และรอบยาเทียบกับ Guideline ฉบับจริงแล้ว</span></label>' +
       '<div class="review-publish-token"><p><strong>สิทธิ์ในการ Publish (แยกจากลิงก์ Guideline)</strong> — ต้องใส่ GitHub Token ครั้งแรกของการเปิดหน้าเว็บ หากใส่แล้วไม่ต้องกรอกซ้ำเมื่อ Review สูตรอื่นในหน้าเดียวกัน</p>' +
@@ -67,11 +77,32 @@
     else if(box)box.scrollIntoView({block:'nearest'});
   }
 
+
+  function suggestedProtocol(item) {
+    const box=$('review-reference-suggestion');
+    const p=SUGGESTED_PROTOCOLS[item.master.catalog_id];
+    if(!p) {box.hidden=true;box.innerHTML='';return;}
+    box.hidden=false;
+    box.innerHTML='<div class="reference-suggestion-title">เอกสารสำหรับเปรียบเทียบ (ยังไม่ใช่การรับรอง)</div>'+
+      '<a href="'+escape(p.url)+'" target="_blank" rel="noopener noreferrer">'+escape(p.id)+' — เปิดเอกสาร</a>'+
+      '<p class="reference-suggestion-warning">'+escape(p.warning)+'</p>'+
+      '<button type="button" id="review-use-suggestion">ใส่ลิงก์นี้</button>';
+    $('review-use-suggestion').addEventListener('click',()=>{
+      $('review-publish-source').value=p.source;
+      $('review-publish-protocol').value=p.id;
+      $('review-publish-url').value=p.url;
+      $('review-publish-url').setCustomValidity('');
+      $('review-publish-error').hidden=true;
+      $('review-publish-message').textContent='เพิ่มลิงก์แล้ว โปรดตรวจขนาดยาและตารางให้ตรงกับ variant ก่อนยืนยัน';
+    });
+  }
+
   function open(item) {
     if (!item || !item.master || item.structured) return;
     reviewItem = item;
     ui();
     $('review-publish-name').innerHTML = '<strong>' + escape(item.master.name) + '</strong><p>' + escape(item.master.catalog_id) + ' · ' + escape(item.status) + '</p>';
+    suggestedProtocol(item);
     const saved = reviewQueue.get(item.master.catalog_id)?.fields;
     $('review-publish-indication').value = saved?.corrected_indication || item.master.indication || '';
     $('review-publish-cycle').value = saved?.corrected_cycle_text || item.master.cycle_text || '';
