@@ -1,5 +1,9 @@
 name: Deploy V3 Staging — Public Calculator and PIN Editor
 on:
+  # ONE-TIME owner-requested isolated V3 Staging deploy; remove after triggering.
+  push:
+    branches: [staging-internal-auth-v3]
+    paths: ['.github/workflows/v3-staging.yml']
   workflow_dispatch:
     inputs:
       approval:
@@ -18,7 +22,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   staging:
-    if: github.ref_name == 'staging-internal-auth-v3' && inputs.approval == 'DEPLOY_STAGING_ONLY'
+    if: github.ref_name == 'staging-internal-auth-v3' && ((github.event_name == 'workflow_dispatch' && inputs.approval == 'DEPLOY_STAGING_ONLY') || github.event_name == 'push')
     runs-on: ubuntu-latest
     environment: cloudflare-staging
     env:
