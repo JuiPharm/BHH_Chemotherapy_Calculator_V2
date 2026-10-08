@@ -40,7 +40,7 @@
       '<label>ลิงก์ Guideline ที่ใช้ตรวจสอบ<input id="review-publish-url" type="url" placeholder="https://..." required /></label>' +
       '<label>หมายเหตุผลการตรวจสอบ<textarea id="review-publish-notes" rows="2" placeholder="แก้ไขข้อมูลใด / มีเงื่อนไขการใช้เพิ่มเติม"></textarea></label>' +
       '<label class="review-publish-check"><input id="review-publish-attest" type="checkbox" required /> <span>ยืนยันว่าตรวจชนิดมะเร็ง ข้อบ่งใช้ ยา ขนาดยา หน่วย วันให้ยา และรอบยาเทียบกับ Guideline ฉบับจริงแล้ว</span></label>' +
-      '<div class="review-publish-token"><p><strong>เชื่อม GitHub เพื่อบันทึกลง Production</strong> (เฉพาะครั้งแรกในหน้าที่เปิดอยู่)</p>' +
+      '<div class="review-publish-token"><p><strong>สิทธิ์ในการ Publish (แยกจากลิงก์ Guideline)</strong> — ต้องใส่ GitHub Token ครั้งแรกของการเปิดหน้าเว็บ หากใส่แล้วไม่ต้องกรอกซ้ำเมื่อ Review สูตรอื่นในหน้าเดียวกัน</p>' +
       '<label>GitHub fine-grained token<input id="review-publish-token" type="password" autocomplete="off" placeholder="Token แบบ Contents: Read and write" /></label>' +
       '<small>เลือก Repository นี้เพียงแห่งเดียวและให้สิทธิ์ Contents: Read and write เท่านั้น ไม่เก็บ token ในไฟล์หรือ localStorage · <a id="review-publish-token-guide" target="_blank" rel="noopener noreferrer" href="' + TOKEN_URL + '">สร้าง Token ที่ GitHub</a></small></div>' +
       '<p id="review-publish-message" role="status" aria-live="polite"></p></div>' +
