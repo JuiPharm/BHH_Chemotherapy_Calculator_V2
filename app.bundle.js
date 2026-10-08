@@ -268,10 +268,25 @@ function kidneyFunction(p,bsa) {
   if (p.kidneyMethod==='cockcroft_gault_legacy') {
     return {value:cockcroft(p),label:'Cockcroft-Gault CrCl (mL/min)'};
   }
+  if (p.kidneyMethod==='ckd_epi_2021_cr') {
+    const r=globalThis.BHH_RENAL.ckdEpi2021WithBsa(p,bsa);
+    return {
+      value:r.deindexedEgfr,
+      indexedEgfr:r.indexedEgfr,
+      deindexedEgfr:r.deindexedEgfr,
+      method:p.kidneyMethod,
+      label:'CKD-EPI 2021 (race-free), BSA de-indexed (mL/min)',
+      warning:'CKD-EPI 2021 is NOT the CKD-EPI 2009 equation used by eviQ/ADDIKD Carboplatin guidance. Confirm the protocol-approved renal method; measured GFR may be preferred.'
+    };
+  }
   if (!(p.kidneyValue>0)) throw new Error('Kidney function value is required');
   if (p.kidneyMethod==='measured_gfr') return {value:p.kidneyValue,label:'Measured GFR (mL/min)'};
   if (p.kidneyMethod==='bsa_adjusted_egfr') {
-    return {value:p.kidneyValue*(bsa/1.73),label:'BSA-adjusted eGFR (mL/min)'};
+    return {
+      value:globalThis.BHH_RENAL.deindexEgfr(p.kidneyValue,bsa),
+      indexedEgfr:p.kidneyValue, deindexedEgfr:globalThis.BHH_RENAL.deindexEgfr(p.kidneyValue,bsa),
+      method:p.kidneyMethod,label:'Lab-reported eGFR, BSA de-indexed (mL/min)'
+    };
   }
   throw new Error('Kidney function method is required');
 }
@@ -760,6 +775,11 @@ function bindCalculator() {
   });
 
   $('#kidney-method').addEventListener('change', updateKidneyUi);
+  ['age-input','sex-input','height-input','weight-input','scr-input','kidney-value'].forEach(id=>{
+    const field=document.getElementById(id);
+    field?.addEventListener('input',updateRenalPreview);
+    field?.addEventListener('change',updateRenalPreview);
+  });
   $('#calc-form').addEventListener('submit', e => { e.preventDefault(); runCalculation(); });
   $('#calc-form').addEventListener('input', e=>{if(e.target.id!=='regimen-search') invalidateCalculation();});
   $('#calc-form').addEventListener('change', ()=>invalidateCalculation());
@@ -893,15 +913,46 @@ function updateDoseSelections() {
 $('#cycle-input').addEventListener('input',()=>{if(selectedItem?.structured) updateDoseSelections();});
 function updateKidneyUi() {
   const method=$('#kidney-method').value;
-  const scrWrap=$('#scr-wrap'), kvWrap=$('#kidney-value-wrap');
-  const scr=$('#scr-input'), kv=$('#kidney-value');
-  if (method==='cockcroft_gault_legacy') {
-    scrWrap.classList.remove('hidden'); kvWrap.classList.add('hidden'); scr.required=true; kv.required=false; kv.value='';
-  } else {
-    scrWrap.classList.add('hidden'); kvWrap.classList.remove('hidden'); scr.required=false; scr.value=''; kv.required=true;
-    $('#kidney-value-label').innerHTML=method==='measured_gfr'?'Measured GFR (mL/min) <b>*</b>':'eGFR (mL/min/1.73m²) <b>*</b>';
+  const scrWrap=$('#scr-wrap'),kvWrap=$('#kidney-value-wrap'),scr=$('#scr-input'),kv=$('#kidney-value');
+  const serumMethod=method==='cockcroft_gault_legacy'||method==='ckd_epi_2021_cr';
+  scrWrap.classList.toggle('hidden',!serumMethod);
+  kvWrap.classList.toggle('hidden',serumMethod);
+  scr.required=serumMethod;kv.required=!serumMethod;
+  // Preserve SCr and reported eGFR when switching methods so pharmacists can compare results.
+  $('#kidney-value-label').innerHTML=method==='measured_gfr'
+    ?'Measured GFR (mL/min) <b>*</b>'
+    :'Lab-reported indexed eGFR (mL/min/1.73 m²) <b>*</b>';
+  updateRenalPreview();
+}
+function updateRenalPreview() {
+  const el=document.getElementById('renal-preview');if(!el)return;
+  const method=$('#kidney-method').value;
+  const required=['age-input','sex-input','height-input','weight-input',method==='measured_gfr'||method==='bsa_adjusted_egfr'?'kidney-value':'scr-input'];
+  if(required.some(id=>!document.getElementById(id)?.value.trim())) {
+    el.textContent='กรอกอายุ เพศ ส่วนสูง น้ำหนัก และค่า Renal ที่เลือก เพื่อดูผลแบบอัตโนมัติ';
+    return;
+  }
+  try {
+    const patient={ageYears:Number($('#age-input').value),sex:$('#sex-input').value,
+      heightCm:Number($('#height-input').value),weightKg:Number($('#weight-input').value),
+      kidneyMethod:method,
+      serumCreatinineMgDl:Number($('#scr-input').value),kidneyValue:Number($('#kidney-value').value)};
+    if (!Number.isFinite(patient.ageYears) || patient.ageYears<18 || patient.ageYears>120 ||
+        !['male','female'].includes(patient.sex) ||
+        !(patient.heightCm>0) || !(patient.weightKg>0)) throw Error('Incomplete or invalid patient data');
+    const bsa=mosteller(patient.heightCm,patient.weightKg);
+    const k=kidneyFunction(patient,bsa);
+    const idx=k.indexedEgfr!==undefined
+      ?'<div><strong>Indexed eGFR</strong> '+fmt(k.indexedEgfr,2)+' mL/min/1.73 m²</div>':'';
+    const adjusted=k.deindexedEgfr!==undefined
+      ?'<div><strong>De-indexed eGFR</strong> '+fmt(k.deindexedEgfr,2)+' mL/min (BSA '+fmt(bsa,3)+' m²)</div>':'';
+    el.innerHTML='<strong>'+esc(k.label)+'</strong><div>'+fmt(k.value,2)+' mL/min</div>'+
+      idx+adjusted+(k.warning?'<div class="micro" style="margin-top:7px">⚠ '+esc(k.warning)+'</div>':'');
+  }catch {
+    el.textContent='กรุณาตรวจสอบข้อมูลผู้ป่วยและค่า Renal ที่กรอก';
   }
 }
+
 function num(id) {
   const v=Number($(id).value);
   if (!Number.isFinite(v)) throw new Error('Please complete all required numeric data');
@@ -917,7 +968,7 @@ function runCalculation() {
   try {
     const method=$('#kidney-method').value;
     const patient={ageYears:num('#age-input'),sex:$('#sex-input').value,heightCm:num('#height-input'),weightKg:num('#weight-input'),kidneyMethod:method};
-    if (method==='cockcroft_gault_legacy') patient.serumCreatinineMgDl=num('#scr-input'); else patient.kidneyValue=num('#kidney-value');
+    if (method==='cockcroft_gault_legacy'||method==='ckd_epi_2021_cr') patient.serumCreatinineMgDl=num('#scr-input'); else patient.kidneyValue=num('#kidney-value');
     const selections={};
     document.querySelectorAll('[data-dose-select]').forEach(s=>selections[s.dataset.doseSelect]=Number(s.value));
     const cycle=num('#cycle-input');
@@ -932,13 +983,13 @@ function runCalculation() {
 }
 function renderResult(result,r,cycle) {
   $('#calc-output').classList.add('has-result');
-  const warnings=result.results.flatMap(x=>x.warnings).map(w=>`<div class="alert alert-warning">${esc(w)}</div>`).join('');
+  const warnings=[...(result.kidney.warning?[result.kidney.warning]:[]),...result.results.flatMap(x=>x.warnings)].map(w=>`<div class="alert alert-warning">${esc(w)}</div>`).join('');
   const rows=result.results.map(x=>`<tr><td><strong>${esc(x.drugName)}</strong><div class="micro">${esc(x.route)} · ${esc(x.schedule)}</div></td>
     <td>${esc(x.protocol)}</td><td><strong>${fmt(x.raw)} ${esc(x.unit)}</strong></td><td><strong>${fmt(x.clinical)} ${esc(x.unit)}</strong>${x.notes.length?`<div class="micro">${x.notes.map(esc).join('<br>')}</div>`:''}</td>
     <td>${x.recommended===undefined?'<span class="muted">Review</span>':`<strong>${fmt(x.recommended)} ${esc(x.unit)}</strong><div class="micro">${esc(x.roundingLabel)}</div>`}</td>
     <td>${x.differencePct===undefined?'—':`${signed(x.difference)} ${esc(x.unit)} (${signed(x.differencePct)}%)`}</td><td>${fmt(x.cycleTotal)} ${esc(x.unit)}</td></tr>`).join('');
   $('#calc-output').innerHTML=`<section class="result-header"><div><span class="kpi-label">BSA</span><strong>${result.bsa.toFixed(5)} m²</strong></div>
-    <div><span class="kpi-label">Kidney function used</span><strong>${fmt(result.kidney.value)} mL/min</strong><span class="micro">${esc(result.kidney.label)}</span></div>
+    <div><span class="kpi-label">Kidney function used</span><strong>${fmt(result.kidney.value)} mL/min</strong><span class="micro">${esc(result.kidney.label)}</span>${result.kidney.indexedEgfr!==undefined?`<div class="micro">Indexed: ${fmt(result.kidney.indexedEgfr)} mL/min/1.73 m² · De-indexed: ${fmt(result.kidney.deindexedEgfr)} mL/min</div>`:''}</div>
     <div><span class="kpi-label">Regimen / Cycle</span><strong>${esc(r.name)} · Cycle ${cycle}</strong></div></section>${warnings}
     <div class="table-wrap"><table><thead><tr><th>Drug</th><th>Protocol dose</th><th>Calculated</th><th>Clinical dose</th><th>Recommended</th><th>Difference</th><th>Cycle total*</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
