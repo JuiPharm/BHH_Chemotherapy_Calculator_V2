@@ -724,13 +724,27 @@ async function audit() {
     ),
   );
 }
+async function submitDraftForReview(pin){
+  const v=state.draft;
+  if(!v)throw Error('No draft selected');
+  await api('/versions/'+encodeURIComponent(v.id)+'/submit',{method:'POST',
+    body:JSON.stringify({expectedRevision:v.revision,
+      reason:'Submitted structured protocol for independent clinical review',
+      ...(pin?{confirmPin:pin}:{})})});
+  state.pendingSubmit=false;
+  state.details.clear();state.draft=null;state.editorModal=false;
+  if($('#regimen-modal').open)$('#regimen-modal').close();
+  go('registry');
+  await sync();await registry();await review(v.id);
+  note('Submitted for independent clinical review; NOT Published yet.',false);
+}
 $('#manage-pin').onclick=()=>{
   if(canEdit()){go('builder');return;}
   $('#pin-error').textContent='';
   $('#pin-form').reset();
   $('#pin-dialog').showModal();
 };
-$('#pin-cancel').onclick=()=>$('#pin-dialog').close();
+$('#pin-cancel').onclick=()=>{state.pendingSubmit=false;$('#pin-dialog').close();};
 $('#pin-form').onsubmit=async(e)=>{
   e.preventDefault();
   const btn=$('#pin-submit');
@@ -738,6 +752,11 @@ $('#pin-form').onsubmit=async(e)=>{
   try{
     const pin=$('#editor-pin').value.trim();
     if(!/^[0-9]{10}$/.test(pin))throw Error('Enter an individual 10-digit PIN');
+    if(state.pendingSubmit){
+      await submitDraftForReview(pin);
+      $('#pin-form').reset();$('#pin-dialog').close();
+      return;
+    }
     await api('/auth/editor-pin',{method:'POST',body:JSON.stringify({pin})});
     $('#pin-form').reset();$('#pin-dialog').close();
     state.catalog=[];state.details.clear();
@@ -933,22 +952,15 @@ document.addEventListener('click', async (e) => {
     }
     if (b.id === 'draft-submit') {
       await saveDraft();
-      state.reviewing = { version: state.draft };
-      const v = state.draft;
-      await api(`/versions/${encodeURIComponent(v.id)}/submit`, {
-        method: 'POST',
-        body: JSON.stringify({
-          expectedRevision: v.revision,
-          reason:
-            'Submitted structured protocol for independent clinical review',
-        }),
-      });
-      state.details.clear();
-      state.draft = null;
-      go('registry');
-      await sync();
-      await registry();
-      await review(v.id);
+      if (state.authMode === 'editor') {
+        state.pendingSubmit=true;
+        $('#pin-heading').textContent='Confirm PIN before Submit Review';
+        $('#pin-error').textContent='Re-enter your individual PIN. Submit is not Publish.';
+        $('#pin-form').reset();
+        $('#pin-dialog').showModal();
+      } else {
+        await submitDraftForReview();
+      }
       return;
     }
     if (b.id === 'add-phase') {
