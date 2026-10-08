@@ -10,7 +10,7 @@ log="v3/.staging-secrets/codespaces-preview.log"
 credentials="v3/.staging-secrets/CODESPACES_LOGIN.txt"
 pidfile="v3/.staging-secrets/codespaces-preview.pid"
 probe() { curl -sS --max-time 4 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/session 2>/dev/null || true; }
-if [[ "$(probe)" != "401" ]]; then
+if [[ "$(probe)" != "200" ]]; then
   if [[ -f "$pidfile" ]]; then
     oldpid="$(cat "$pidfile" || true)"
     if [[ "$oldpid" =~ ^[0-9]+$ ]] && kill -0 "$oldpid" 2>/dev/null &&\n       ps -o args= -p "$oldpid" 2>/dev/null | grep -Fq "v3/tests/run-staging-local.mjs --serve"; then
@@ -29,7 +29,7 @@ if [[ "$(probe)" != "401" ]]; then
   printf '%s\n' "$server_pid" > "$pidfile"
   ready=0
   for ((i=0;i<150;i++)); do
-    if [[ "$(probe)" == "401" ]] && grep -q 'BHH STAGING LOCAL PREVIEW' "$log"; then
+    if [[ "$(probe)" == "200" ]] && grep -q 'BHH STAGING LOCAL PREVIEW' "$log"; then
       ready=1
       break
     fi
