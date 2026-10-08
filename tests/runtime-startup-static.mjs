@@ -13,8 +13,8 @@ assert(bundle.includes("loadJson('./data/regimens.published.json?v=2.3.0')"), 'R
 assert(bundle.includes("loadJson('./data/legacy-regimens.v1.json?v=2.3.0')"), 'Runtime must load the central 136-regimen master');
 assert(bundle.includes("loadJson('./data/rounding-profiles.json?v=2.3.0')"), 'Runtime must load central rounding defaults');
 assert(index.includes('app.bundle.js?v=2.5.0'), 'Index is not using v2.5.0 runtime');
-assert(index.includes('publish-manager.js?v=2.6.2'), 'Review/Publish UI script must load');
-assert(index.includes('publish-manager.css?v=2.6.2'), 'Review/Publish styling missing');
+assert(index.includes('publish-manager.js?v=2.6.3'), 'Review/Publish UI script must load');
+assert(index.includes('publish-manager.css?v=2.6.3'), 'Review/Publish styling missing');
 assert(index.includes('https://api.github.com'), 'GitHub publication API not permitted by CSP');
 assert(bundle.includes('data-review-regimen'), 'Regimen cards must offer Review/Publish');
 assert(bundle.includes('approval?.corrected_drugs'), 'Reviewed clinical corrections must render in calculator library');
@@ -27,6 +27,10 @@ assert(publisher.includes("f.querySelector(':invalid')"), 'Publish must identify
 assert(publisher.includes('showReviewIssue(e)'), 'Publish must display the reason for failure');
 assert(publisher.includes("$('review-publish-source').value=key"), 'Pasted official guideline URLs must select their source automatically');
 assert(publisher.includes("'eviQ': ['eviq.org.au']"), 'eviQ guideline links must be supported');
+assert(publisher.includes('SUGGESTED_PROTOCOLS'), 'Official protocol comparison suggestions must be available');
+assert(publisher.includes('BHH-CATALOG-039'), 'R-CVP review should surface eviQ 168 for comparison');
+assert(publisher.indexOf("'<label>ลิงก์ Guideline") < publisher.indexOf("'<label>ข้อบ่งใช้"), 'Mobile review must show the Guideline link before lengthy dosing');
+assert(publisher.includes('ห้ามอนุมัติจากการใส่ลิงก์อย่างเดียว'), 'Protocol-mismatch warning must remain visible');
 assert(publisher.includes('sha:latest.sha,branch:'), 'Multi-regimen publication must use an atomic GitHub commit with optimistic concurrency');
 assert(publisher.includes('original.reviewed_at||null'), 'Bulk publication must reject concurrent review updates');
 assert(publisher.includes('if(!result?.commit?.sha)'), 'Batch publisher must require confirmed GitHub commit');
