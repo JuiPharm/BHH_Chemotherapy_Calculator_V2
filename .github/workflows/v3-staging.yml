@@ -1,27 +1,84 @@
-name: Deploy V3 staging
+name: Deploy V3 Staging — Public Calculator and PIN Editor
 on:
   workflow_dispatch:
+    inputs:
+      approval:
+        description: 'Type DEPLOY_STAGING_ONLY to approve remote staging migrations and Worker deployment'
+        required: true
+        type: string
+      editor_email:
+        description: 'One named STAGING editor email for PIN-only Draft entry (no Reviewer/Publish rights)'
+        required: true
+        default: 'editor.staging@example.invalid'
+        type: string
 permissions:
   contents: read
+concurrency:
+  group: bhh-v3-cloudflare-staging-release
+  cancel-in-progress: false
 jobs:
   staging:
+    if: github.ref_name == 'staging-internal-auth-v3' && inputs.approval == 'DEPLOY_STAGING_ONLY'
     runs-on: ubuntu-latest
     environment: cloudflare-staging
+    env:
+      CLOUDFLARE_ACCOUNT_ID: 3229fd47f39f8ca1809f92d4282b5ab5
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      STAGING_PASSWORD_PEPPER: ${{ secrets.STAGING_PASSWORD_PEPPER }}
+      STAGING_EDITOR_PIN: ${{ secrets.STAGING_EDITOR_PIN }}
+      STAGING_EDITOR_EMAIL: ${{ inputs.editor_email }}
+      WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
         with:
           node-version: 24
           cache: npm
+      - name: Fail closed unless separate staging credentials are configured
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$STAGING_PASSWORD_PEPPER" ] || [ -z "$STAGING_EDITOR_PIN" ]; then
+            echo "::error::Set GitHub encrypted staging secrets CLOUDFLARE_API_TOKEN, STAGING_PASSWORD_PEPPER and STAGING_EDITOR_PIN first."
+            exit 1
+          fi
+          node -e "if (!/^[0-9]{10}$/.test(process.env.STAGING_EDITOR_PIN) || process.env.STAGING_PASSWORD_PEPPER.length<32) process.exit(1)"
       - run: npm ci
-      - run: npm run build:v3 && npm run test:v3 && npm run check:deploy:v3
-      - name: Apply staging migrations only
+      - name: Block known high/critical dependency advisories
+        run: npm audit --audit-level=high
+      - name: Validate V2 and V3, including independent staging login
+        run: |
+          npm test
+          npm run import:v3
+          npm run build:v3
+          npm run test:v3
+          npm run test:api:v3
+          npm run test:staging:v3
+          npm run check:deploy:v3
+      - name: Verify exact staging D1 config (never production)
+        run: |
+          node --input-type=module -e "import fs from 'node:fs';const j=JSON.parse(fs.readFileSync('v3/wrangler.jsonc','utf8')); const e=j.env.staging; if(e.name!=='bhh-chemotherapy-v3-staging'||e.d1_databases?.[0]?.database_name!=='bhh-chemo-staging'||e.d1_databases?.[0]?.database_id!=='3d936db6-eed1-4880-9561-1f22101cb27e'||e.vars.PUBLIC_CALCULATOR!=='true'||e.vars.AUTH_MODE!=='internal'||j.name===e.name)process.exit(1);"
+      - name: Apply schema to existing isolated staging D1 ONLY
         run: npx wrangler d1 migrations apply DB --config v3/wrangler.jsonc --env staging --remote
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Deploy to staging Worker
+      - name: Deploy separate staging Worker (never bhh or production Worker)
         run: npm run deploy:staging:v3
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Set credential HMAC pepper as staging-only encrypted Worker Secret
+        run: |
+          printf '%s' "$STAGING_PASSWORD_PEPPER" | npx wrangler secret put STAGING_PASSWORD_PEPPER --config v3/wrangler.jsonc --env staging
+      - name: Provision one named Draft-only PIN editor (no shared PIN)
+        run: |
+          trap 'rm -f "$RUNNER_TEMP/bhh-staging-editor-pin.sql"' EXIT
+          node v3/scripts/provision-staging-editor-ci.mjs
+          npx wrangler d1 execute DB --config v3/wrangler.jsonc --env staging --remote --file "$RUNNER_TEMP/bhh-staging-editor-pin.sql"
+      - name: Live smoke — only published protocols visible without login
+        run: |
+          node --input-type=module -e "
+          const origin='https://bhh-chemotherapy-v3-staging.juipharm.workers.dev';
+          const session=await fetch(origin+'/api/session');
+          if(!session.ok||(await session.json()).authMode!=='public')throw Error('Public calculator session failed');
+          const catalog=await fetch(origin+'/api/catalog');
+          if(!catalog.ok)throw Error('Published catalog unavailable');
+          const list=(await catalog.json()).catalog;
+          if(list.length!==6||list.some(x=>x.status!=='published'))throw Error('Unexpected publication state');
+          const blocked=await fetch(origin+'/api/registry');
+          if(blocked.status!==403)throw Error('Unauthenticated registry must remain forbidden');
+          console.log('STAGING LIVE READ-ONLY SMOKE PASS: 6 Published; registry 403');
+          "
