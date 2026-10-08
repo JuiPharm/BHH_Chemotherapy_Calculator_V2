@@ -1,0 +1,24 @@
+#review-publish-dialog{border:1px solid #cdd9e6;border-radius:16px;padding:0;width:min(780px,96vw);max-height:92vh;color:#142236;box-shadow:0 18px 60px #081b334d}
+#review-publish-dialog::backdrop{background:#081b33a6}
+.review-publish-head{display:flex;align-items:center;justify-content:space-between;gap:18px;border-bottom:1px solid #dce7f2;padding:16px 22px;background:#eff5fc}
+.review-publish-head h2{font-size:1.24rem;margin:0;color:#0b2c55}
+.review-publish-head button{border:0;background:transparent;font-size:1.2rem;cursor:pointer;width:auto}
+.review-publish-content{padding:18px 22px;overflow:auto;max-height:65vh;display:grid;gap:13px}
+.review-publish-content label{display:grid;gap:5px;font-size:.88rem;font-weight:650}
+.review-publish-content input,.review-publish-content select,.review-publish-content textarea{font:inherit;width:100%;padding:8px 10px;border:1px solid #b6c9dc;border-radius:8px;background:white;color:#122943}
+.review-publish-help{margin:0;color:#435b75;font-size:.94rem}
+.review-publish-two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.review-publish-drug{border:1px solid #dce7f2;border-radius:10px;padding:12px;background:#fbfdff;display:grid;gap:10px;margin-bottom:10px}
+.review-publish-drug strong{color:#0b2c55}
+.review-publish-check{display:flex!important;align-items:start;gap:10px;font-weight:600;background:#edf7ef;border:1px solid #bad6c1;padding:12px;border-radius:9px}
+.review-publish-check input{width:20px;flex:0 0 20px;margin-top:2px}
+.review-publish-token{border:1px solid #d1d9e6;border-radius:10px;padding:12px;background:#f6f9fc}
+.review-publish-token p{margin:0 0 7px}
+.review-publish-token small{display:block;color:#596b7e;margin-top:5px}
+.review-publish-actions{display:flex;justify-content:end;gap:10px;padding:12px 22px;border-top:1px solid #dce7f2}
+.review-publish-actions button{cursor:pointer;border:1px solid #b8cddd;border-radius:8px;padding:10px 15px;background:white;color:#0b2c55;font-weight:700;width:auto}
+.review-publish-actions button.primary{background:#145da0;color:white;border-color:#145da0}
+.review-publish-actions button:disabled{opacity:.55;cursor:not-allowed}
+.review-publish-foot{font-size:.79rem;color:#5c6d80;padding:0 22px 15px;margin:0}
+#review-publish-message{font-size:.93rem;color:#145da0;margin:0;overflow-wrap:anywhere}
+@media(max-width:620px){.review-publish-two{grid-template-columns:1fr}.review-publish-actions{flex-direction:column}.review-publish-actions button{width:100%}}
