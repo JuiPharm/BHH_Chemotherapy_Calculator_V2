@@ -89,3 +89,20 @@ export async function logoutEditorPin(request,env){
  if(token)await env.DB.prepare('DELETE FROM staging_editor_sessions WHERE token_hash=?').bind(await sha(token)).run();
  return reply({ok:true},200,{'Set-Cookie':cookie('',0)});
 }
+
+// A PIN-editing session is insufficient to submit: re-confirm the person's PIN
+// immediately before clinical review transition. This NEVER grants Publish.
+export async function verifySubmitPin(env,email,pin,request){
+ if(!publicCalculator(env))throw fail('Not found',404);
+ if(typeof pin!=='string'||!(/^[0-9]{10}$/).test(pin))throw fail('Confirm PIN required before Submit',403);
+ const now=Math.floor(Date.now()/1000),db=env.DB;
+ const fingerprint=await sha(request.headers.get('CF-Connecting-IP')||'unknown');
+ const allowed=await limiter(db,'submit-pin-ip:'+fingerprint,5,now);
+ if(!allowed)throw fail('Too many PIN attempts',429);
+ const row=await db.prepare(`SELECT p.pin_hash FROM staging_editor_pins p
+   JOIN users u ON u.id=p.user_id WHERE u.email=? AND u.active=1
+   AND u.role_code='regimen_editor'`).bind(email).first();
+ const correct=await pinHash(pin,pepper(env));
+ if(!row||row.pin_hash!==correct)throw fail('Incorrect Confirm PIN',403);
+ return true;
+}
