@@ -1,3 +1,4 @@
+import { sameOrigin } from './preview-origin.js';
 import { identity } from './auth.js';
 import { isInternalStaging, stagingLogin, stagingLogout, stagingSalt } from './staging-auth.js';
 import { validateDefinition, policies } from '../shared/clinical.js';
@@ -156,7 +157,7 @@ async function dispatch(request, env) {
     error('Method not allowed', 405);
   if (request.method !== 'GET') {
     if (
-      request.headers.get('Origin') !== url.origin ||
+      !sameOrigin(request, env) ||
       request.headers.get('X-Requested-With') !== 'BHH-V3'
     )
       error('Same-origin application request required', 403);
