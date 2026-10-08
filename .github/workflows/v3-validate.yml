@@ -3,7 +3,7 @@ on:
   push:
     branches: [production-v3-cloudflare]
   pull_request:
-    paths: ['v3/**', 'package*.json', '.github/workflows/v3-validate.yml']
+    paths: ['v3/**', '.devcontainer/**', 'package*.json', '.github/workflows/v3-validate.yml']
 permissions:
   contents: read
 jobs:
@@ -36,6 +36,15 @@ jobs:
         run: npm run test:browser:v3
       - name: Full staging-mode authentication in isolated local Worker + D1 + Chromium
         run: npm run test:staging:v3
+      - name: Browser-only Codespaces preview smoke (no deployment)
+        run: |
+          bash .devcontainer/start-preview.sh
+          test -s v3/.staging-secrets/CODESPACES_LOGIN.txt
+          grep -q 'calculator@staging-fixture.test' v3/.staging-secrets/CODESPACES_LOGIN.txt
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/login)" = '200'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/session)" = '401'
+          kill -TERM "$(cat v3/.staging-secrets/codespaces-preview.pid)"
+          echo "CODESPACES_LOCAL_PREVIEW_PASS"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
