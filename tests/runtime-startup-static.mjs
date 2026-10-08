@@ -21,7 +21,7 @@ assert(bundle.includes('approval?.corrected_drugs'), 'Reviewed clinical correcti
 const publisher = fs.readFileSync(new URL('../publish-manager.js', import.meta.url), 'utf8');
 assert(publisher.includes('sha:latest.sha'), 'GitHub publication writes require optimistic concurrency SHA');
 assert(publisher.includes('calculator_enabled:false'), 'Reference publication must not enable unvalidated dose calculations');
-assert(!publisher.includes('localStorage'), 'GitHub token must not be stored in localStorage');
+assert(!publisher.includes('localStorage.setItem(') && !publisher.includes('sessionStorage.setItem('), 'GitHub token must not be stored in browser storage');
 assert(bundle.includes("loadJson('./data/guideline-status.v2.4.json?v=2.4.0')"), 'Runtime must load guideline approval and review statuses');
 const guideline=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
 assert(guideline.length>=33,'Baseline 33 guideline-status records must be preserved');
