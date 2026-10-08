@@ -34,6 +34,8 @@ jobs:
         run: npm run test:api:v3
       - name: Browser workflow and offline tests
         run: npm run test:browser:v3
+      - name: Full staging-mode authentication in isolated local Worker + D1 + Chromium
+        run: npm run test:staging:v3
       - uses: actions/upload-artifact@v4
         if: always()
         with:
