@@ -1,6 +1,7 @@
 let BHH_ACTIVE = [];
 let BHH_MASTER = [];
 let BHH_ROUNDING_DEFAULTS = [];
+let BHH_GUIDELINE_STATUS = [];
 let catalog = [];
 let activeById = {};
 let roundingProfiles = {};
@@ -63,6 +64,21 @@ function structuredLink(name,indication) {
   if (name==='Carboplatin-Paclitaxel regimen' && indication.includes('Ovarian Cancer')) return 'BHH-OVARIAN-CARBO-TAXOL-EVIQ252';
   return null;
 }
+function getGuidelineRecord(catalogId) {return BHH_GUIDELINE_STATUS.find(r=>r.catalog_id===catalogId)||null;}
+function displayStatus(item) {
+  if (item.structured) return 'APPROVED · CALCULATOR';
+  if (item.status==='approved_published') return 'APPROVED · PUBLISHED';
+  if (item.status==='blocked') return 'BLOCKED · REVIEW';
+  if (item.status==='published_review') return 'PUBLISHED · REVIEW';
+  return 'REVIEW REQUIRED';
+}
+function statusBadge(item) {return item.structured||item.status==='approved_published'?'badge-ok':'badge-warning';}
+function referenceDetails(item) {
+  const r=item.guidelineReference;
+  if (!r) return '';
+  const source=r.reference_url?`<a href="${esc(r.reference_url)}" target="_blank" rel="noopener noreferrer">${esc(r.protocol||r.source||'Guideline source')}</a>`:'รอตรวจสอบเอกสารต้นฉบับ';
+  return `<div class="micro">${esc(r.catalog_id)} · ${source}</div><div class="micro">${esc(r.note||'')}</div>`;
+}
 function normalizeMaster(raw) {
   return raw.map((r,i)=>{
     const indication=String(r['ชนิดของมะเร็ง']||'');
@@ -71,14 +87,14 @@ function normalizeMaster(raw) {
     const sid=structuredLink(name,indication);
     return {regimen_id:`BHH-MASTER-${String(i+1).padStart(3,'0')}`,name,cancer_type:ct,cancer_type_label:TYPE_LABELS[ct]||ct,
       indication,cycle_text:String(r['รอบการรักษา']||''),drugs:Array.isArray(r['รายการยา'])?r['รายการยา']:[],
-      clinical_status:sid?'approved':'clinical_review_required',structured_regimen_id:sid};
+      clinical_status:sid?'approved':'clinical_review_required',structured_regimen_id:sid,catalog_id:`BHH-CATALOG-${String(i+1).padStart(3,'0')}`};
   });
 }
 function rebuildCatalog() {
   activeById=Object.fromEntries(BHH_ACTIVE.map(r=>[r.id,r]));
   const linked=new Set(BHH_MASTER.map(x=>x.structured_regimen_id).filter(Boolean));
-  catalog=BHH_MASTER.map(m=>({key:`master:${m.regimen_id}`,master:m,structured:m.structured_regimen_id?activeById[m.structured_regimen_id]:null,
-    cancerType:m.cancer_type,cancerTypeLabel:m.cancer_type_label,name:m.name,indication:m.indication,status:m.structured_regimen_id?'approved':'clinical_review_required'}));
+  catalog=BHH_MASTER.map(m=>{const a=getGuidelineRecord(m.catalog_id);return {key:`master:${m.regimen_id}`,master:m,structured:m.structured_regimen_id?activeById[m.structured_regimen_id]:null,
+    cancerType:m.cancer_type,cancerTypeLabel:m.cancer_type_label,name:m.name,indication:m.indication,guidelineReference:a,status:m.structured_regimen_id?'approved':(a?.status||'clinical_review_required')};});
   for (const r of BHH_ACTIVE) if (!linked.has(r.id)) {
     const ct=activeCancerType(r);
     catalog.push({key:`active:${r.id}`,master:null,structured:r,cancerType:ct,cancerTypeLabel:typeLabel(ct),name:r.name,indication:r.indication,status:'approved'});
@@ -205,12 +221,14 @@ function calculate(context) {
 
 async function init() {
   try {
-    const [active,legacyRoot,rounding]=await Promise.all([
+    const [active,legacyRoot,rounding,guidelineStatus]=await Promise.all([
       loadJson('./data/regimens.published.json?v=2.3.0'),
       loadJson('./data/legacy-regimens.v1.json?v=2.3.0'),
-      loadJson('./data/rounding-profiles.json?v=2.3.0')
+      loadJson('./data/rounding-profiles.json?v=2.3.0'),
+      loadJson('./data/guideline-status.v2.4.json?v=2.4.0')
     ]);
     BHH_ACTIVE=active;
+    BHH_GUIDELINE_STATUS=guidelineStatus;
     BHH_MASTER=normalizeMaster(Array.isArray(legacyRoot?.['สูตรยาเคมีบำบัด'])?legacyRoot['สูตรยาเคมีบำบัด']:[]);
     BHH_ROUNDING_DEFAULTS=rounding;
     roundingProfiles=loadRounding();
@@ -265,10 +283,10 @@ function populateRegimenOptions() {
   sel.innerHTML='<option value="" selected disabled></option>';
   if (!type) {sel.disabled=true;return;}
   const items=catalog.filter(x=>x.cancerType===type && (!q || `${x.name} ${x.indication}`.toLowerCase().includes(q)))
-    .sort((a,b)=>(a.status===b.status? a.name.localeCompare(b.name): a.status==='approved'?-1:1));
+    .sort((a,b)=>{const rank=x=>x.structured?0:x.status==='approved_published'?1:x.status==='published_review'?2:3;return rank(a)-rank(b)||a.name.localeCompare(b.name);});
   for (const x of items) {
     const o=document.createElement('option'); o.value=x.key;
-    o.textContent=`${x.status==='approved'?'✓ ':''}${x.name} — ${x.indication}`;
+    o.textContent=`${x.structured||x.status==='approved_published'?'✓ ':''}${x.name} — ${x.indication}`;
     sel.appendChild(o);
   }
   sel.disabled=false;
@@ -304,9 +322,9 @@ function renderSelectedContext() {
     updateDoseSelections();
   } else {
     const m=selectedItem.master;
-    box.innerHTML=`<div class="context-head"><div><span class="badge badge-warning">CLINICAL REVIEW REQUIRED</span> <strong>${esc(m.name)}</strong></div><span class="micro">${esc(m.cancer_type_label)}</span></div>
-      <p>${esc(m.indication)}</p><div class="micro">${esc(m.cycle_text)}</div>${originalDrugRows(selectedItem)}
-      <div class="alert alert-warning">สูตรนี้เลือกดูข้อมูลได้แล้ว แต่ยังไม่เปิดการคำนวณจนกว่าจะมี Structured Regimen ที่ผ่านการตรวจและอนุมัติ</div>`;
+    box.innerHTML=`<div class="context-head"><div><span class="badge ${statusBadge(selectedItem)}">${displayStatus(selectedItem)}</span> <strong>${esc(m.name)}</strong></div><span class="micro">${esc(m.cancer_type_label)}</span></div>
+      <p>${esc(m.indication)}</p><div class="micro">${esc(m.cycle_text)}</div>${referenceDetails(selectedItem)}${originalDrugRows(selectedItem)}
+      <div class="alert alert-warning">เปิดดูและตรวจบน Production ได้แล้ว แต่ยังไม่เปิดคำนวณ จนกว่าจะผ่านการตรวจสอบ Structured Regimen สำหรับเครื่องคำนวณ</div>`;
   }
 }
 function updateDoseSelections() {
@@ -384,11 +402,11 @@ function filteredCatalog() {
 }
 function renderLibrary() {
   const items=filteredCatalog();
-  $('#library-summary').innerHTML=`พบ <strong>${items.length}</strong> Regimen · Approved Structured <strong>${items.filter(x=>x.structured).length}</strong> · Clinical Review Required <strong>${items.filter(x=>!x.structured).length}</strong>`;
+  $('#library-summary').innerHTML=`พบ <strong>${items.length}</strong> Regimens · Approved + Published <strong>${items.filter(x=>x.structured||x.status==='approved_published').length}</strong> · Calculator Ready <strong>${items.filter(x=>x.structured).length}</strong> · Review <strong>${items.filter(x=>!x.structured&&x.status!=='approved_published'&&x.status!=='blocked').length}</strong> · Blocked <strong>${items.filter(x=>x.status==='blocked').length}</strong>`;
   const groups=TYPE_ORDER.map(t=>[t,items.filter(x=>x.cancerType===t)]).filter(([,arr])=>arr.length);
   $('#library-list').innerHTML=groups.map(([type,arr])=>`<section class="cancer-group"><h3>${esc(typeLabel(type))} <span class="micro">(${arr.length})</span></h3><div class="registry-grid">${
-    arr.map(x=>`<article class="regimen-card"><div><span class="badge ${x.structured?'badge-ok':'badge-warning'}">${x.structured?'APPROVED':'REVIEW REQUIRED'}</span></div>
-      <h4>${esc(x.name)}</h4><p>${esc(x.indication)}</p><div class="micro">${esc(x.master?.cycle_text||`${x.structured?.cycleIntervalDays||''} days/cycle`)}</div>
+    arr.map(x=>`<article class="regimen-card"><div><span class="badge ${statusBadge(x)}">${displayStatus(x)}</span></div>
+      <h4>${esc(x.name)}</h4><p>${esc(x.indication)}</p><div class="micro">${esc(x.master?.cycle_text||`${x.structured?.cycleIntervalDays||''} days/cycle`)}</div>${referenceDetails(x)}
       ${x.master?.drugs?.length?`<details><summary>Drug details</summary><div class="drug-list">${x.master.drugs.map(d=>`<div class="drug-row"><strong>${esc(d['ชื่อยา'])}</strong><span>${esc(d['ขนาดยา'])}</span></div>`).join('')}</div></details>`:''}
       <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button></div></article>`).join('')
   }</div></section>`).join('');
