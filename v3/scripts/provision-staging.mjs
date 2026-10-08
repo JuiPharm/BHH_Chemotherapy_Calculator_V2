@@ -1,6 +1,6 @@
 // Run on an operator-owned machine only. Never paste passwords, TOTP keys or output SQL into chat.
 // Usage: node v3/scripts/provision-staging.mjs tester@example.org regimen_editor
-import { randomBytes, pbkdf2Sync, randomUUID, createHash } from 'node:crypto';
+import { randomBytes, pbkdf2Sync, randomUUID, createHash, createHmac } from 'node:crypto';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { stdin, stdout } from 'node:process';
@@ -46,9 +46,11 @@ function base32(bytes) {
   if(bits)out+=alphabet[(value << (5-bits))&31];
   return out;
 }
+if (!process.env.STAGING_PASSWORD_PEPPER || process.env.STAGING_PASSWORD_PEPPER.length < 32) throw Error('Set STAGING_PASSWORD_PEPPER locally (not in source code)');
 const secret = base32(randomBytes(20));
 const salt = randomBytes(16);
-const passwordHash = pbkdf2Sync(password, salt, 600000, 32, 'sha256').toString('hex');
+const derived = pbkdf2Sync(password, salt, 600000, 32, 'sha256');
+const passwordHash = createHmac('sha256', process.env.STAGING_PASSWORD_PEPPER).update(derived).digest('hex');
 const id = randomUUID();
 const auditId = randomUUID();
 const q = v => "'" + String(v).replaceAll("'", "''") + "'";
