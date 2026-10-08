@@ -22,10 +22,10 @@ export function validateRegimen(r, publishing = true) {
   if (typeof r.id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9._:-]{2,120}$/.test(r.id)) add('id', 'Valid ID required');
   if (typeof r.name !== 'string' || !r.name.trim()) add('name', 'Name required');
   if (typeof r.indication !== 'string' || !r.indication.trim()) add('indication', 'Indication required');
+  if (!publishing) return errors; // Drafts may be incomplete; publication is strictly validated.
   if (!Number.isInteger(r.cycleIntervalDays) || r.cycleIntervalDays < 1 || r.cycleIntervalDays > 365) add('cycleIntervalDays', 'Invalid interval');
   if (!Number.isInteger(r.cycleCount) || r.cycleCount < 1 || r.cycleCount > 200) add('cycleCount', 'Invalid cycle count');
   if (!Array.isArray(r.phases) || (publishing && !r.phases.length)) add('phases', 'Structured phases required');
-  if (!publishing) return errors; // Incomplete drafts may be saved; publication always validates all structured orders.
   const orderIds = new Set();
   for (const [pi, phase] of (Array.isArray(r.phases) ? r.phases : []).entries()) {
     const pp = `phases[${pi}]`;
