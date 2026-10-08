@@ -11,10 +11,6 @@ on:
         required: true
         default: 'editor.staging@example.invalid'
         type: string
-      reviewer_email:
-        description: 'DIFFERENT named Oncology Pharmacist reviewer email (required for independent Approve and Publish)'
-        required: true
-        type: string
 permissions:
   contents: read
 concurrency:
@@ -32,7 +28,7 @@ jobs:
       STAGING_EDITOR_PIN: ${{ secrets.STAGING_EDITOR_PIN }}
       STAGING_REVIEWER_PIN: ${{ secrets.STAGING_REVIEWER_PIN }}
       STAGING_EDITOR_EMAIL: ${{ inputs.editor_email }}
-      STAGING_REVIEWER_EMAIL: ${{ inputs.reviewer_email }}
+      STAGING_REVIEWER_EMAIL: ${{ vars.STAGING_REVIEWER_EMAIL }}
       WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@v6
