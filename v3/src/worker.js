@@ -1,6 +1,6 @@
 import { sameOrigin } from './preview-origin.js';
 import { identity } from './auth.js';
-import { publicCalculator, confirmEditorPin, logoutEditorPin } from './editor-pin.js';
+import { publicCalculator, confirmEditorPin, logoutEditorPin, verifySubmitPin } from './editor-pin.js';
 import { isInternalStaging, stagingLogin, stagingLogout, stagingSalt } from './staging-auth.js';
 import { validateDefinition, policies } from '../shared/clinical.js';
 import { projections } from '../shared/projections.js';
@@ -514,6 +514,9 @@ async function dispatch(request, env) {
     const [from, to, permission] = rules[act];
     permit(user, permission);
     if (v.status !== from) error('Invalid workflow transition', 409);
+    // Every submitted PIN-session Draft requires fresh personal confirmation.
+    if (act==='submit' && who.pin)
+      await verifySubmitPin(env, who.email, body.confirmPin, request);
     if (['submit', 'approve', 'publish'].includes(act)) {
       try {
         validateDefinition(v.document);
