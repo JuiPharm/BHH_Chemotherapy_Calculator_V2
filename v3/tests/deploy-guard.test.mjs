@@ -21,7 +21,7 @@ function config() {
       staging: {
         name: 'bhh-chemotherapy-v3-staging',
         workers_dev: true,
-        vars: accessVars('staging', 'staging-aud'),
+        vars: {APP_ENV:'staging', AUTH_MODE:'internal'},
         d1_databases: [{ binding: 'DB', database_id: stageId }],
       },
     },
@@ -40,7 +40,7 @@ function run(c, env = 'staging') {
 }
 test('staging permits workers.dev only with complete JWT/D1 config', () => {
   assert.equal(run(config()).ok, true);
-  const c = config(); c.env.staging.vars.ACCESS_AUD = 'REPLACE_STAGING_AUD';
+  const c = config(); c.env.staging.vars.AUTH_MODE = 'none';
   assert.equal(run(c).ok, false);
 });
 test('custom-domain staging mode is allowed and misconfigured routes are blocked', () => {
@@ -61,4 +61,10 @@ test('production stays custom-domain only and D1 must be segregated', () => {
 test('deployed local test authentication is always rejected', () => {
   const c = config(); c.env.staging.vars.LOCAL_TEST_AUTH = 'true';
   assert.equal(run(c).ok, false);
+});
+
+test('production never accepts internal staging authentication', () => {
+  const c = config();
+  c.vars.AUTH_MODE = 'internal';
+  assert.equal(run(c, 'production').ok, false);
 });

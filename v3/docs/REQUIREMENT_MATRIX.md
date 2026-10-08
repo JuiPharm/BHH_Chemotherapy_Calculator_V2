@@ -9,7 +9,7 @@
 | Responsive clinical UI / BDMS theme / existing BHH logo | Yes | Desktop + 390px browser; visual screenshots | PASS local |
 | Central clinical master, no GitHub/localStorage editor | Yes | Source review + real central CRUD | PASS local |
 | Four roles | Yes | API denials, four browser identities | PASS local |
-| Cloudflare Access email OTP (staging) | JWT code unchanged; OTP runbook/hosting guard updated | JWT fixture and deploy guard local tests | JWT crypto baseline PASS; deploy guard local tests PASS; real Access OTP PENDING STAGING |
+| Staging internal password + TOTP | JWT code unchanged; OTP runbook/hosting guard updated | JWT fixture and deploy guard local tests | JWT crypto baseline PASS; deploy guard local tests PASS; real password+TOTP login PENDING STAGING |
 | All required D1 domain tables | Yes | Migration tests, schema inspection | PASS local |
 | All writes include domain actor/time + audit | Yes | Schema, API audit before/after | PASS local; real user provisioning must include audit |
 | Draft/Submitted/Clinical Review Required/Approved/Published/Retired | Yes | API + browser transitions | PASS local |
@@ -61,5 +61,7 @@
 | Unit / integration / migration / API / golden / frontend tests | Yes | 31 unit/migration/auth + 42 API + 3 browser suites | PASS local |
 | Two clients see new Published version and consistent reload | Yes | API + separate browser contexts | PASS local; real remote clients PENDING STAGING |
 | Browser console/network/API/D1/workflow checked | Yes | Real browser/runtime logs and tests | PASS local |
-| Cloudflare staging deployed and OTP sign-in exercised | OTP/Worker/D1 templates ready | Cannot execute without account auth | PENDING ACCOUNT; NOT deployed or clinically approved |
+| Cloudflare staging deployed and password+TOTP sign-in exercised | OTP/Worker/D1 templates ready | Cannot execute without account auth | PENDING ACCOUNT; NOT deployed or clinically approved |
 | Merge main only after all release gates pass | Branch isolated | main untouched | NOT MERGED; staging/account gates pending |
+
+**Staging internal-auth review (8 October 2026):** Isolated branch implements salted PBKDF2, RFC6238 TOTP replay protection, opaque D1-backed HttpOnly sessions, rate limiting and authenticated assets; source/tests added. These are **unverified for remote Workers Free and staging D1** until new CI plus real staged UAT; production Cloudflare Access is unchanged. See [STAGING_INTERNAL_LOGIN.md](STAGING_INTERNAL_LOGIN.md).

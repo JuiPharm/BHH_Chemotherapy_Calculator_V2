@@ -34,6 +34,9 @@ const state = {
   draft: null,
   checked: 0,
   loading: false,
+  authMode: '',
+  editorModal: false,
+  pendingSubmit: false,
 };
 const statusLabel = (s) =>
   ({
@@ -42,6 +45,7 @@ const statusLabel = (s) =>
     clinical_review_required: 'Clinical Review Required',
     approved: 'Approved',
     published: 'Published',
+    reference_only: 'Reference only · Review required',
     retired: 'Retired',
     rejected: 'Rejected',
   })[s] || s;
@@ -55,7 +59,7 @@ const canEdit = () =>
 const canReview = () =>
   state.online &&
   ['oncology_pharmacist', 'clinical_admin'].includes(state.user?.role);
-const canPublish = () => state.online && state.user?.role === 'clinical_admin';
+const canPublish = () => state.online && (state.user?.role === 'clinical_admin' || (state.authMode === 'reviewer_pin' && state.user?.role === 'oncology_pharmacist'));
 function note(message, error = true) {
   $('#notice').textContent = message;
   $('#notice').hidden = false;
@@ -66,6 +70,47 @@ function clearNote() {
 }
 function failure(e) {
   note(e.message);
+}
+function renderAccount(session) {
+  const selectedLocal=$('#local-user')?.value||'calculator@local.test';
+  state.authMode=session.authMode;
+  if($('#environment-label'))
+    $('#environment-label').textContent=session.environment==='production'
+      ? 'V3 · Production'
+      : session.environment==='staging'?'V3 · UAT Staging':'V3 · Local QA';
+  state.user=session.user;
+  state.local=session.local;
+  const editor=['regimen_editor','oncology_pharmacist','clinical_admin'].includes(session.user?.role);
+  $('#registry-tab').hidden=!editor && !session.local;
+  $('#builder-tab').hidden=!editor;
+  $('#manage-pin').hidden=!['public','editor','reviewer_pin'].includes(session.authMode);
+  $('#audit-tab').hidden=session.user?.role!=='clinical_admin';
+  const label=session.authMode==='public'?'Public calculator':
+    esc(session.user.email)+'<small>'+esc(session.user.role)+'</small>';
+  const end=['editor','reviewer_pin'].includes(session.authMode)
+    ? '<button type="button" id="editor-logout">Exit PIN session</button>'
+    : session.authMode==='internal'
+    ? '<button type="button" id="staging-logout">Sign out</button>'
+    : session.authMode==='public'
+    ? (session.environment==='production' ? '' : '<a href="/login">Reviewer / Admin sign in</a>')
+    : '';
+  const selector=session.local?'<label>LOCAL TEST identity<select id="local-user"><option value="calculator@local.test">Calculator user</option><option value="editor@local.test">Regimen editor</option><option value="reviewer@local.test">Oncology pharmacist</option><option value="admin@local.test">Clinical admin</option></select></label>':'';
+  $('#account').innerHTML=label+end+selector;
+  if($('#local-user'))$('#local-user').value=selectedLocal;
+  if($('#staging-logout'))$('#staging-logout').onclick=stagingSignOut;
+  if($('#editor-logout'))$('#editor-logout').onclick=async()=>{
+    try{
+      await api('/auth/editor-logout',{method:'POST',body:'{}'});
+      await clearPrivateClientState();
+      window.location.replace('/');
+    }catch(e){failure(e)}
+  };
+  if($('#local-user'))$('#local-user').onchange=async()=>{
+    state.details.clear();state.selected=null;state.draft=null;
+    state.catalog=[];await sync();
+    if(!$('#registry').hidden)await registry();
+    renderLibrary();
+  };
 }
 function connection() {
   const v = state.selected?.version;
@@ -104,10 +149,35 @@ async function api(path, options = {}) {
     }
     const e = Error(value.error || `API error ${r.status}`);
     e.status = r.status;
+    if (r.status === 401 && r.headers.get('X-BHH-Auth') === 'internal' && state.authMode!=='public') {
+      await clearPrivateClientState();
+      window.location.replace('/login');
+    }
     if (r.status >= 500) e.transport = true;
     throw e;
   }
   return r.json();
+}
+async function clearPrivateClientState() {
+  await clearCache();
+  if ('caches' in window) {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key => key.startsWith('bhh-v3-shell-'))
+      .map(key => caches.delete(key)));
+  }
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map(registration => registration.unregister()));
+  }
+}
+async function stagingSignOut() {
+  try {
+    await api('/auth/logout', { method: 'POST', body: '{}' });
+    await clearPrivateClientState();
+    window.location.replace('/login');
+  } catch (error) {
+    note('ไม่สามารถออกจากระบบบน Server ได้ กรุณาตรวจสอบการเชื่อมต่อ: ' + error.message);
+  }
 }
 async function offline() {
   state.online = false;
@@ -129,8 +199,11 @@ async function sync() {
   try {
     const reconnect = !state.online;
     const session = await api('/session');
-    state.user = session.user;
-    state.local = session.local;
+    const previousRole=state.user?.role, previousMode=state.authMode;
+    if(previousRole!==session.user?.role || previousMode!==session.authMode) {
+      state.catalog=[];state.details.clear();state.draft=null;
+      renderAccount(session);
+    } else {state.user=session.user;state.local=session.local;}
     state.online = true;
     const r = await api('/revision');
     if (reconnect || r.revision !== state.revision || !state.catalog.length) {
@@ -189,7 +262,17 @@ function renderCatalog() {
     $(selector).value = value;
   }
   $('#library-count').textContent =
-    `${state.catalog.length} records · 136 original source regimens + 6 independently approved pilot protocols${state.online ? '' : ' · cached published records only'}`;
+    `${state.catalog.length} records${state.authMode==='public'?' · Published only':' · Central regimen library'}${state.online ? '' : ' · cached published records only'}`;
+  const verified = state.catalog.filter(x => x.status === 'published');
+  const reference = state.catalog.filter(x => x.status === 'reference_only');
+  const picker = $('#regimen-picker');
+  const previous = picker.value, cancer = $('#cancer').value;
+  picker.innerHTML = '<option value="">เลือกสูตร Published สำหรับคำนวณ</option>' +
+    verified.filter(x => !cancer || x.cancerType === cancer)
+      .map(x => '<option value="' + esc(x.versionId) + '">' + esc(x.name) + ' — ' + esc(x.cancerType) + '</option>').join('');
+  if (verified.some(x => x.versionId === previous)) picker.value = previous;
+  $('#library-count').textContent = state.catalog.length +
+    ' sources · ' + verified.length + ' Published/Calculable · ' + reference.length + ' Reference only (clinical review required)';
   renderLibrary();
 }
 const matches = (r, q) =>
@@ -214,6 +297,24 @@ function search() {
           `<button type="button" role="option" data-select="${esc(r.versionId)}"><strong>${esc(r.name)}</strong><small>${esc(r.cancerType)} · ${esc(statusLabel(r.status))} · v${esc(r.version)}</small></button>`,
       )
       .join('') || '<div class="empty">ไม่พบสูตรยา</div>';
+}
+function openRegimenModal(title, mode='view') {
+  const dialog=$('#regimen-modal');
+  if(dialog.open)dialog.close();
+  $('#regimen-modal-title').textContent=title;
+  for(const id of ['modal-view','review-detail','modal-builder'])
+    $('#'+id).hidden = id !== (mode==='review'?'review-detail':mode==='edit'?'modal-builder':'modal-view');
+  dialog.showModal();
+}
+$('#regimen-modal-close').onclick=()=>$('#regimen-modal').close();
+$('#regimen-modal').addEventListener('close',()=>{state.editorModal=false;});
+async function viewRegimen(id) {
+  const d=await getDetail(id);
+  const isPublished=d.version.status==='published';
+  $('#modal-view').innerHTML=protocolHtml(d)+
+    (isPublished?'<div class="actions"><button type="button" data-use="'+esc(id)+'" class="primary">Use in Calculator</button></div>':
+    '<div class="blocked">Reference only: not eligible for patient-dose calculation. Clinical review required.</div>');
+  openRegimenModal(d.version.document.name,'view');
 }
 function renderLibrary() {
   const q = $('#library-search').value,
@@ -271,8 +372,19 @@ function clinicalRuleText(x) {
   return `${x.metric} ${x.operator} ${x.value}: ${x.message}`;
 }
 function protocolHtml(d) {
-  const v = d.version,
-    r = v.document;
+  const v = d.version, r = v.document;
+  if(v.status==='reference_only' || !(r.phases||[]).length) {
+    const source=r.sourceRecord;
+    const rows=(source?.['รายการยา']||[]).map(o=>
+      '<tr><td>'+esc(o['ชื่อยา'])+'</td><td>'+esc(o['ขนาดยา']||'Not specified')+'</td>'+
+      '<td>'+esc(o['ความถี่ในการให้']||'Not specified')+'</td><td>'+
+      esc(o.maximum_dose||'—')+'</td></tr>');
+    return '<h3>'+esc(r.name)+' '+badge(v.status)+'</h3><p>'+esc(r.cancerGroup||r.indication)+'</p>'+
+      '<div class="blocked">UNVERIFIED ORIGINAL SOURCE — reference only. Not approved for calculation or treatment.</div>'+
+      '<p><strong>Original cycle:</strong> '+esc(source?.['รอบการรักษา']||'Not specified')+'</p>'+
+      table(['Drug','Original protocol expression','Frequency','Original maximum'],rows)+
+      '<small>This transcription has not been independently verified against a current authoritative protocol.</small>';
+  }
   return `<h3>${esc(r.name)} ${badge(v.status)}</h3><p>${esc(r.indication)} · v${esc(v.version)}</p><p>Population: ${esc(r.population || 'Not defined')} · Cycle interval: ${esc(r.cycleIntervalDays || '—')} days · Cycles: ${esc(r.cycleCount || '—')}</p><small>Approved: ${esc(v.approved_by === 'v2-approved-import' ? 'Prior local approval (import)' : v.approved_by || '—')} · ${esc(v.approved_at || '—')}<br>Published: ${esc(v.published_at || '—')}</small>${r.phases
     .map(
       (p) =>
@@ -301,6 +413,7 @@ async function selectVersion(id) {
   const r = d.version.document;
   $('#regimen-search').value = r.name;
   $('#cancer').value = r.cancerGroup;
+  $('#regimen-picker').value = id;
   $('#matches').hidden = true;
   $('#regimen-search').setAttribute('aria-expanded', 'false');
   $('#selected').innerHTML =
@@ -348,6 +461,10 @@ function updateClinicalInputs() {
     .join('');
 }
 function go(page) {
+  if(['registry','builder','audit'].includes(page) && !canEdit() && !(page==='registry' && state.local)){
+    note('Manage Regimen: Confirm PIN required');
+    return;
+  }
   document
     .querySelectorAll('main>section')
     .forEach((s) => (s.hidden = s.id !== page));
@@ -358,29 +475,32 @@ function go(page) {
   if (page === 'library') renderLibrary();
   if (page === 'audit') audit().catch(failure);
 }
-async function registry() {
-  if (!state.online) {
-    $('#registry-list').innerHTML =
-      '<div class="warning">Offline: registry unavailable</div>';
-    return;
-  }
-  const r = await api('/registry');
-  state.registry = r.versions;
-  $('#registry-list').innerHTML = table(
-    [
-      'Regimen',
-      'Cancer Type',
-      'Status / Active',
-      'Version / Updated',
-      'Reviewer / Approval',
-      'Source',
-      'Actions',
-    ],
-    r.versions.map(
-      (v) =>
-        `<tr><td>${esc(v.name)}<small>${esc(v.indication)}</small></td><td>${esc(v.cancerType)}</td><td>${badge(v.status)}<small>${v.active ? 'Active published' : 'Not active'}</small></td><td>v${esc(v.version)}<small>${esc(v.updatedAt)}</small></td><td>${esc(v.reviewer || '—')}<small>${esc(v.approvedAt || '—')}</small></td><td>${esc(v.source.map((x) => x.label).join('; ') || 'Awaiting source review')}</td><td><button data-review="${esc(v.versionId)}">View</button>${canEdit() ? `<button data-clone="${esc(v.versionId)}">Clone</button>${v.status === 'draft' ? `<button data-edit="${esc(v.versionId)}">Edit Draft</button>` : `<button data-new-version="${esc(v.versionId)}">New Version</button>`}` : ''}</td></tr>`,
-    ),
-  );
+function renderRegistry(){
+ const q=($('#registry-search')?.value||'').trim().toLowerCase();
+ const status=$('#registry-status')?.value||'';
+ const filtered=state.registry.filter(v => (!status||v.status===status) &&
+   [v.name,v.indication,v.cancerType,v.status,...(v.source||[]).map(x=>x.label)]
+     .join(' ').toLowerCase().includes(q));
+ $('#registry-count').textContent=filtered.length+' / '+state.registry.length+' versions';
+ $('#registry-list').innerHTML=table(
+  ['Regimen','Cancer Type','Status / Active','Version / Updated','Reviewer / Approval','Source','Actions'],
+  filtered.map(v=>
+   '<tr><td><strong>'+esc(v.name)+'</strong><small>'+esc(v.indication)+'</small></td>'+
+   '<td>'+esc(v.cancerType)+'</td><td>'+badge(v.status)+'<small>'+(v.active?'Active published':'Not active')+'</small></td>'+
+   '<td>v'+esc(v.version)+'<small>'+esc(v.updatedAt)+'</small></td>'+
+   '<td>'+esc(v.reviewer||'—')+'<small>'+esc(v.approvedAt||'—')+'</small></td>'+
+   '<td>'+esc((v.source||[]).map(x=>x.label).join('; ')||'Awaiting source review')+'</td>'+
+   '<td><button data-review="'+esc(v.versionId)+'">View</button>'+
+   (canEdit()?'<button data-clone="'+esc(v.versionId)+'">Clone</button>'+
+   (v.status==='draft'?'<button data-edit="'+esc(v.versionId)+'">Edit Draft</button>':
+     '<button data-new-version="'+esc(v.versionId)+'">New Version</button>'):'')+'</td></tr>')
+ );
+}
+async function registry(){
+ if(!state.online){$('#registry-list').innerHTML='<div class="warning">Offline: registry unavailable</div>';return;}
+ const r=await api('/registry');
+ state.registry=r.versions;
+ renderRegistry();
 }
 async function review(id) {
   const d = await getDetail(id);
@@ -393,7 +513,7 @@ async function review(id) {
     actions.push(['start-review', 'Start Clinical Review']);
   if (canReview() && v.status === 'clinical_review_required')
     actions.push(
-      ['approve', 'Approve'],
+      [canPublish() ? 'approve-publish' : 'approve', canPublish() ? 'Approve & Publish' : 'Approve'],
       ['request-revision', 'Request Revision'],
       ['reject', 'Reject'],
     );
@@ -411,17 +531,32 @@ async function review(id) {
         (x) =>
           `<tr><td>${esc(x.action)}</td><td>${esc(x.created_by)}</td><td>${esc(x.created_at)}</td><td>${esc(x.comment)}</td></tr>`,
       ),
-    )}${actions.length ? `<label>Review / change comment<textarea id="review-comment" required placeholder="ระบุเหตุผลและผลการทบทวน"></textarea></label><div class="actions">${actions.map(([a, label]) => `<button data-transition="${a}" class="${a === 'approve' || a === 'publish' ? 'primary' : ''}">${label}</button>`).join('')}</div>` : ''}</div>`;
-  $('#review-detail').scrollIntoView({ behavior: 'smooth' });
+    )}${actions.length ? `<label>Review / change comment<textarea id="review-comment" required placeholder="ระบุ Clinical Reference, dose, route, days/cycle และผลทบทวน"></textarea></label>${actions.some(([a])=>a==='approve-publish') ? '<label class="clinical-attestation"><input id="clinical-attestation" type="checkbox" /> ข้าพเจ้าเป็นผู้ทบทวนคนละคนกับผู้สร้างสูตร และได้ตรวจสอบขนาดยา Schedule, Clinical Reference และความถูกต้องทางคลินิกแล้ว</label>' : ''}<div class="actions">${actions.map(([a, label]) => `<button data-transition="${a}" class="${['approve','publish','approve-publish'].includes(a) ? 'primary' : ''}">${label}</button>`).join('')}</div>` : ''}</div>`;
+  openRegimenModal(v.document.name + ' — Clinical review','review');
 }
 async function transition(action) {
   if (!state.online) throw Error('Offline writes are disabled');
   const v = state.reviewing.version,
     reason = $('#review-comment').value;
-  await api(`/versions/${encodeURIComponent(v.id)}/${action}`, {
-    method: 'POST',
-    body: JSON.stringify({ expectedRevision: v.revision, reason }),
-  });
+  if (action==='approve-publish') {
+    if (!canPublish() || !canReview()) throw Error('Independent named Oncology Reviewer access required');
+    if (!$('#clinical-attestation')?.checked) throw Error('ยืนยันการตรวจสอบขนาดยา ตารางให้ยา และแหล่งอ้างอิงก่อน Published');
+    // Two authorized transitions. If publication fails, Approved remains retryable and visible.
+    const approval=await api(`/versions/${encodeURIComponent(v.id)}/approve`,{
+      method:'POST',body:JSON.stringify({expectedRevision:v.revision,reason})
+    });
+    await api(`/versions/${encodeURIComponent(v.id)}/publish`,{
+      method:'POST',body:JSON.stringify({
+        expectedRevision:approval.version.revision,
+        reason:'Independent reviewer verified protocol and authorized publication: '+reason
+      })
+    });
+  } else {
+    await api(`/versions/${encodeURIComponent(v.id)}/${action}`, {
+      method: 'POST',
+      body: JSON.stringify({ expectedRevision: v.revision, reason }),
+    });
+  }
   state.details.clear();
   await sync();
   await registry();
@@ -442,7 +577,7 @@ function newOrder() {
     id: crypto.randomUUID(),
     drugId: '',
     drugName: '',
-    dose: { basis: 'bsa', unit: 'mg', value: 1 },
+    dose: { basis: 'fixed', unit: 'mg' }, // No invented clinical dose default
     route: 'IV',
     schedule: { days: [1] },
     roundingProfileId: 'NO_ROUND',
@@ -453,7 +588,7 @@ function newOrder() {
 function renderBuilder() {
   if (!state.draft) return;
   const r = state.draft.document;
-  $('#builder-content').innerHTML =
+  (state.editorModal ? $('#modal-builder') : $('#builder-content')).innerHTML =
     `<form id="builder-form"><h3>${esc(r.name)} · v${esc(state.draft.version)} · Draft</h3><div class="fields">${input('Regimen name', 'name', r.name)}${input('Cancer Type', 'cancerGroup', r.cancerGroup)}${input('Indication', 'indication', r.indication)}${select('Population', 'population', r.population || 'adult', ['adult', 'pediatric'])}${input('Cycle interval (days)', 'cycleIntervalDays', r.cycleIntervalDays || '', 'number', 'min="1"')}${input('Number of cycles', 'cycleCount', r.cycleCount || '', 'number', 'min="1"')}${input('Aliases (comma separated)', 'alias', (r.alias || []).join(', '))}</div>
  ${r.phases
    .map(
@@ -477,6 +612,7 @@ function renderBuilder() {
    .join('')}</div>`,
    )
    .join('')}
+ ${r.sourceRecord && !(r.phases||[]).length ? '<div class="warning">Legacy regimen source only — verify every dose, route, phase and reference before submitting</div><button type="button" id="source-scaffold">Create editable drug rows (DOSES NOT FILLED)</button>' : ''}
  <button type="button" id="add-phase">Add phase</button><h3>Clinical references</h3><label>Reference label<input id="reference-label" value="${esc(r.references?.[0]?.label || '')}"></label><label>Reference URL<input id="reference-url" type="url" value="${esc(r.references?.[0]?.url || '')}"></label><small>Additional existing references are preserved.</small><label>Clinical notes<textarea id="clinical-notes">${esc((r.clinicalNotes || []).join('\n'))}</textarea></label>${r.sourceRecord ? `<details><summary>Original regimen details — use for clinical review</summary><pre class="source">${esc(JSON.stringify(r.sourceRecord, null, 2))}</pre></details>` : ''}<label>Reason for change<textarea id="draft-reason" required></textarea></label><div class="actions"><button class="primary" type="submit">Save Draft</button><button type="button" id="draft-submit">Submit Review</button></div></form>`;
   $('#builder-form').onsubmit = (e) => {
     e.preventDefault();
@@ -566,7 +702,9 @@ async function clone(id, same = false) {
     }),
   });
   state.draft = v.version;
+  state.editorModal = true;
   go('builder');
+  openRegimenModal(v.version.document.name+' — Edit/Clone','edit');
   renderBuilder();
   await sync();
 }
@@ -574,7 +712,9 @@ async function edit(id) {
   const d = await getDetail(id);
   if (d.version.status !== 'draft') throw Error('Only draft can be edited');
   state.draft = structuredClone(d.version);
+  state.editorModal = true;
   go('builder');
+  openRegimenModal(d.version.document.name+' — Edit Draft','edit');
   renderBuilder();
 }
 async function saveDraft() {
@@ -605,6 +745,60 @@ async function audit() {
     ),
   );
 }
+async function submitDraftForReview(pin){
+  const v=state.draft;
+  if(!v)throw Error('No draft selected');
+  await api('/versions/'+encodeURIComponent(v.id)+'/submit',{method:'POST',
+    body:JSON.stringify({expectedRevision:v.revision,
+      reason:'Submitted structured protocol for independent clinical review',
+      ...(pin?{confirmPin:pin}:{})})});
+  state.pendingSubmit=false;
+  state.details.clear();state.draft=null;state.editorModal=false;
+  if($('#regimen-modal').open)$('#regimen-modal').close();
+  go('registry');
+  await sync();await registry();await review(v.id);
+  note('Submitted for independent clinical review; NOT Published yet.',false);
+}
+$('#manage-pin').onclick=()=>{
+  if(canEdit()){go('builder');return;}
+  state.pendingSubmit=false;
+  $('#pin-heading').textContent='Manage Regimen · Confirm PIN';
+  $('#pin-error').textContent='';
+  $('#pin-form').reset();
+  $('#pin-dialog').showModal();
+};
+$('#pin-cancel').onclick=()=>{state.pendingSubmit=false;$('#pin-dialog').close();};
+$('#pin-form').onsubmit=async(e)=>{
+  e.preventDefault();
+  const btn=$('#pin-submit');
+  btn.disabled=true;$('#pin-error').textContent='';
+  try{
+    const pin=$('#editor-pin').value.trim();
+    if(!/^[0-9]{10}$/.test(pin))throw Error('Enter an individual 10-digit PIN');
+    if(state.pendingSubmit){
+      await submitDraftForReview(pin);
+      $('#pin-form').reset();$('#pin-dialog').close();
+      return;
+    }
+    await api('/auth/editor-pin',{method:'POST',body:JSON.stringify({pin})});
+    $('#pin-form').reset();$('#pin-dialog').close();
+    state.catalog=[];state.details.clear();
+    const session=await api('/session');
+    renderAccount(session);
+    await sync();
+    if(session.authMode==='reviewer_pin'){
+      go('registry');
+      $('#registry-status').value='submitted';
+      renderRegistry();
+      note('Oncology Reviewer PIN verified. Review submitted regimen before Approve & Publish.',false);
+    }else{
+      go('builder');
+      note('Editor permission confirmed. Every Draft needs independent clinical review.',false);
+    }
+  }catch(err){
+    $('#pin-error').textContent=err.status===429?'Too many PIN attempts; try later':err.message;
+  }finally{btn.disabled=false;$('#editor-pin').value='';}
+};
 $('#patient-form').onsubmit = (e) => {
   e.preventDefault();
   try {
@@ -634,10 +828,13 @@ $('#patient-form').onsubmit = (e) => {
       selections,
     );
     const v = state.selected.version;
+    const phase=v.document.phases.find(x=>Number(p.cycle)>=x.cycleStart&&Number(p.cycle)<=x.cycleEnd);
+    const protocolDoses=new Map((phase?.orders||[]).map(o=>[o.id,doseText(o.dose)]));
     $('#result').innerHTML =
       `<div class="panel"><h3>Calculation result · ${esc(v.document.name)} · v${esc(v.version)}</h3>${!state.online ? '<div class="warning">OFFLINE / CACHED PUBLISHED PROTOCOL — verify current protocol before administration.</div>' : ''}<small>Published ${esc(v.published_at)} · revision ${state.revision} · ${esc(r.phase)}</small><div class="metrics"><span>BSA ${fmt(r.bsa)} m²</span>${r.kidney !== undefined ? `<span>${esc($('#kidney-method option:checked').textContent)}: ${fmt(r.kidney)} mL/min</span>` : ''}</div>${table(
         [
           'Drug / Schedule',
+          'Protocol Dose',
           'Calculated Dose',
           'Clinical Dose',
           'Recommended Dose',
@@ -646,7 +843,7 @@ $('#patient-form').onsubmit = (e) => {
         ],
         r.rows.map(
           (x) =>
-            `<tr><td><strong>${esc(x.drug)}</strong><small>${esc(x.route)} · days ${x.schedule.days.join(', ')}${x.schedule.continuousInfusionHours ? ` · ${x.schedule.continuousInfusionHours} h infusion` : ''}<br>Per administration · ${x.administrations} administration(s)/cycle</small></td><td class="calc">${fmt(x.base)} ${x.unit}</td><td class="clinical">${fmt(x.clinical)} ${x.unit}</td><td class="recommended">${fmt(x.recommended)} ${x.unit}</td><td class="diff">${fmt(x.difference)} ${x.unit}<small>${fmt(x.differencePct)}%</small></td><td>${x.notes.map((n) => `<small>${esc(n)}</small>`).join('')}${x.warnings.map((w) => `<div class="warning">${esc(w)}</div>`).join('')}</td></tr>`,
+            `<tr><td><strong>${esc(x.drug)}</strong><small>${esc(x.route)} · days ${x.schedule.days.join(', ')}${x.schedule.continuousInfusionHours ? ` · ${x.schedule.continuousInfusionHours} h infusion` : ''}<br>Per administration · ${x.administrations} administration(s)/cycle</small></td><td class="protocol-dose">${esc(protocolDoses.get(x.id)||"—")}</td><td class="calc">${fmt(x.base)} ${x.unit}</td><td class="clinical">${fmt(x.clinical)} ${x.unit}</td><td class="recommended">${fmt(x.recommended)} ${x.unit}</td><td class="diff">${fmt(x.difference)} ${x.unit}<small>${fmt(x.differencePct)}%</small></td><td>${x.notes.map((n) => `<small>${esc(n)}</small>`).join('')}${x.warnings.map((w) => `<div class="warning">${esc(w)}</div>`).join('')}</td></tr>`,
         ),
       )}<p>เภสัชกรต้องตรวจสอบขนาดยา ตารางให้ยา และความเหมาะสมทางคลินิกก่อนบริหารยา</p><label><input type="checkbox" id="verification" class="verification"> Pharmacist verification completed (this calculation only)</label></div>`;
     $('#result').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -682,12 +879,19 @@ $('#matches').onkeydown = (e) => {
     e.preventDefault();
   }
 };
+$('#regimen-picker').onchange=async(e)=>{
+ if(e.target.value)try{await selectVersion(e.target.value);}catch(err){failure(err)}
+};
+$('#browse-regimens').onclick=()=>go('library');
+$('#registry-search').oninput=renderRegistry;
+$('#registry-status').onchange=renderRegistry;
 $('#cancer').onchange = () => {
   state.selected = null;
   $('#regimen-search').value = '';
   $('#selected').textContent = 'ยังไม่ได้เลือกสูตรยา';
   $('#result').innerHTML = '';
   $('#matches').hidden = true;
+  renderCatalog();
   connection();
 };
 $('#patient-form').oninput = (e) => {
@@ -698,6 +902,7 @@ $('#patient-form').oninput = (e) => {
 $('#rounding').onchange = () => ($('#result').innerHTML = '');
 $('#clear-patient').onclick = () => {
   $('#patient-form').reset();
+  $('#regimen-picker').value = '';
   state.selected = null;
   $('#selected').textContent = 'ยังไม่ได้เลือกสูตรยา';
   $('#result').innerHTML = '';
@@ -752,8 +957,13 @@ document.addEventListener('click', async (e) => {
       return;
     }
     if (b.dataset.view) {
+      await viewRegimen(b.dataset.view);
+      return;
+    }
+    if (b.dataset.use) {
+      $('#regimen-modal').close();
       go('calculator');
-      await selectVersion(b.dataset.view);
+      await selectVersion(b.dataset.use);
       return;
     }
     if (b.dataset.review) {
@@ -783,22 +993,41 @@ document.addEventListener('click', async (e) => {
     }
     if (b.id === 'draft-submit') {
       await saveDraft();
-      state.reviewing = { version: state.draft };
-      const v = state.draft;
-      await api(`/versions/${encodeURIComponent(v.id)}/submit`, {
-        method: 'POST',
-        body: JSON.stringify({
-          expectedRevision: v.revision,
-          reason:
-            'Submitted structured protocol for independent clinical review',
-        }),
+      if (state.authMode === 'editor') {
+        state.pendingSubmit=true;
+        $('#pin-heading').textContent='Confirm PIN before Submit Review';
+        $('#pin-error').textContent='Re-enter your individual PIN. Submit is not Publish.';
+        $('#pin-form').reset();
+        $('#pin-dialog').showModal();
+      } else {
+        await submitDraftForReview();
+      }
+      return;
+    }
+    if (b.id === 'source-scaffold') {
+      const original=state.draft?.document?.sourceRecord;
+      if (!original || !Array.isArray(original['รายการยา']) || !original['รายการยา'].length)
+        throw Error('Original source drug rows unavailable');
+      if (state.draft.document.phases.length) throw Error('Edit the existing phase instead');
+      readBuilder();
+      const orders=original['รายการยา'].map((src,i)=>{
+        const o=newOrder();
+        o.drugName=String(src['ชื่อยา']||'').trim();
+        o.drugId=o.drugName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'verify-drug-'+(i+1);
+        o.route=''; // Mandatory human confirmation.
+        o.schedule={days:[1],note:'UNVERIFIED ORIGINAL: '+String(src['ขนาดยา']||'missing dose')+
+          '; frequency '+String(src['ความถี่ในการให้']||'not specified')+
+          (src.maximum_dose?'; source max '+String(src.maximum_dose):'')};
+        return o;
       });
-      state.details.clear();
-      state.draft = null;
-      go('registry');
-      await sync();
-      await registry();
-      await review(v.id);
+      state.draft.document.phases.push({
+        id:crypto.randomUUID(),name:'VERIFY PHASE AND CYCLES',
+        cycleStart:1,cycleEnd:1,orders
+      });
+      state.draft.document.cycleCount=0;
+      state.draft.document.cycleIntervalDays=0;
+      renderBuilder();
+      note('Drug names populated, but no dose/route/interval was assigned; clinical pharmacist must verify every field.',false);
       return;
     }
     if (b.id === 'add-phase') {
@@ -840,23 +1069,8 @@ document.addEventListener('click', async (e) => {
 async function boot() {
   try {
     const s = await api('/session');
-    state.user = s.user;
-    state.local = s.local;
-    $('#account').innerHTML =
-      `${esc(s.user.email)}<small>${esc(s.user.role)}</small>${s.local ? '<label>LOCAL TEST identity<select id="local-user"><option value="calculator@local.test">Calculator user</option><option value="editor@local.test">Regimen editor</option><option value="reviewer@local.test">Oncology pharmacist</option><option value="admin@local.test">Clinical admin</option></select></label>' : ''}`;
-    if (state.local)
-      $('#local-user').onchange = async () => {
-        state.details.clear();
-        state.selected = null;
-        state.draft = null;
-        await sync();
-        $('#account small').textContent = state.user?.role || '';
-        $('#audit-tab').hidden = state.user?.role !== 'clinical_admin';
-        if (!$('#registry').hidden) await registry();
-        renderLibrary();
-      };
+    renderAccount(s);
     await sync();
-    $('#audit-tab').hidden = state.user?.role !== 'clinical_admin';
   } catch (e) {
     if (e.transport) await offline();
     else {

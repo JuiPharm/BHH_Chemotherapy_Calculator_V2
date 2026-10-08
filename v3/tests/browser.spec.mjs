@@ -88,7 +88,7 @@ test('Clinical UI, blank patient, cancer typeahead, rounding, pastel results and
     fullPage: true,
   });
   await page.locator('[data-page=library]').click();
-  await expect(page.locator('#library-count')).toContainText('142 records');
+  await expect(page.locator('#library-count')).toContainText('142 sources');
   await page.locator('#library-search').fill('pembro');
   await expect(page.locator('#library-list')).toContainText('Pembrolizumab');
   await page.locator('#library-cancer').selectOption({ label: 'Breast' });
@@ -133,7 +133,7 @@ test('Browser clone, builder, save, submit, independent approve, publish and sec
   await ep.locator('[data-page=library]').click();
   await ep.locator('#library-search').fill('TCH');
   await ep.locator('[data-clone="BHH-BREAST-TCH-EVIQ53:1"]').click();
-  await expect(ep.locator('#builder-content')).toContainText('Draft');
+  await expect(ep.locator('#modal-builder')).toContainText('Draft');
   const title = 'BHH browser approved TCH ' + Date.now();
   await ep.locator('#builder-form [data-field=name]').first().fill(title);
   await ep
@@ -186,12 +186,15 @@ test('Browser clone, builder, save, submit, independent approve, publish and sec
   await expect(cp.locator('#matches')).toContainText(title);
   await cp.locator('#matches button').first().click();
   await patient(cp);
+  const invalid=await cp.locator('#patient-form').evaluate(f=>[...f.elements].filter(e=>e.willValidate&&!e.validity.valid).map(e=>({id:e.id,name:e.name,value:e.value,message:e.validationMessage})));
+  expect(invalid).toEqual([]);
   await cp.locator('#calculate').click();
   await expect(cp.locator('#result')).toContainText('690 mg');
   await cp.reload();
   await expect(cp.locator('#connection')).toContainText('Central protocols');
   await cp.locator('[data-page=registry]').click();
   await expect(cp.locator('#registry-list')).toContainText(title);
+  await ap.locator('#regimen-modal-close').click();
   await ap.locator('[data-page=audit]').click();
   await expect(ap.locator('#audit-list')).toContainText('publish');
   await expect(ap.locator('#audit-list')).toContainText('reviewer@local.test');

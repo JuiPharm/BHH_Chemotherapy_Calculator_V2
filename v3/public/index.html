@@ -13,6 +13,7 @@
       <div>
         <h1>Chemotherapy Calculator</h1>
         <p>ฝ่ายเภสัชกรรม · Bangkok Hospital Hatyai</p>
+        <small id="environment-label" aria-live="polite">V3 · Loading...</small>
       </div>
       <div id="account"></div>
     </header>
@@ -21,10 +22,36 @@
     <nav aria-label="Main navigation">
       <button data-page="calculator" class="active">Calculator</button
       ><button data-page="library">All Regimens Library</button
-      ><button data-page="registry">Regimen Registry</button
-      ><button data-page="builder">Regimen Builder</button
+      ><button data-page="registry" id="registry-tab" hidden>Regimen Registry</button
+      ><button data-page="builder" id="builder-tab" hidden>Regimen Builder</button
+      ><button id="manage-pin" type="button" hidden>Manage / Review Regimen · Confirm PIN</button
       ><button data-page="audit" id="audit-tab" hidden>Audit Log</button>
     </nav>
+    <dialog id="pin-dialog" aria-labelledby="pin-heading">
+      <form id="pin-form">
+        <h2 id="pin-heading">Manage Regimen · Confirm PIN</h2>
+        <p>ใช้ PIN ของ Editor เพื่อแก้ไขและ Submit สูตรยา หรือ PIN ของ Oncology Pharmacist อีกคนเพื่อ Review → Approve & Publish หลังยืนยันความถูกต้องครบถ้วน</p>
+        <label>Confirm PIN
+          <input id="editor-pin" name="pin" type="password" inputmode="numeric" autocomplete="off" pattern="[0-9]{10}" maxlength="10" minlength="10" required />
+        </label>
+        <p id="pin-error" role="alert" aria-live="polite"></p>
+        <div class="actions">
+          <button class="primary" type="submit" id="pin-submit">Confirm PIN</button>
+          <button type="button" id="pin-cancel">Cancel</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="regimen-modal" aria-labelledby="regimen-modal-title">
+      <div class="modal-header">
+        <h2 id="regimen-modal-title">Regimen details</h2>
+        <button type="button" id="regimen-modal-close" aria-label="Close dialog">✕ Close</button>
+      </div>
+      <div class="modal-scroll">
+        <div id="modal-view"></div>
+        <div id="review-detail" hidden></div>
+        <div id="modal-builder" hidden></div>
+      </div>
+    </dialog>
     <main>
       <section id="calculator">
         <div class="heading">
@@ -32,7 +59,7 @@
             <h2>คำนวณขนาดยา</h2>
             <p>เลือกสูตรยาและรอบการรักษา แล้วตรวจสอบขนาดยาก่อนใช้งาน</p>
           </div>
-          <span class="pill">V3 · Clinical candidate</span>
+          <span class="pill">V3 · Clinical review required before patient use</span>
         </div>
         <form id="patient-form">
           <div class="panel">
@@ -81,6 +108,13 @@
                   aria-controls="matches"
                   aria-autocomplete="list" />
                 <div id="matches" role="listbox" hidden></div></label
+              ><label class="span2"
+                >Choose Regimen / รายชื่อสูตรยาสำหรับคำนวณ
+                <select id="regimen-picker" aria-label="Choose a published regimen">
+                  <option value="">เลือกสูตรยา Published จากรายการ</option>
+                </select>
+                <button type="button" id="browse-regimens">Browse all 142 regimen sources</button>
+              </label
               ><label
                 >Cycle<input
                   name="cycle"
@@ -149,7 +183,8 @@
           ><label
             >Status<select id="library-status">
               <option value="">ทั้งหมด</option>
-              <option value="published">Published</option>
+              <option value="published">Published / Calculable</option>
+              <option value="reference_only">Reference only — Clinical review required</option>
               <option value="draft">Draft</option>
               <option value="clinical_review_required">
                 Clinical Review Required
@@ -167,8 +202,25 @@
           </div>
           <button id="registry-refresh">Refresh</button>
         </div>
+        <div class="toolbar">
+          <label>Search Regimen Registry
+            <input id="registry-search" type="search" placeholder="ค้นหาชื่อสูตร / ข้อบ่งใช้ / ยา / สถานะ" />
+          </label>
+          <label>Status
+            <select id="registry-status">
+              <option value="">All statuses</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+              <option value="submitted">Submitted</option>
+              <option value="clinical_review_required">Clinical Review Required</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="retired">Retired</option>
+            </select>
+          </label>
+          <span id="registry-count" aria-live="polite"></span>
+        </div>
         <div id="registry-list"></div>
-        <div id="review-detail"></div>
       </section>
       <section id="builder" hidden>
         <div class="heading">

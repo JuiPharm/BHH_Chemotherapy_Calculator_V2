@@ -1,0 +1,16 @@
+@font-face{font-family:BHHThai;src:url('/fonts/thai-400.woff2') format('woff2');font-display:swap}
+:root{font-family:BHHThai,Tahoma,Arial,sans-serif;color:#1a3049;background:#eef3f9}
+*{box-sizing:border-box}
+body{min-height:100vh;margin:0;display:grid;place-items:center;padding:20px}
+main{width:100%;max-width:480px;background:white;border-radius:16px;box-shadow:0 12px 40px #12325418;border-top:6px solid #ca2943;padding:32px}
+.logo{max-width:235px;width:100%;height:auto;margin-bottom:15px}
+.header h1{font-size:24px;margin:12px 0 3px;color:#123257}
+.header p{color:#60738a;font-size:14px;margin:0 0 28px}
+.environment{font-size:11px;font-weight:bold;letter-spacing:1px;background:#e8eff8;color:#21588b;padding:7px 10px;border-radius:20px}
+label{display:block;font-size:14px;font-weight:600;margin:0 0 17px}
+input{display:block;margin-top:7px;width:100%;border:1px solid #afc0d5;border-radius:9px;padding:13px;font:inherit}
+input:focus{outline:2px solid #2679c4;outline-offset:1px}
+button{display:block;width:100%;color:#fff;background:#1264a1;border:0;border-radius:9px;padding:14px;font:inherit;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6;cursor:progress}
+#error{color:#ae2035;min-height:25px;font-size:13px}
+footer{border-top:1px solid #dbe4ec;margin-top:25px;padding-top:15px;font-size:12px;line-height:1.6;color:#617187}

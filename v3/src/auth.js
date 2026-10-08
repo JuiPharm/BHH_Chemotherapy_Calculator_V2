@@ -1,4 +1,6 @@
+import { pinIdentity } from './editor-pin.js';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { isInternalStaging, stagingIdentity } from './staging-auth.js';
 const keysets = new Map();
 export async function identity(request, env) {
   const host = new URL(request.url).hostname;
@@ -10,6 +12,21 @@ export async function identity(request, env) {
     const email =
       request.headers.get('X-Local-User') || 'calculator@local.test';
     return { email, local: true };
+  }
+  if (env.APP_ENV === 'production' && env.AUTH_MODE==='internal' &&
+      env.PRODUCTION_PUBLIC_PIN==='true' && env.PUBLIC_CALCULATOR==='true' &&
+      env.LOCAL_TEST_AUTH!=='true') {
+    const editor=await pinIdentity(request,env);
+    if(editor)return editor;
+    throw Object.assign(Error('Sign in required'),{status:401});
+  }
+  if (isInternalStaging(env)) {
+    // A named password+TOTP reviewer/admin session takes precedence over a PIN editor session.
+    try {return await stagingIdentity(request,env);}
+    catch(e) {if(e.status!==401)throw e;}
+    const editor=await pinIdentity(request,env);
+    if(editor)return editor;
+    throw Object.assign(Error('Sign in required'),{status:401});
   }
   if (env.LOCAL_TEST_AUTH === 'true')
     throw Object.assign(

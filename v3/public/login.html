@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Staging Sign in · BHH Chemotherapy Calculator</title>
+  <link rel="stylesheet" href="/login.css" />
+  <script type="module" src="/login.js"></script>
+</head>
+<body>
+  <main>
+    <img class="logo" src="/logo.png" alt="Bangkok Hospital Hatyai" />
+    <div class="header">
+      <span class="environment">STAGING · SYNTHETIC DATA ONLY</span>
+      <h1>Chemotherapy Calculator V3</h1>
+      <p>ระบบทดสอบสำหรับบุคลากรที่ได้รับอนุญาตเท่านั้น</p>
+    </div>
+    <form id="signin" autocomplete="on">
+      <label>อีเมลผู้ทดสอบ
+        <input name="email" type="email" autocomplete="username" maxlength="180" required autofocus />
+      </label>
+      <label>รหัสผ่านส่วนบุคคล
+        <input name="password" type="password" autocomplete="current-password" required />
+      </label>
+      <label>รหัส 6 หลักจาก Authenticator
+        <input name="totp" type="text" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" autocomplete="one-time-code" required />
+      </label>
+      <p id="error" role="alert" aria-live="polite"></p>
+      <button id="submit" type="submit">เข้าสู่ระบบ Staging</button>
+    </form>
+    <footer>
+      <strong>ความปลอดภัย</strong> ห้ามใช้ข้อมูลผู้ป่วยจริง และอย่าแบ่งปันรหัสผ่านหรือรหัส Authenticator
+    </footer>
+  </main>
+</body>
+</html>

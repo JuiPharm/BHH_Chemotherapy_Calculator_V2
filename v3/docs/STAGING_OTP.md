@@ -1,3 +1,5 @@
+> **SUPERSEDED for the isolated `staging-internal-auth-v3` branch.** The Cloudflare Access OTP path below is retained as historical context only. Current staging candidate: [STAGING_INTERNAL_LOGIN.md](STAGING_INTERNAL_LOGIN.md). Do not configure both identity paths at once.
+
 # Staging authentication — Cloudflare Access email One-time PIN
 
 **Decision (8 Oct 2026): staging only uses Cloudflare Access email OTP, not Google OAuth.** No Google Cloud Console, Google OAuth client ID or client secret is required for staging. Production authentication remains a separate hospital IT/security decision. This is a deployment runbook, not proof of remote testing or clinical approval.
