@@ -93,6 +93,21 @@ function clearProjection(db, id) {
     'regimen_references',
   ].map((t) => dbQuery(db, `DELETE FROM ${t} WHERE version_id=?`, id));
 }
+// Original 136 legacy catalog entries are PUBLIC REFERENCE, not clinically published.
+// Never expose mutable draft documents or approval metadata to anonymous visitors.
+function referenceCompact(v) {
+  const original = JSON.parse(v.source_record);
+  const drugs = original['รายการยา'] || [];
+  return {
+    id: v.regimen_id, versionId: v.id,
+    name: original['ชื่อสูตรยา'], cancerType: original['ชนิดของมะเร็ง'],
+    indication: original['ชนิดของมะเร็ง'],
+    keywords: [original['ชื่อสูตรยา'], original['ชนิดของมะเร็ง'], ...drugs.map(d=>d['ชื่อยา'])],
+    status: 'reference_only', version: '1', reviewer:null, approvedAt:null,
+    publishedAt:null, updatedAt:null, source:[], revision:0, active:false,
+    reviewRequired:true,
+  };
+}
 function compact(v) {
   return {
     id: v.regimen_id,
@@ -189,18 +204,18 @@ async function dispatch(request, env) {
   if (path === '/api/revision' && request.method === 'GET')
     return response(revision);
   if (path === '/api/catalog' && request.method === 'GET') {
-    const tag = `"catalog-${revision.revision}"`;
+    const tag = `"catalog-${revision.revision}-${who.guest ? "public" : "private"}"`;
     if (request.headers.get('If-None-Match') === tag)
       return new Response(null, {
         status: 304,
         headers: { ...headers, ETag: tag },
       });
     const catalogSql = who.guest
-      ? "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' ORDER BY r.name"
+      ? "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords,r.source_record FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' OR (v.status='draft' AND v.id LIKE 'BHH-CATALOG-%:1' AND r.source_record IS NOT NULL) ORDER BY r.name"
       : "SELECT v.*,r.name,r.cancer_type,r.indication,r.keywords FROM regimen_versions v JOIN regimens r ON r.id=v.regimen_id WHERE v.status='published' OR (v.status<>'published' AND NOT EXISTS(SELECT 1 FROM regimen_versions p WHERE p.regimen_id=v.regimen_id AND p.status='published') AND v.rowid=(SELECT MAX(x.rowid) FROM regimen_versions x WHERE x.regimen_id=v.regimen_id)) ORDER BY r.name";
     const { results } = await db.prepare(catalogSql).all();
     return response(
-      { revision: revision.revision, policies, catalog: results.map(compact) },
+      { revision: revision.revision, policies, catalog: results.map(v=>who.guest && v.status==='draft' ? referenceCompact(v) : compact(v)) },
       200,
       { ETag: tag, 'Cache-Control': 'private, max-age=0, must-revalidate' },
     );
@@ -226,7 +241,23 @@ async function dispatch(request, env) {
   const detail = path.match(/^\/api\/versions\/([^/]+)$/);
   if (detail && request.method === 'GET') {
     const v = await version(db, decodeURIComponent(detail[1]));
-    if (who.guest && v.status !== 'published') error('Editor access required',403);
+    if (who.guest && v.status !== 'published') {
+      // Whitelist ONLY immutable original sourceRecord, never modified draft data.
+      if (v.status!=='draft' || !/^BHH-CATALOG-\\d{3}:1$/.test(v.id))
+        error('Editor access required',403);
+      const r=await dbQuery(db,'SELECT source_record FROM regimens WHERE id=?',v.regimen_id).first();
+      if(!r?.source_record)error('Editor access required',403);
+      const original=JSON.parse(r.source_record);
+      return response({version:{
+        id:v.id,regimen_id:v.regimen_id,version:'1',status:'reference_only',
+        revision:0,published_at:null,approved_by:null,approved_at:null,
+        document:{id:v.regimen_id,version:'1',status:'reference_only',localApproval:false,
+          name:original['ชื่อสูตรยา'],cancerGroup:original['ชนิดของมะเร็ง'],
+          indication:original['ชนิดของมะเร็ง'],phases:[],references:[],
+          clinicalNotes:['Original source data only: not validated for patient dosing'],
+          sourceRecord:original},
+      },history:[],systemRevision:revision.revision});
+    }
     const tag = `"${v.id}-${v.revision}-${revision.revision}"`;
     if (request.headers.get('If-None-Match') === tag)
       return new Response(null, {
