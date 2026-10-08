@@ -40,6 +40,17 @@
         </div>
       </form>
     </dialog>
+    <dialog id="regimen-modal" aria-labelledby="regimen-modal-title">
+      <div class="modal-header">
+        <h2 id="regimen-modal-title">Regimen details</h2>
+        <button type="button" id="regimen-modal-close" aria-label="Close dialog">✕ Close</button>
+      </div>
+      <div class="modal-scroll">
+        <div id="modal-view"></div>
+        <div id="review-detail" hidden></div>
+        <div id="modal-builder" hidden></div>
+      </div>
+    </dialog>
     <main>
       <section id="calculator">
         <div class="heading">
@@ -47,7 +58,7 @@
             <h2>คำนวณขนาดยา</h2>
             <p>เลือกสูตรยาและรอบการรักษา แล้วตรวจสอบขนาดยาก่อนใช้งาน</p>
           </div>
-          <span class="pill">V3 · Clinical candidate</span>
+          <span class="pill">V3 · Clinical review required before patient use</span>
         </div>
         <form id="patient-form">
           <div class="panel">
@@ -96,6 +107,13 @@
                   aria-controls="matches"
                   aria-autocomplete="list" />
                 <div id="matches" role="listbox" hidden></div></label
+              ><label class="span2"
+                >Choose Regimen / รายชื่อสูตรยาสำหรับคำนวณ
+                <select id="regimen-picker" aria-label="Choose a published regimen">
+                  <option value="">เลือกสูตรยา Published จากรายการ</option>
+                </select>
+                <button type="button" id="browse-regimens">Browse all 142 regimen sources</button>
+              </label
               ><label
                 >Cycle<input
                   name="cycle"
@@ -164,7 +182,8 @@
           ><label
             >Status<select id="library-status">
               <option value="">ทั้งหมด</option>
-              <option value="published">Published</option>
+              <option value="published">Published / Calculable</option>
+              <option value="reference_only">Reference only — Clinical review required</option>
               <option value="draft">Draft</option>
               <option value="clinical_review_required">
                 Clinical Review Required
@@ -182,8 +201,25 @@
           </div>
           <button id="registry-refresh">Refresh</button>
         </div>
+        <div class="toolbar">
+          <label>Search Regimen Registry
+            <input id="registry-search" type="search" placeholder="ค้นหาชื่อสูตร / ข้อบ่งใช้ / ยา / สถานะ" />
+          </label>
+          <label>Status
+            <select id="registry-status">
+              <option value="">All statuses</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+              <option value="submitted">Submitted</option>
+              <option value="clinical_review_required">Clinical Review Required</option>
+              <option value="approved">Approved</option>
+              <option value="rejected">Rejected</option>
+              <option value="retired">Retired</option>
+            </select>
+          </label>
+          <span id="registry-count" aria-live="polite"></span>
+        </div>
         <div id="registry-list"></div>
-        <div id="review-detail"></div>
       </section>
       <section id="builder" hidden>
         <div class="heading">
