@@ -29,7 +29,7 @@
     d.id = 'review-publish-dialog';
     d.setAttribute('aria-labelledby', 'review-publish-heading');
     d.innerHTML = '<div class="review-publish-head"><h2 id="review-publish-heading">Review → Approve & Publish</h2><button id="review-publish-close" type="button" aria-label="Close">✕</button></div>' +
-      '<form id="review-publish-form"><div class="review-publish-content">' +
+      '<form id="review-publish-form" novalidate><div class="review-publish-content">' +
       '<p class="review-publish-help">แก้ไขข้อมูลที่จำเป็น ตรวจสอบกับ Guideline ฉบับจริง แล้วกด <strong>Approve & Publish</strong> เพื่อบันทึกลง GitHub Production</p>' +
       '<div id="review-publish-name"></div>' +
       '<label>ข้อบ่งใช้ (Indication)<textarea id="review-publish-indication" rows="2" required></textarea></label>' +
