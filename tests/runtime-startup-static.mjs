@@ -12,7 +12,13 @@ assert(!/\\binit;\\s*$/.test(bundle), 'Runtime ends with init; instead of init()
 assert(bundle.includes("loadJson('./data/regimens.published.json?v=2.3.0')"), 'Runtime must load central published regimen data');
 assert(bundle.includes("loadJson('./data/legacy-regimens.v1.json?v=2.3.0')"), 'Runtime must load the central 136-regimen master');
 assert(bundle.includes("loadJson('./data/rounding-profiles.json?v=2.3.0')"), 'Runtime must load central rounding defaults');
-assert(index.includes('app.bundle.js?v=2.3.0'), 'Index is not using v2.3.0 runtime');
+assert(index.includes('app.bundle.js?v=2.4.0'), 'Index is not using v2.4.0 runtime');
+assert(bundle.includes("loadJson('./data/guideline-status.v2.4.json?v=2.4.0')"), 'Runtime must load guideline approval and review statuses');
+const guideline=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
+assert(guideline.length===33,'Exactly 33 reference-status records expected');
+assert(guideline.filter(x=>x.approved&&x.published).length===3,'Three exact BC Cancer reference matches expected');
+assert(guideline.filter(x=>x.status==='blocked').length===21,'Twenty-one clinical holds expected');
+assert(guideline.every(x=>!x.calculator_enabled),'Source review status must not bypass structured-calculator approval');
 assert(!index.includes('Safety principles'), 'Safety principles panel must not be rendered');
 assert(!index.includes('Structured regimen engine · fail-closed calculation · zero-code regimen drafts'), 'Technical subtitle must not be rendered');
 assert(!/id="age-input"[^>]*value=/.test(index), 'Age must not have a default value');
