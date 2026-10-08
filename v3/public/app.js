@@ -104,10 +104,35 @@ async function api(path, options = {}) {
     }
     const e = Error(value.error || `API error ${r.status}`);
     e.status = r.status;
+    if (r.status === 401 && r.headers.get('X-BHH-Auth') === 'internal') {
+      await clearPrivateClientState();
+      window.location.replace('/login');
+    }
     if (r.status >= 500) e.transport = true;
     throw e;
   }
   return r.json();
+}
+async function clearPrivateClientState() {
+  await clearCache();
+  if ('caches' in window) {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(key => key.startsWith('bhh-v3-shell-'))
+      .map(key => caches.delete(key)));
+  }
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    await Promise.all(registrations.map(registration => registration.unregister()));
+  }
+}
+async function stagingSignOut() {
+  try {
+    await api('/auth/logout', { method: 'POST', body: '{}' });
+    await clearPrivateClientState();
+    window.location.replace('/login');
+  } catch (error) {
+    note('ไม่สามารถออกจากระบบบน Server ได้ กรุณาตรวจสอบการเชื่อมต่อ: ' + error.message);
+  }
 }
 async function offline() {
   state.online = false;
@@ -843,7 +868,9 @@ async function boot() {
     state.user = s.user;
     state.local = s.local;
     $('#account').innerHTML =
-      `${esc(s.user.email)}<small>${esc(s.user.role)}</small>${s.local ? '<label>LOCAL TEST identity<select id="local-user"><option value="calculator@local.test">Calculator user</option><option value="editor@local.test">Regimen editor</option><option value="reviewer@local.test">Oncology pharmacist</option><option value="admin@local.test">Clinical admin</option></select></label>' : ''}`;
+      `${esc(s.user.email)}<small>${esc(s.user.role)}</small>${s.authMode === 'internal' ? '<button type="button" id="staging-logout">ออกจากระบบ</button>' : ''}${s.local ? '<label>LOCAL TEST identity<select id="local-user"><option value="calculator@local.test">Calculator user</option><option value="editor@local.test">Regimen editor</option><option value="reviewer@local.test">Oncology pharmacist</option><option value="admin@local.test">Clinical admin</option></select></label>' : ''}`;
+    if (s.authMode === 'internal')
+      $('#staging-logout').onclick = stagingSignOut;
     if (state.local)
       $('#local-user').onchange = async () => {
         state.details.clear();
