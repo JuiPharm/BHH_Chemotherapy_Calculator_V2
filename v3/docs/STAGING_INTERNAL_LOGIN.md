@@ -15,11 +15,12 @@
 
 ## Account and D1 setup
 1. In Cloudflare Workers & Pages choose Workers Free and note your `workers.dev` subdomain. Whether the current Cloudflare signup process demands a payment method depends on account onboarding; **stop rather than adding billing details if the account requires them**.
-2. The user's Cloudflare account identifier was provided as `3229fd47f39f8ca1809f92d4282b5ab5`; their D1 staging UUID is `3d936db6-eed1-4880-9561-1f22101cb27e`. The linked D1 Metrics page does **not** establish a Workers subdomain. Do not infer one. Create (or reuse) the project-specific staging D1:
+2. The user's Cloudflare account identifier was provided as `3229fd47f39f8ca1809f92d4282b5ab5`; their D1 staging UUID is `3d936db6-eed1-4880-9561-1f22101cb27e`. The linked D1 Metrics page does **not** establish a Workers subdomain. Do not infer one. **The D1 staging database already exists: do not run `d1 create` again.** The operator may confirm account and database identity with read-only CLI commands when authorized:
    ```sh
    npx wrangler login
-   npx wrangler d1 create bhh-chemo-staging
+   npx wrangler d1 list
    ```
+   A login performed on the operator's machine does not grant ChatGPT deployment permission.
 3. The supplied staging `database_id` is already filled in `v3/wrangler.jsonc`. Before any remote operation, independently verify the UUID identifies **`bhh-chemo-staging`** in the intended Cloudflare account and is not Production; keep staging `AUTH_MODE=internal` and `workers_dev=true`. Keep production's Access team domain/AUD placeholders and `workers_dev=false` unchanged. Never use the production D1 ID for staging.
 4. Run `npm ci && npm run build:v3 && npm run test:v3 && npm run check:deploy:v3`, and `npm audit` to confirm the patched `sharp` 0.35.5 lockfile has no current advisories. Also run `npm run test:api:v3` and `npm run test:browser:v3` locally or in GitHub CI. When staging configuration passes and IT approves the exposure, apply **staging only** migrations:
    ```sh
