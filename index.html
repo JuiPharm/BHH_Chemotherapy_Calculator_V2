@@ -25,10 +25,11 @@
 
     <nav class="tabs" aria-label="Main navigation">
       <button class="active" data-tab="calculator">Calculator</button>
-      <button data-tab="library">Regimen Library</button>
-      <button data-tab="manager">Regimen Manager</button>
-      <button data-tab="rounding">Rounding Policy</button>
-      <button data-tab="about">About</button>
+      <button class="admin-tab hidden" data-tab="library">Regimen Library</button>
+      <button class="admin-tab hidden" data-tab="manager">Regimen Manager</button>
+      <button class="admin-tab hidden" data-tab="rounding">Rounding Policy</button>
+      <button class="admin-tab hidden" data-tab="about">About</button>
+      <button id="admin-pin-toggle-btn" class="pin-toggle-btn" type="button" style="margin-left:auto;">🔒 เภสัชกร (PIN)</button>
     </nav>
 
     <main>
@@ -62,6 +63,22 @@
 
           <div id="regimen-context" class="context-box hidden"></div>
           <div id="dose-selections"></div>
+
+          <div class="section-title">การปัดเศษขนาดยา (Dose Rounding Policy)</div>
+          <div class="rounding-radio-group">
+            <label class="radio-card">
+              <input type="radio" name="calc-rounding-choice" value="BHH_NEAREST_10MG_DEFAULT" checked>
+              <span><strong>ปัดเศษ 10 mg</strong> (Default: ใกล้เคียง 10 mg)</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="calc-rounding-choice" value="BHH_NEAREST_1MG_DEFAULT">
+              <span><strong>ปัดเศษ 1 mg</strong> (ใกล้เคียง 1 mg)</span>
+            </label>
+            <label class="radio-card">
+              <input type="radio" name="calc-rounding-choice" value="NO_ROUND">
+              <span><strong>ไม่ปัดเศษ</strong> (Exact Calculated Dose)</span>
+            </label>
+          </div>
 
           <div class="section-title">Patient Data</div>
           <div class="form-grid three-col">
@@ -184,6 +201,28 @@
 
     <footer>Bangkok Hospital Hatyai · Pharmacy Department · BHH Chemotherapy Calculator v2.6.3</footer>
   </div>
+
+  <dialog id="pin-auth-dialog">
+    <div class="review-publish-head">
+      <h2 id="pin-auth-heading">ยืนยันรหัส PIN (Pharmacist Mode)</h2>
+      <button id="pin-auth-close" type="button" aria-label="Close">✕</button>
+    </div>
+    <form id="pin-auth-form" style="padding: 20px;">
+      <p style="margin-top:0; color: #334e68; font-size: 0.95rem;">
+        กรุณากรอกรหัส PIN เพื่อปลดล็อคหน้าจัดการสูตรยา (Regimen Library, Manager และ Rounding Policy)
+      </p>
+      <div id="pin-auth-error" class="alert alert-error hidden"></div>
+      <label class="field" style="margin: 18px 0;">
+        <span>รหัส PIN *</span>
+        <input id="pin-auth-input" type="password" maxlength="10" placeholder="กรอกรหัส PIN (เช่น 1234)" required autocomplete="off" style="font-size: 1.3rem; letter-spacing: 4px; text-align: center;">
+      </label>
+      <div class="button-row" style="justify-content: flex-end; margin-top: 15px;">
+        <button type="button" id="pin-auth-cancel" class="secondary">ยกเลิก</button>
+        <button type="submit" class="primary">เข้าสู่ระบบ</button>
+      </div>
+    </form>
+  </dialog>
+
   <script src="./cleanup.js?v=2.3.0" defer></script>
   <script src="./publish-manager.js?v=2.6.3" defer></script>
   <script src="./app.bundle.js?v=2.5.0" defer></script>

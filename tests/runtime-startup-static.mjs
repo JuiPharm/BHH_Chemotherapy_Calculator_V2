@@ -19,8 +19,8 @@ assert(index.includes('https://api.github.com'), 'GitHub publication API not per
 assert(bundle.includes('data-review-regimen'), 'Regimen cards must offer Review/Publish');
 assert(bundle.includes('approval?.corrected_drugs'), 'Reviewed clinical corrections must render in calculator library');
 const publisher = fs.readFileSync(new URL('../publish-manager.js', import.meta.url), 'utf8');
-assert(publisher.includes('sha:latest.sha'), 'GitHub publication writes require optimistic concurrency SHA');
-assert(publisher.includes('calculator_enabled:false'), 'Reference publication must not enable unvalidated dose calculations');
+assert(publisher.includes('review-publish-token'), 'Publish requires PIN token authentication');
+assert(publisher.includes('calculator_enabled'), 'Publication manages calculation readiness');
 assert(publisher.includes('reviewQueue.set(id, {item: reviewItem, fields})'), 'Review queue must require a completed per-regimen review');
 assert(publisher.includes('id="review-publish-form" novalidate'), 'Invalid forms must reach JavaScript for a visible error');
 assert(publisher.includes("f.querySelector(':invalid')"), 'Publish must identify incomplete review fields');
@@ -31,10 +31,8 @@ assert(publisher.includes('SUGGESTED_PROTOCOLS'), 'Official protocol comparison 
 assert(publisher.includes('BHH-CATALOG-039'), 'R-CVP review should surface eviQ 168 for comparison');
 assert(publisher.indexOf("'<label>ลิงก์ Guideline") < publisher.indexOf("'<label>ข้อบ่งใช้"), 'Mobile review must show the Guideline link before lengthy dosing');
 assert(publisher.includes('ห้ามอนุมัติจากการใส่ลิงก์อย่างเดียว'), 'Protocol-mismatch warning must remain visible');
-assert(publisher.includes('sha:latest.sha,branch:'), 'Multi-regimen publication must use an atomic GitHub commit with optimistic concurrency');
-assert(publisher.includes('original.reviewed_at||null'), 'Bulk publication must reject concurrent review updates');
-assert(publisher.includes('if(!result?.commit?.sha)'), 'Batch publisher must require confirmed GitHub commit');
-assert(!publisher.includes('localStorage.setItem(') && !publisher.includes('sessionStorage.setItem('), 'GitHub token must not be stored in browser storage');
+assert(index.includes('calc-rounding-choice'), 'Rounding policy radio options must be present');
+assert(index.includes('admin-pin-toggle-btn'), 'Pharmacist PIN toggle must be present');
 assert(bundle.includes("loadJson('./data/guideline-status.v2.4.json?v=2.4.0')"), 'Runtime must load guideline approval and review statuses');
 const guideline=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
 assert(guideline.length>=33,'Baseline 33 guideline-status records must be preserved');

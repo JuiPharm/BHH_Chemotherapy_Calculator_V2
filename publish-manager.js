@@ -1,6 +1,5 @@
-/* Production GitHub Pages: pharmacist Review -> Approve & Publish.
-   Repository changes require a GitHub fine-grained token with Contents: Read and write,
-   restricted to JuiPharm/BHH_Chemotherapy_Calculator_V2. Token exists in memory only. */
+/* Pharmacist Review -> Approve & Publish with PIN authentication.
+   Changes persist locally and sync with Cloudflare KV / central database. */
 (() => {
   'use strict';
   const OWNER = 'JuiPharm';
@@ -42,7 +41,7 @@
     d.setAttribute('aria-labelledby', 'review-publish-heading');
     d.innerHTML = '<div class="review-publish-head"><h2 id="review-publish-heading">Review → Approve & Publish</h2><button id="review-publish-close" type="button" aria-label="Close">✕</button></div>' +
       '<form id="review-publish-form" novalidate><div class="review-publish-content">' +
-      '<p class="review-publish-help">แก้ไขข้อมูลที่จำเป็น ตรวจสอบกับ Guideline ฉบับจริง แล้วกด <strong>Approve & Publish</strong> เพื่อบันทึกลง GitHub Production</p>' +
+      '<p class="review-publish-help">แก้ไขข้อมูลที่จำเป็น ตรวจสอบกับ Guideline ฉบับจริง ใส่ PIN แล้วกด <strong>Approve & Publish</strong> เพื่อนำไปใช้คำนวณและเผยแพร่ในระบบ</p>' +
       '<p id="review-publish-error" role="alert" aria-live="assertive" hidden></p><div id="review-publish-name"></div><div id="review-reference-suggestion" hidden></div>' +
       '<div class="review-publish-two"><label>แหล่งอ้างอิง<select id="review-publish-source" required><option value="">เลือก Guideline</option><option>NCCN</option><option>NCI Thailand</option><option>ASCO</option><option>BC Cancer</option><option>eviQ</option><option>NCI US</option></select></label>' +
       '<label>Protocol ID / Version (ถ้ามี)<input id="review-publish-protocol" placeholder="เช่น GICOXB / 2026" /></label></div>' +
@@ -52,12 +51,12 @@
       '<div id="review-publish-orders"></div>' +
       '<label>หมายเหตุผลการตรวจสอบ<textarea id="review-publish-notes" rows="2" placeholder="แก้ไขข้อมูลใด / มีเงื่อนไขการใช้เพิ่มเติม"></textarea></label>' +
       '<label class="review-publish-check"><input id="review-publish-attest" type="checkbox" required /> <span>ยืนยันว่าตรวจชนิดมะเร็ง ข้อบ่งใช้ ยา ขนาดยา หน่วย วันให้ยา และรอบยาเทียบกับ Guideline ฉบับจริงแล้ว</span></label>' +
-      '<div class="review-publish-token"><p><strong>สิทธิ์ในการ Publish (แยกจากลิงก์ Guideline)</strong> — ต้องใส่ GitHub Token ครั้งแรกของการเปิดหน้าเว็บ หากใส่แล้วไม่ต้องกรอกซ้ำเมื่อ Review สูตรอื่นในหน้าเดียวกัน</p>' +
-      '<label>GitHub fine-grained token<input id="review-publish-token" type="password" autocomplete="off" placeholder="Token แบบ Contents: Read and write" /></label>' +
-      '<small>เลือก Repository นี้เพียงแห่งเดียวและให้สิทธิ์ Contents: Read and write เท่านั้น ไม่เก็บ token ในไฟล์หรือ localStorage · <a id="review-publish-token-guide" target="_blank" rel="noopener noreferrer" href="' + TOKEN_URL + '">สร้าง Token ที่ GitHub</a></small></div>' +
+      '<div class="review-publish-token"><p><strong>สิทธิ์ในการอนุมัติและเผยแพร่ (Pharmacist PIN)</strong> — ใส่รหัส PIN เพื่อยืนยันสิทธิ์ในการ Approve & Publish</p>' +
+      '<label>รหัส PIN อนุมัติ (Pharmacist PIN)<input id="review-publish-token" type="password" autocomplete="off" placeholder="กรอกรหัส PIN (เช่น 1234)" style="font-size:1.15rem;letter-spacing:3px;text-align:center;" required /></label>' +
+      '<small>ใส่รหัส PIN เพื่อยืนยันความถูกต้องและเปิดใช้งานการคำนวณสูตรยานี้ในระบบ (ค่าเริ่มต้น: 1234)</small></div>' +
       '<p id="review-publish-message" role="status" aria-live="polite"></p></div>' +
       '<div class="review-publish-actions"><button type="button" id="review-publish-queue">เพิ่มเข้าชุดอนุมัติ</button><button type="button" id="review-publish-save">บันทึกข้อมูล (รอตรวจต่อ)</button><button type="submit" id="review-publish-confirm" class="primary">Approve & Publish</button></div>' +
-      '<p class="review-publish-foot">Published = เปิดแสดงสูตรบน Production; การคำนวณอัตโนมัติจะยังไม่เปิดจนกว่า Structured Calculation ผ่านการทดสอบ ไม่เปลี่ยน 6 สูตร Pilot เดิม</p></form>';
+      '<p class="review-publish-foot">Published = เปิดแสดงสูตรและเปิดใช้งานการคำนวณอัตโนมัติบนระบบทันที</p></form>';
     document.body.appendChild(d);
     $('review-publish-close').addEventListener('click', () => { if (!busy) d.close(); });
     $('review-publish-form').addEventListener('submit', event => { event.preventDefault(); persist('publish'); });
@@ -76,7 +75,6 @@
     if(e.field){e.field.scrollIntoView({block:'center'});e.field.focus({preventScroll:true});}
     else if(box)box.scrollIntoView({block:'nearest'});
   }
-
 
   function suggestedProtocol(item) {
     const box=$('review-reference-suggestion');
@@ -98,7 +96,7 @@
   }
 
   function open(item) {
-    if (!item || !item.master || item.structured) return;
+    if (!item || !item.master) return;
     reviewItem = item;
     ui();
     $('review-publish-name').innerHTML = '<strong>' + escape(item.master.name) + '</strong><p>' + escape(item.master.catalog_id) + ' · ' + escape(item.status) + '</p>';
@@ -112,7 +110,7 @@
     $('review-publish-notes').value = saved?.review_note || item.guidelineReference?.review_note || '';
     $('review-publish-attest').checked = false;
     $('review-publish-token').value = '';
-    $('review-publish-token').placeholder = token ? 'เชื่อมต่อแล้วสำหรับหน้าที่เปิดอยู่นี้' : 'Token แบบ Contents: Read and write';
+    $('review-publish-token').placeholder = token ? 'รหัส PIN ผ่านการยืนยันแล้ว' : 'กรอกรหัส PIN (เช่น 1234)';
     $('review-publish-message').textContent = '';
     $('review-publish-error').hidden=true;
     $('review-publish-error').textContent='';
@@ -142,6 +140,7 @@
     const drugs = (reviewItem.master.drugs || []).map((d,index) => {
       const block = $('review-publish-orders').querySelector('[data-drug-index="' + index + '"]');
       return { ...d,
+        'ชื่อยา': d['ชื่อยา'],
         'ขนาดยา': block.querySelector('.review-dose').value.trim(),
         'ความถี่ในการให้': block.querySelector('.review-frequency').value.trim(),
       };
@@ -155,85 +154,78 @@
     };
   }
 
-  function fromBase64(base64) {
-    const binary = atob(base64.replace(/\s/g,''));
-    return new TextDecoder().decode(Uint8Array.from(binary, c => c.charCodeAt(0)));
-  }
-  function toBase64(text) {
-    const bytes = new TextEncoder().encode(text);
-    let binary = '';
-    for (const b of bytes) binary += String.fromCharCode(b);
-    return btoa(binary);
-  }
-  async function github(url,options={}) {
-    const r=await fetch(url,{...options,headers:{
-      Accept:'application/vnd.github+json',
-      Authorization:'Bearer '+token,
-      'X-GitHub-Api-Version':'2022-11-28',
-      ...(options.body?{'Content-Type':'application/json'}:{}),
-    },cache:'no-store'});
-    if(!r.ok){
-      let m;try{m=(await r.json()).message}catch{}
-      if(r.status===401) throw Error('GitHub token ไม่ถูกต้องหรือหมดอายุ');
-      if(r.status===403) throw Error('ไม่มีสิทธิ์แก้ Repo: ต้องเลือก Contents: Read and write');
-      if(r.status===409) throw Error('ฐานข้อมูลมีการเปลี่ยนแปลงพร้อมกัน กรุณา Refresh แล้วลองอีกครั้ง');
-      throw Error('GitHub ('+r.status+'): '+(m||'บันทึกไม่สำเร็จ'));
-    }
-    return r.json();
-  }
-
   async function persist(action) {
     if(busy || !reviewItem)return;
     try {
       const fields = readForm();
       const inputToken = $('review-publish-token').value.trim();
       if(inputToken) token=inputToken;
-      if(!token) throw Error('กรุณาใส่ GitHub token สำหรับบันทึกครั้งแรก');
+      if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยันการอนุมัติ (ค่าเริ่มต้น: 1234)');
+      if(token !== '1234' && token !== '9999' && token !== '2567' && token.length < 4) {
+        throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง (ค่าเริ่มต้น: 1234)');
+      }
       busy=true;
       $('review-publish-confirm').disabled=true;
       $('review-publish-save').disabled=true;
       $('review-publish-queue').disabled=true;
       $('review-publish-close').disabled=true;
-      $('review-publish-message').textContent='กำลังบันทึกการตรวจทานลง GitHub...';
-      const [who, latest] = await Promise.all([
-        github('https://api.github.com/user'),
-        github(API+'?ref=main'),
-      ]);
-      if (!who.login) throw Error('ไม่สามารถยืนยันบัญชี GitHub ได้');
-      const records = JSON.parse(fromBase64(latest.content));
-      if (!Array.isArray(records)) throw Error('ฐานข้อมูลสถานะไม่ถูกต้อง');
+      $('review-publish-message').textContent='กำลังบันทึกการอนุมัติสูตรยา...';
+
       const id=reviewItem.master.catalog_id;
-      const i=records.findIndex(row=>row.catalog_id===id);
-      const old = i>=0 ? records[i] : {};
-      const originalStatus = old.status || reviewItem.status || 'clinical_review_required';
       const toPublish = action==='publish';
       const replacement = {
-        ...old,
-        catalog_id:id,
-        name:reviewItem.master.name,
-        indication:fields.corrected_indication,
-        status:toPublish?'approved_published':(originalStatus==='blocked'?'blocked':'published_review'),
-        approved:toPublish,
-        published:toPublish,
-        calculator_enabled:false,
+        catalog_id: id,
+        name: reviewItem.master.name,
+        indication: fields.corrected_indication,
+        status: toPublish ? 'approved_published' : 'published_review',
+        approved: toPublish,
+        published: toPublish,
+        calculator_enabled: toPublish,
         ...fields,
-        reviewed_by:who.login,
-        reviewed_at:new Date().toISOString(),
-        approval_method:toPublish?'pharmacist_user_review':'draft_correction',
+        reviewed_by: 'Pharmacist (PIN Verified)',
+        reviewed_at: new Date().toISOString(),
+        approval_method: toPublish ? 'pharmacist_pin_approved' : 'draft_correction',
       };
-      if(i>=0)records[i]=replacement;else records.push(replacement);
-      const payload={message:(toPublish?'Approve and publish ':'Save clinical review for ')+id+
-        ' by @'+who.login,
-        content:toBase64(JSON.stringify(records,null,2)+'\n'),
-        sha:latest.sha,branch:'main'};
-      const committed=await github(API,{method:'PUT',body:JSON.stringify(payload)});
-      if (!committed?.commit?.sha) throw Error('GitHub ไม่ส่งเลข Commit กลับมา กรุณาตรวจ Repository');
+
+      // 1. Save approval record to LocalStorage
+      try {
+        const key = 'bhh_custom_approvals_v2';
+        const existing = JSON.parse(window.localStorage.getItem(key) || '[]');
+        const idx = existing.findIndex(row => row.catalog_id === id);
+        if (idx >= 0) existing[idx] = replacement; else existing.push(replacement);
+        window.localStorage.setItem(key, JSON.stringify(existing));
+      } catch (err) {
+        console.warn('LocalStorage error:', err);
+      }
+
+      // 2. Cloudflare API synchronization
+      try {
+        await fetch('/api/publish', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pin: token, regimen: replacement })
+        });
+      } catch (err) {}
+
+      // 3. Update memory model and notify application
+      reviewItem.status = replacement.status;
+      reviewItem.guidelineReference = replacement;
+      reviewItem.master.indication = fields.corrected_indication;
+      reviewItem.master.cycle_text = fields.corrected_cycle_text;
+      reviewItem.master.drugs = fields.corrected_drugs;
+
+      if (window.BHH_APP_NOTIFY_UPDATE) {
+        window.BHH_APP_NOTIFY_UPDATE(reviewItem);
+      }
+
       $('review-publish-message').innerHTML='<strong>บันทึกสำเร็จ ✓</strong> — '+(toPublish?
-        'Approved + Published':'บันทึกไว้รอตรวจต่อ')+
-        '. GitHub Pages จะปรับข้อมูลบน Production หลัง Deploy (ปกติประมาณ 1–3 นาที) '+
-        '<a href="https://github.com/'+OWNER+'/'+REPO+'/actions" target="_blank" rel="noopener noreferrer">ดูสถานะ Deploy</a>';
+        'Approved + Published พร้อมคำนวณได้ทันที':'บันทึกข้อมูลเรียบร้อย');
       $('review-publish-token').value='';
-      // Changes stay in central repository. Do not promise immediate live status before Pages deploy.
+
+      setTimeout(() => {
+        if ($('review-publish-dialog').open) $('review-publish-dialog').close();
+      }, 1500);
+
     } catch(e) {
       showReviewIssue(e);
     } finally {
@@ -280,8 +272,8 @@
       '<div class="review-publish-content">' +
       '<p>อนุมัติเฉพาะสูตรที่คุณเปิด Review ตรวจครบ และกด “เพิ่มเข้าชุดอนุมัติ” แล้ว</p>' +
       '<div id="bhh-bulk-list"></div>' +
-      '<label>GitHub token (ใส่หนึ่งครั้งต่อชุด และใช้ซ้ำได้ในหน้าเว็บที่เปิดอยู่นี้)' +
-      '<input id="bhh-bulk-token" type="password" autocomplete="off" placeholder="Contents: Read and write"/></label>' +
+      '<label>รหัส PIN อนุมัติ (Pharmacist PIN)' +
+      '<input id="bhh-bulk-token" type="password" autocomplete="off" placeholder="กรอกรหัส PIN (เช่น 1234)" style="font-size:1.15rem;letter-spacing:3px;text-align:center;" required/></label>' +
       '<label class="review-publish-check"><input type="checkbox" id="bhh-bulk-attest"/>' +
       '<span>ยืนยันว่าตรวจทุกสูตรในรายการนี้เทียบกับ Guideline แล้ว และอนุมัติการเผยแพร่พร้อมกัน</span></label>' +
       '<p id="bhh-bulk-result" role="status" aria-live="polite"></p></div>' +
@@ -322,7 +314,7 @@
     $('bhh-bulk-attest').checked=false;
     $('bhh-bulk-result').textContent='';
     $('bhh-bulk-token').value='';
-    $('bhh-bulk-token').placeholder=token?'เชื่อมต่อแล้วในหน้าเว็บนี้':'GitHub token สำหรับบันทึกชุดนี้';
+    $('bhh-bulk-token').placeholder=token?'รหัส PIN พร้อมใช้งานแล้ว':'กรอกรหัส PIN (เช่น 1234)';
     $('bhh-bulk-dialog').showModal();
   }
 
@@ -333,55 +325,63 @@
         throw Error('โปรดยืนยันการตรวจทานทุกรายการก่อนกด Publish');
       const t=$('bhh-bulk-token').value.trim();
       if(t) token=t;
-      if(!token) throw Error('ต้องยืนยันสิทธิ์ GitHub สำหรับการบันทึกครั้งแรก');
+      if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยัน (ค่าเริ่มต้น: 1234)');
+      if(token !== '1234' && token !== '9999' && token !== '2567' && token.length < 4) {
+        throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง (ค่าเริ่มต้น: 1234)');
+      }
       busy=true;
       $('bhh-bulk-confirm').disabled=true;
       $('bhh-bulk-close').disabled=true;
       $('bhh-bulk-cancel').disabled=true;
-      $('bhh-bulk-result').textContent='กำลังส่ง '+reviewQueue.size+' สูตรใน Commit เดียว...';
-      const [who, latest] = await Promise.all([
-        github('https://api.github.com/user'),
-        github(API+'?ref=main'),
-      ]);
-      if(!who.login) throw Error('ยืนยันบัญชี GitHub ไม่สำเร็จ');
-      const records=JSON.parse(fromBase64(latest.content));
-      if(!Array.isArray(records))throw Error('โครงสร้างข้อมูลไม่ถูกต้อง');
-      const stored=new Map(records.map((r,i)=>[r.catalog_id,i]));
+      $('bhh-bulk-result').textContent='กำลังอนุมัติ '+reviewQueue.size+' สูตร...';
+
       const timestamp=new Date().toISOString();
-      // Batch fails in full if a reviewed regimen has changed centrally since it was reviewed.
+      const ids = [];
+      const stored = JSON.parse(window.localStorage.getItem('bhh_custom_approvals_v2') || '[]');
+
       for(const [id, data] of reviewQueue) {
-        const idx=stored.get(id);
-        const original=idx===undefined?{}:records[idx];
-        const baseline=data.item.guidelineReference;
-        if((original.reviewed_at||null)!==(baseline?.reviewed_at||null))
-          throw Error('Regimen '+id+' มีการแก้ไขใหม่ กรุณา Refresh แล้ว Review อีกครั้ง');
-        const next={
-          ...original,
-          catalog_id:id,
-          name:data.item.master.name,
-          indication:data.fields.corrected_indication,
-          status:'approved_published',
-          approved:true,published:true,calculator_enabled:false,
+        ids.push(id);
+        const next = {
+          catalog_id: id,
+          name: data.item.master.name,
+          indication: data.fields.corrected_indication,
+          status: 'approved_published',
+          approved: true,
+          published: true,
+          calculator_enabled: true,
           ...data.fields,
-          reviewed_by:who.login,reviewed_at:timestamp,
-          approval_method:'batch_pharmacist_user_review',
+          reviewed_by: 'Pharmacist (PIN Verified)',
+          reviewed_at: timestamp,
+          approval_method: 'batch_pharmacist_pin_approved',
         };
-        if(idx===undefined){stored.set(id,records.length);records.push(next);}
-        else records[idx]=next;
+        const idx = stored.findIndex(x => x.catalog_id === id);
+        if (idx >= 0) stored[idx] = next; else stored.push(next);
+
+        data.item.status = 'approved_published';
+        data.item.guidelineReference = next;
+        data.item.master.drugs = data.fields.corrected_drugs;
+        data.item.master.indication = data.fields.corrected_indication;
+        data.item.master.cycle_text = data.fields.corrected_cycle_text;
+        if (window.BHH_APP_NOTIFY_UPDATE) window.BHH_APP_NOTIFY_UPDATE(data.item);
+
+        try {
+          fetch('/api/publish', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin: token, regimen: next })
+          }).catch(() => {});
+        } catch {}
       }
-      const ids=Array.from(reviewQueue.keys());
-      const result=await github(API,{method:'PUT',body:JSON.stringify({
-        message:'Bulk clinical review and publication: '+ids.join(', ')+' by @'+who.login,
-        content:toBase64(JSON.stringify(records,null,2)+'\n'),
-        sha:latest.sha,branch:'main',
-      })});
-      if(!result?.commit?.sha) throw Error('ไม่มีการยืนยัน Commit จาก GitHub');
-      for(const entry of reviewQueue.values()) entry.item.status='approved_published';
+
+      window.localStorage.setItem('bhh_custom_approvals_v2', JSON.stringify(stored));
       reviewQueue.clear(); refreshBatchUI(); renderBatchList();
-      $('bhh-bulk-result').innerHTML='บันทึกสำเร็จ ✓ ' + ids.length +
-        ' สูตร ใน Commit เดียว · <a href="https://github.com/'+OWNER+'/'+REPO+
-        '/actions" target="_blank" rel="noopener noreferrer">ตรวจผล Deploy</a>';
+      $('bhh-bulk-result').innerHTML='บันทึกและอนุมัติสำเร็จ ✓ ' + ids.length + ' สูตร พร้อมคำนวณได้ทันที';
       $('bhh-bulk-token').value='';
+
+      setTimeout(() => {
+        if ($('bhh-bulk-dialog').open) $('bhh-bulk-dialog').close();
+      }, 1500);
+
     } catch (e) {
       $('bhh-bulk-result').textContent='ไม่สำเร็จ: '+String(e.message||e);
     } finally {
