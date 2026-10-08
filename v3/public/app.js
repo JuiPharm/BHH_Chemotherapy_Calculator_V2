@@ -69,6 +69,7 @@ function failure(e) {
   note(e.message);
 }
 function renderAccount(session) {
+  const selectedLocal=$('#local-user')?.value||'calculator@local.test';
   state.authMode=session.authMode;
   state.user=session.user;
   state.local=session.local;
@@ -88,6 +89,7 @@ function renderAccount(session) {
     : '';
   const selector=session.local?'<label>LOCAL TEST identity<select id="local-user"><option value="calculator@local.test">Calculator user</option><option value="editor@local.test">Regimen editor</option><option value="reviewer@local.test">Oncology pharmacist</option><option value="admin@local.test">Clinical admin</option></select></label>':'';
   $('#account').innerHTML=label+end+selector;
+  if($('#local-user'))$('#local-user').value=selectedLocal;
   if($('#staging-logout'))$('#staging-logout').onclick=stagingSignOut;
   if($('#editor-logout'))$('#editor-logout').onclick=async()=>{
     try{
