@@ -92,7 +92,7 @@
 
   function readForm() {
     const f = $('review-publish-form');
-    if (!f.reportValidity()) throw Error('กรุณากรอกข้อมูลและยืนยันการตรวจทานให้ครบ');
+    if (!f.checkValidity()) {const field=f.querySelector(':invalid');const label=field?.closest('label')?.textContent?.trim().replace(/\s+/g,' ').slice(0,85)||'ข้อมูลที่จำเป็น';const e=Error('กรุณากรอกหรือยืนยัน: '+label);e.field=field;throw e;}
     const source = $('review-publish-source').value;
     const refUrl = checkReference(source, $('review-publish-url').value.trim());
     const drugs = (reviewItem.master.drugs || []).map((d,index) => {
