@@ -14,6 +14,7 @@ const pass='Local-Staging-Only-Long-Password!2026';
 const env={...process.env,NODE_OPTIONS:`${process.env.NODE_OPTIONS||''} --require ${shim}`,WRANGLER_SEND_METRICS:'false'};
 const roles=['calculator_user','regimen_editor','oncology_pharmacist','clinical_admin'];
 const editorPin='8342719056'; // SYNTHETIC TEST ONLY; never real staff credential
+const reviewerPin='5739026418'; // INDEPENDENT TEST-ONLY REVIEWER, never real staff credential
 const q=x=>"'"+String(x).replaceAll("'","''")+"'";
 const b32=a=>{
   const alpha='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -34,7 +35,10 @@ const sql=fixtures.flatMap(f=>[
 ]).join('\n');
 const pinHash=createHmac('sha256',pepper).update('bhh-editor-pin-v1:'+editorPin).digest('hex');
 const editor=fixtures.find(f=>f.role==='regimen_editor');
-const editorSql=`INSERT INTO staging_editor_pins(user_id,pin_hash,created_at,created_by) VALUES(${q(editor.id)},${q(pinHash)},datetime('now'),'staging-fixture');`;
+const reviewer=fixtures.find(f=>f.role==='oncology_pharmacist');
+const reviewerHash=createHmac('sha256',pepper).update('bhh-editor-pin-v1:'+reviewerPin).digest('hex');
+const editorSql=`INSERT INTO staging_editor_pins(user_id,pin_hash,created_at,created_by) VALUES(${q(editor.id)},${q(pinHash)},datetime('now'),'staging-fixture');
+INSERT INTO staging_editor_pins(user_id,pin_hash,created_at,created_by) VALUES(${q(reviewer.id)},${q(reviewerHash)},datetime('now'),'staging-fixture');`;
 const seed=join(temp,'staging-test-users.sql');
 writeFileSync(seed,sql+'\n'+editorSql+'\n',{mode:0o600});
 const PORT=8792,base=`http://127.0.0.1:${PORT}`;
@@ -81,6 +85,7 @@ try{
     console.log('Open PUBLIC Calculator: '+(forwardOrigin || base)+'/');
     console.log('LOCAL-TEST PASSWORD (not for real accounts): '+pass);
     console.log('EDITOR Confirm PIN (synthetic test only): '+editorPin);
+    console.log('REVIEWER Confirm PIN (synthetic test only): '+reviewerPin);
     console.log('Add each user to an Authenticator app with the listed test-only TOTP seed:');
     for(const f of fixtures.slice(0,4))
       console.log(f.role+' | '+f.email+' | TOTP secret: '+f.secret);
