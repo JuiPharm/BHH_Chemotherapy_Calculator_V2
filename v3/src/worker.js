@@ -243,7 +243,7 @@ async function dispatch(request, env) {
     const v = await version(db, decodeURIComponent(detail[1]));
     if (who.guest && v.status !== 'published') {
       // Whitelist ONLY immutable original sourceRecord, never modified draft data.
-      if (v.status!=='draft' || !/^BHH-CATALOG-\\d{3}:1$/.test(v.id))
+      if (v.status!=='draft' || !/^BHH-CATALOG-[0-9]{3}:1$/.test(v.id))
         error('Editor access required',403);
       const r=await dbQuery(db,'SELECT source_record FROM regimens WHERE id=?',v.regimen_id).first();
       if(!r?.source_record)error('Editor access required',403);
