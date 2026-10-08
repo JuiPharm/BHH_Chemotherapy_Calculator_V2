@@ -184,8 +184,7 @@ async function dispatch(request, env) {
       user: { id: user.id, email: user.email, role: user.role_code },
       local: who.local,
       revision: revision.revision,
-      authMode: who.guest ? 'public' : publicCalculator(env) && user.role_code==='regimen_editor' ?
-        'editor' : isInternalStaging(env) ? 'internal' : 'access',
+      authMode: who.guest ? 'public' : who.pin ? 'editor' : isInternalStaging(env) ? 'internal' : 'access',
     });
   if (path === '/api/revision' && request.method === 'GET')
     return response(revision);
