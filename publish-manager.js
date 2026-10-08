@@ -56,6 +56,15 @@
     $('review-publish-url').addEventListener('input', () => { $('review-publish-url').setCustomValidity('');const raw=$('review-publish-url').value.trim();try{const h=new URL(raw).hostname.toLowerCase();for(const [key,domains] of Object.entries(SOURCE_DOMAINS)){if(domains.some(d=>h===d||h.endsWith('.'+d))){$('review-publish-source').value=key;break;}}}catch{} });
   }
 
+  function showReviewIssue(e) {
+    const msg='Publish ยังไม่สำเร็จ: '+String(e.message||e);
+    const box=$('review-publish-error');
+    if(box){box.textContent=msg;box.hidden=false;}
+    $('review-publish-message').textContent=msg;
+    if(e.field){e.field.scrollIntoView({block:'center'});e.field.focus({preventScroll:true});}
+    else if(box)box.scrollIntoView({block:'nearest'});
+  }
+
   function open(item) {
     if (!item || !item.master || item.structured) return;
     reviewItem = item;
@@ -72,6 +81,8 @@
     $('review-publish-token').value = '';
     $('review-publish-token').placeholder = token ? 'เชื่อมต่อแล้วสำหรับหน้าที่เปิดอยู่นี้' : 'Token แบบ Contents: Read and write';
     $('review-publish-message').textContent = '';
+    $('review-publish-error').hidden=true;
+    $('review-publish-error').textContent='';
     $('review-publish-orders').innerHTML = '<h3>รายการยาและขนาดยา</h3>' +
       (saved?.corrected_drugs || item.master.drugs || []).map((drug, index) =>
         '<section class="review-publish-drug" data-drug-index="' + index + '"><strong>' + escape(drug['ชื่อยา']) + '</strong>' +
@@ -191,7 +202,7 @@
       $('review-publish-token').value='';
       // Changes stay in central repository. Do not promise immediate live status before Pages deploy.
     } catch(e) {
-      $('review-publish-message').textContent='ไม่สำเร็จ: '+String(e.message||e);
+      showReviewIssue(e);
     } finally {
       busy=false;
       $('review-publish-confirm').disabled=false;
@@ -212,7 +223,7 @@
       refreshBatchUI();
       $('review-publish-dialog').close();
     } catch (e) {
-      $('review-publish-message').textContent = 'ยังเพิ่มเข้าชุดไม่ได้: ' + String(e.message || e);
+      showReviewIssue(e);
     }
   }
 
