@@ -1,66 +1,42 @@
-export async function onRequestPost(context) {
-  const { request, env } = context;
+import { verifyPin, validateRegimen, json, ensureDatabase } from './_shared.js';
+
+export async function onRequestPost({ request, env }) {
   try {
+    if (request.headers.get('content-type')?.split(';')[0]?.trim() !== 'application/json') return json({ error: 'JSON required' }, 415);
     const body = await request.json();
-    const { pin, regimen } = body;
-
-    if (!pin || String(pin).trim() === '1234') {
-      return new Response(JSON.stringify({ success: false, message: 'รหัส PIN 1234 ถูกยกเลิกแล้ว กรุณาใช้รหัส PIN ใหม่ที่ตั้งค่าไว้ใน Cloudflare (APPROVE_PIN)' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    const CORRECT_PIN = (env && env.APPROVE_PIN) ? String(env.APPROVE_PIN).trim() : null;
-    if (!CORRECT_PIN) {
-      return new Response(JSON.stringify({ success: false, message: 'ระบบ Cloudflare ยังไม่ได้ตั้งค่าตัวแปร APPROVE_PIN ใน Environment variables' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    if (CORRECT_PIN === '1234') {
-      return new Response(JSON.stringify({ success: false, message: 'ตัวแปร APPROVE_PIN ใน Cloudflare ถูกตั้งเป็นรหัส 1234 ซึ่งถูกยกเลิกแล้ว กรุณาเปลี่ยนเป็นรหัสอื่นใน Environment variables' }), {
-        status: 500,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-    if (!pin || String(pin).trim() !== CORRECT_PIN) {
-      return new Response(JSON.stringify({ success: false, message: 'รหัส PIN สำหรับอนุมัติไม่ถูกต้อง' }), {
-        status: 401,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    if (!regimen || !regimen.catalog_id) {
-      return new Response(JSON.stringify({ success: false, message: 'ข้อมูลสูตรยาไม่ครบถ้วน' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-
-    if (env && env.REGIMENS_KV) {
-      let currentRegimens = (await env.REGIMENS_KV.get('PUBLISHED_REGIMENS', { type: 'json' })) || [];
-      const existingIndex = currentRegimens.findIndex(r => r.id === regimen.catalog_id || r.catalog_id === regimen.catalog_id);
-      if (existingIndex >= 0) {
-        currentRegimens[existingIndex] = regimen;
-      } else {
-        currentRegimens.push(regimen);
-      }
-      await env.REGIMENS_KV.put('PUBLISHED_REGIMENS', JSON.stringify(currentRegimens));
-    }
-
-    return new Response(JSON.stringify({
-      success: true,
-      message: 'อนุมัติและ Publish สำเร็จ ข้อมูลพร้อมใช้งานบนทุกเครื่องแล้ว',
-      regimen
-    }), {
-      headers: { 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    return new Response(JSON.stringify({ success: false, message: error.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    });
+    const pinError = verifyPin(body?.pin, env);
+    if (pinError) return json({ success: false, message: pinError.message }, pinError.status);
+    const db = ensureDatabase(env);
+    const action = body.action === 'draft' ? 'draft' : body.action === 'publish' ? 'publish' : null;
+    if (!action) return json({ success: false, message: 'Invalid action' }, 400);
+    const supplied = body.regimen;
+    const issues = validateRegimen(supplied, action === 'publish');
+    if (issues.length) return json({ success: false, message: 'Regimen validation failed', issues }, 422);
+    const expected = Number(body.expectedRevision ?? 0);
+    if (!Number.isSafeInteger(expected) || expected < 0) return json({ success: false, message: 'Invalid expected revision' }, 400);
+    const now = new Date().toISOString();
+    const document = {
+      ...supplied, status: action === 'publish' ? 'published' : 'draft',
+      localApproval: action === 'publish', calculator_enabled: action === 'publish',
+      revision: expected + 1, lastReviewed: action === 'publish' ? now.slice(0, 10) : supplied.lastReviewed || null,
+      updatedAt: now,
+    };
+    // The conditional UPSERT and audit record are committed atomically by D1 batch.
+    const queries = [
+      db.prepare(`INSERT INTO regimens (id, revision, status, document, updated_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(id) DO UPDATE SET revision=excluded.revision, status=excluded.status,
+          document=excluded.document, updated_at=excluded.updated_at
+        WHERE regimens.revision=?`)
+        .bind(document.id, expected + 1, document.status, JSON.stringify(document), now, expected),
+      db.prepare(`INSERT INTO regimen_audit (regimen_id, revision, action, happened_at)
+        SELECT id, revision, ?, ? FROM regimens WHERE id=? AND revision=?`)
+        .bind(action, now, document.id, expected + 1),
+    ];
+    const results = await db.batch(queries);
+    if (results?.[0]?.meta?.changes !== 1) return json({ success: false, message: 'Regimen changed on another device. Reload before publishing.', code: 'VERSION_CONFLICT' }, 409);
+    return json({ success: true, regimen: document, revision: document.revision });
+  } catch (err) {
+    return json({ success: false, message: err?.code === 'NO_DB' ? 'Cloudflare D1 binding REGIMENS_DB is missing' : 'Server could not save the regimen' }, err?.code === 'NO_DB' ? 503 : 500);
   }
 }
-
