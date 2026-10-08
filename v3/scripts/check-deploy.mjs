@@ -3,7 +3,8 @@ const stage = process.argv[2] || 'staging';
 if (!['staging', 'production'].includes(stage))
   throw Error('Only staging and production deployments are supported');
 const c = JSON.parse(fs.readFileSync('v3/wrangler.jsonc', 'utf8'));
-const e = stage === 'production' ? c : c.env?.staging;
+const e = stage === 'production' ? (c.env?.production ?? c) : c.env?.staging;
+const pinProduction = stage === 'production' && e.vars?.PRODUCTION_PUBLIC_PIN === 'true';
 if (!e || e.vars?.APP_ENV !== stage || e.vars.LOCAL_TEST_AUTH || e.vars.CODESPACES_PREVIEW || e.vars.CODESPACES_PREVIEW_ORIGIN)
   throw Error('Invalid deployed authentication environment');
 if (c.workers_dev !== false || c.assets?.run_worker_first !== true)
@@ -14,7 +15,16 @@ if (!/^[a-f0-9]{8}-(?:[a-f0-9]{4}-){3}[a-f0-9]{12}$/i.test(id || '') || id === '
 if (c.d1_databases?.[0]?.database_id === c.env?.staging?.d1_databases?.[0]?.database_id)
   throw Error('Staging and production must use separate D1 databases');
 if (stage === 'production') {
-  if (e.vars.AUTH_MODE === 'internal' ||
+  if (pinProduction) {
+    if (e.name !== 'bhh-chemotherapy-v3-production' ||
+        e.vars.APP_ENV !== 'production' || e.vars.AUTH_MODE !== 'internal' ||
+        e.vars.PUBLIC_CALCULATOR !== 'true' ||
+        e.vars.ACCESS_AUD || e.vars.ACCESS_TEAM_DOMAIN ||
+        e.d1_databases?.[0]?.database_name !== 'bhh-chemo-production' ||
+        e.d1_databases?.[0]?.database_id === c.env?.staging?.d1_databases?.[0]?.database_id ||
+        e.vars.PRODUCTION_PASSWORD_PEPPER || e.vars.STAGING_PASSWORD_PEPPER)
+      throw Error('Dedicated public/PIN Production Worker/D1/auth configuration required');
+  } else if (e.vars.AUTH_MODE === 'internal' ||
       typeof e.vars.ACCESS_TEAM_DOMAIN !== 'string' ||
       !/^[a-z0-9-]+\.cloudflareaccess\.com$/i.test(e.vars.ACCESS_TEAM_DOMAIN) ||
       e.vars.ACCESS_TEAM_DOMAIN.startsWith('REPLACE') ||
@@ -45,7 +55,10 @@ const validRoutes =
     );
   });
 if (stage === 'production') {
-  if (e.workers_dev !== false || !validRoutes)
+  if (pinProduction) {
+    if (e.workers_dev !== true || routes.length !== 0 || !e.name?.endsWith('-production'))
+      throw Error('Dedicated Production workers.dev hostname with no shared routes required');
+  } else if (e.workers_dev !== false || !validRoutes)
     throw Error('Production requires a real custom-domain route and workers_dev false');
 } else if (e.workers_dev === true) {
   if (routes.length)
