@@ -13,6 +13,8 @@
     'NCI Thailand': ['nci.go.th'],
     'ASCO': ['asco.org', 'ascopubs.org', 'jco.org'],
     'BC Cancer': ['bccancer.bc.ca'],
+    'eviQ': ['eviq.org.au'],
+    'NCI US': ['cancer.gov'],
   };
   let token = '';
   let reviewItem = null;
@@ -35,7 +37,7 @@
       '<label>ข้อบ่งใช้ (Indication)<textarea id="review-publish-indication" rows="2" required></textarea></label>' +
       '<label>รอบการรักษา (Cycle schedule)<input id="review-publish-cycle" required /></label>' +
       '<div id="review-publish-orders"></div>' +
-      '<div class="review-publish-two"><label>แหล่งอ้างอิง<select id="review-publish-source" required><option value="">เลือก Guideline</option><option>NCCN</option><option>NCI Thailand</option><option>ASCO</option><option>BC Cancer</option></select></label>' +
+      '<div class="review-publish-two"><label>แหล่งอ้างอิง<select id="review-publish-source" required><option value="">เลือก Guideline</option><option>NCCN</option><option>NCI Thailand</option><option>ASCO</option><option>BC Cancer</option><option>eviQ</option><option>NCI US</option></select></label>' +
       '<label>Protocol ID / Version (ถ้ามี)<input id="review-publish-protocol" placeholder="เช่น GICOXB / 2026" /></label></div>' +
       '<label>ลิงก์ Guideline ที่ใช้ตรวจสอบ<input id="review-publish-url" type="url" placeholder="https://..." required /></label>' +
       '<label>หมายเหตุผลการตรวจสอบ<textarea id="review-publish-notes" rows="2" placeholder="แก้ไขข้อมูลใด / มีเงื่อนไขการใช้เพิ่มเติม"></textarea></label>' +
