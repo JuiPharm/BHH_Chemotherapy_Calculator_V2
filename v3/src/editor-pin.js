@@ -46,7 +46,7 @@ export async function pinIdentity(request,env){
     JOIN users u ON u.id=s.user_id
     WHERE s.token_hash=? AND s.expires_at>? AND u.active=1 AND u.role_code='regimen_editor'`)
    .bind(await sha(token),Math.floor(Date.now()/1000)).first();
-  return row?{email:row.email.toLowerCase(),local:false}:null;
+  return row?{email:row.email.toLowerCase(),local:false,pin:true}:null;
 }
 export async function confirmEditorPin(request,env){
  if(!publicCalculator(env))throw fail('Not found',404);
