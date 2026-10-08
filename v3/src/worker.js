@@ -199,7 +199,7 @@ async function dispatch(request, env) {
       user: { id: user.id, email: user.email, role: user.role_code },
       local: who.local,
       revision: revision.revision,
-      authMode: who.guest ? 'public' : who.pin ? 'editor' : isInternalStaging(env) ? 'internal' : 'access',
+      authMode: who.guest ? 'public' : who.pin ? (who.pinRole==='oncology_pharmacist'?'reviewer_pin':'editor') : isInternalStaging(env) ? 'internal' : 'access',
     });
   if (path === '/api/revision' && request.method === 'GET')
     return response(revision);
@@ -512,8 +512,16 @@ async function dispatch(request, env) {
       retire: ['published', 'retired', 'publish'],
     };
     const [from, to, permission] = rules[act];
-    permit(user, permission);
+    // Independent named reviewer PIN can publish an already Approved version
+    // on STAGING ONLY; this does not provide clinical_admin or audit privileges.
+    const reviewerPinPublish = act==='publish' && publicCalculator(env) &&
+      who.pin && who.pinRole==='oncology_pharmacist' &&
+      user.role_code==='oncology_pharmacist';
+    if (!reviewerPinPublish) permit(user, permission);
     if (v.status !== from) error('Invalid workflow transition', 409);
+    if (act==='publish' && (v.created_by===actor || !v.approved_by ||
+        (v.approved_by===v.created_by)))
+      error('Independent approval by a different pharmacist is required before publication',403);
     // Every submitted PIN-session Draft requires fresh personal confirmation.
     if (act==='submit' && who.pin)
       await verifySubmitPin(env, who.email, body.confirmPin, request);
