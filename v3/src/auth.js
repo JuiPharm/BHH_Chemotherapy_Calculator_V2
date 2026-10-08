@@ -13,10 +13,9 @@ export async function identity(request, env) {
       request.headers.get('X-Local-User') || 'calculator@local.test';
     return { email, local: true };
   }
-  if (env.APP_ENV === 'production' && env.AUTH_MODE==='internal') {
-    if (env.PRODUCTION_PUBLIC_PIN!=='true' || env.PUBLIC_CALCULATOR!=='true' ||
-        env.LOCAL_TEST_AUTH==='true')
-      throw Object.assign(Error('Production authentication not configured'),{status:503});
+  if (env.APP_ENV === 'production' && env.AUTH_MODE==='internal' &&
+      env.PRODUCTION_PUBLIC_PIN==='true' && env.PUBLIC_CALCULATOR==='true' &&
+      env.LOCAL_TEST_AUTH!=='true') {
     const editor=await pinIdentity(request,env);
     if(editor)return editor;
     throw Object.assign(Error('Sign in required'),{status:401});
