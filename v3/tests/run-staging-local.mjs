@@ -21,8 +21,8 @@ const b32=a=>{
   if(bits)out+=alpha[(acc<<(5-bits))&31];
   return out;
 };
-const fixtures=roles.map((role,i)=>{
-  const email=['calculator','editor','reviewer','admin'][i]+'@staging-fixture.test';
+const fixtures=[...roles,...roles].map((role,i)=>{
+  const email=(i>=4?'ui-':'')+['calculator','editor','reviewer','admin'][i%4]+'@staging-fixture.test';
   const salt=randomBytes(16), secret=b32(randomBytes(20));
   const hash=createHmac('sha256',pepper).update(pbkdf2Sync(pass,salt,600000,32,'sha256')).digest('hex');
   return {id:randomUUID(),email,role,salt:salt.toString('hex'),hash,secret};
