@@ -368,8 +368,19 @@ function clinicalRuleText(x) {
   return `${x.metric} ${x.operator} ${x.value}: ${x.message}`;
 }
 function protocolHtml(d) {
-  const v = d.version,
-    r = v.document;
+  const v = d.version, r = v.document;
+  if(v.status==='reference_only' || !(r.phases||[]).length) {
+    const source=r.sourceRecord;
+    const rows=(source?.['รายการยา']||[]).map(o=>
+      '<tr><td>'+esc(o['ชื่อยา'])+'</td><td>'+esc(o['ขนาดยา']||'Not specified')+'</td>'+
+      '<td>'+esc(o['ความถี่ในการให้']||'Not specified')+'</td><td>'+
+      esc(o.maximum_dose||'—')+'</td></tr>');
+    return '<h3>'+esc(r.name)+' '+badge(v.status)+'</h3><p>'+esc(r.cancerGroup||r.indication)+'</p>'+
+      '<div class="blocked">UNVERIFIED ORIGINAL SOURCE — reference only. Not approved for calculation or treatment.</div>'+
+      '<p><strong>Original cycle:</strong> '+esc(source?.['รอบการรักษา']||'Not specified')+'</p>'+
+      table(['Drug','Original protocol expression','Frequency','Original maximum'],rows)+
+      '<small>This transcription has not been independently verified against a current authoritative protocol.</small>';
+  }
   return `<h3>${esc(r.name)} ${badge(v.status)}</h3><p>${esc(r.indication)} · v${esc(v.version)}</p><p>Population: ${esc(r.population || 'Not defined')} · Cycle interval: ${esc(r.cycleIntervalDays || '—')} days · Cycles: ${esc(r.cycleCount || '—')}</p><small>Approved: ${esc(v.approved_by === 'v2-approved-import' ? 'Prior local approval (import)' : v.approved_by || '—')} · ${esc(v.approved_at || '—')}<br>Published: ${esc(v.published_at || '—')}</small>${r.phases
     .map(
       (p) =>
