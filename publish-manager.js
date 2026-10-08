@@ -31,7 +31,7 @@
     d.innerHTML = '<div class="review-publish-head"><h2 id="review-publish-heading">Review → Approve & Publish</h2><button id="review-publish-close" type="button" aria-label="Close">✕</button></div>' +
       '<form id="review-publish-form" novalidate><div class="review-publish-content">' +
       '<p class="review-publish-help">แก้ไขข้อมูลที่จำเป็น ตรวจสอบกับ Guideline ฉบับจริง แล้วกด <strong>Approve & Publish</strong> เพื่อบันทึกลง GitHub Production</p>' +
-      '<div id="review-publish-name"></div>' +
+      '<p id="review-publish-error" role="alert" aria-live="assertive" hidden></p><div id="review-publish-name"></div>' +
       '<label>ข้อบ่งใช้ (Indication)<textarea id="review-publish-indication" rows="2" required></textarea></label>' +
       '<label>รอบการรักษา (Cycle schedule)<input id="review-publish-cycle" required /></label>' +
       '<div id="review-publish-orders"></div>' +
@@ -53,7 +53,7 @@
     $('review-publish-queue').addEventListener('click', queueCurrent);
     addBatchUI();
     $('review-publish-source').addEventListener('change', () => $('review-publish-url').setCustomValidity(''));
-    $('review-publish-url').addEventListener('input', () => $('review-publish-url').setCustomValidity(''));
+    $('review-publish-url').addEventListener('input', () => { $('review-publish-url').setCustomValidity('');const raw=$('review-publish-url').value.trim();try{const h=new URL(raw).hostname.toLowerCase();for(const [key,domains] of Object.entries(SOURCE_DOMAINS)){if(domains.some(d=>h===d||h.endsWith('.'+d))){$('review-publish-source').value=key;break;}}}catch{} });
   }
 
   function open(item) {
