@@ -11,6 +11,10 @@ on:
         required: true
         default: 'editor.staging@example.invalid'
         type: string
+      reviewer_email:
+        description: 'DIFFERENT named Oncology Pharmacist reviewer email (required for independent Approve and Publish)'
+        required: true
+        type: string
 permissions:
   contents: read
 concurrency:
@@ -26,7 +30,9 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       STAGING_PASSWORD_PEPPER: ${{ secrets.STAGING_PASSWORD_PEPPER }}
       STAGING_EDITOR_PIN: ${{ secrets.STAGING_EDITOR_PIN }}
+      STAGING_REVIEWER_PIN: ${{ secrets.STAGING_REVIEWER_PIN }}
       STAGING_EDITOR_EMAIL: ${{ inputs.editor_email }}
+      STAGING_REVIEWER_EMAIL: ${{ inputs.reviewer_email }}
       WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@v6
@@ -36,11 +42,11 @@ jobs:
           cache: npm
       - name: Fail closed unless separate staging credentials are configured
         run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$STAGING_PASSWORD_PEPPER" ] || [ -z "$STAGING_EDITOR_PIN" ]; then
-            echo "::error::Set GitHub encrypted staging secrets CLOUDFLARE_API_TOKEN, STAGING_PASSWORD_PEPPER and STAGING_EDITOR_PIN first."
+          if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$STAGING_PASSWORD_PEPPER" ] || [ -z "$STAGING_EDITOR_PIN" ] || [ -z "$STAGING_REVIEWER_PIN" ]; then
+            echo "::error::Set GitHub encrypted staging secrets CLOUDFLARE_API_TOKEN, STAGING_PASSWORD_PEPPER, STAGING_EDITOR_PIN and STAGING_REVIEWER_PIN first."
             exit 1
           fi
-          node -e "if (!/^[0-9]{10}$/.test(process.env.STAGING_EDITOR_PIN) || process.env.STAGING_PASSWORD_PEPPER.length<32) process.exit(1)"
+          node -e "if (!/^[0-9]{10}$/.test(process.env.STAGING_EDITOR_PIN) || !/^[0-9]{10}$/.test(process.env.STAGING_REVIEWER_PIN) || process.env.STAGING_EDITOR_PIN===process.env.STAGING_REVIEWER_PIN || process.env.STAGING_PASSWORD_PEPPER.length<32) process.exit(1)"
       - name: Verify Cloudflare token is valid for target Staging D1 before lengthy tests
         run: |
           node --input-type=module -e "
@@ -102,6 +108,11 @@ jobs:
           trap 'rm -f "$RUNNER_TEMP/bhh-staging-editor-pin.sql"' EXIT
           node v3/scripts/provision-staging-editor-ci.mjs
           npx wrangler d1 execute DB --config v3/wrangler.jsonc --env staging --remote --file "$RUNNER_TEMP/bhh-staging-editor-pin.sql"
+      - name: Provision distinct individual Oncology Reviewer PIN for Approve and Publish
+        run: |
+          trap 'rm -f "$RUNNER_TEMP/bhh-staging-reviewer-pin.sql"' EXIT
+          node v3/scripts/provision-staging-reviewer-ci.mjs
+          npx wrangler d1 execute DB --config v3/wrangler.jsonc --env staging --remote --file "$RUNNER_TEMP/bhh-staging-reviewer-pin.sql"
       - name: Live smoke — only published protocols visible without login
         run: |
           node --input-type=module -e "
