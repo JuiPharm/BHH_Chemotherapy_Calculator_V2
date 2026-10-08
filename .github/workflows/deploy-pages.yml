@@ -41,6 +41,9 @@ jobs:
           node --check functions/api/verify-pin.js
           node --check src/server/clinical.js
 
+      - name: Real browser production smoke
+        run: node tests/browser-production-flow.mjs
+
       - name: Parse-check browser runtime
         run: node --check app.bundle.js
 
