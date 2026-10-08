@@ -621,7 +621,11 @@ export default {
           request.method === 'GET' &&
           request.headers.get('Accept')?.includes('text/html') &&
           !new URL(request.url).pathname.startsWith('/api/'))
-        return Response.redirect(new URL('/login', request.url).toString(), 303);
+        return Response.redirect(
+          env.CODESPACES_PREVIEW === 'true' &&
+          /^https:\/\/[a-z0-9-]+-8792\.app\.github\.dev$/.test(env.CODESPACES_PREVIEW_ORIGIN || '')
+            ? env.CODESPACES_PREVIEW_ORIGIN + '/login'
+            : new URL('/login', request.url).toString(), 303);
       const r = response(
         {
           error: e.status
