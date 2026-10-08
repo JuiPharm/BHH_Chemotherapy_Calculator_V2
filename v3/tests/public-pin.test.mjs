@@ -139,3 +139,34 @@ test('different oncology reviewer PIN grants review role; it does not grant admi
  assert.equal((await worker.fetch(new Request(base+'/api/registry',{headers:{Cookie:cookie}}),env)).status,200);
  assert.equal((await worker.fetch(new Request(base+'/api/audit',{headers:{Cookie:cookie}}),env)).status,403);
 });
+
+test('production public calculator and named editor PIN use ONLY production secret',async()=>{
+ const {sql,env}=fixture();
+ const production={...env,APP_ENV:'production',PRODUCTION_PUBLIC_PIN:'true',PRODUCTION_PASSWORD_PEPPER:pepper};
+ delete production.STAGING_PASSWORD_PEPPER;
+ const session=await worker.fetch(new Request(base+'/api/session'),production);
+ assert.equal(session.status,200);
+ assert.equal((await session.json()).authMode,'public');
+ const denied=await worker.fetch(new Request(base+'/api/registry'),production);
+ assert.equal(denied.status,403);
+ sql.prepare("INSERT INTO users VALUES('prod-editor','owner@hospital.example','regimen_editor',1,'now','fixture','now','fixture')").run();
+ sql.prepare("INSERT INTO staging_editor_pins VALUES('prod-editor',?,'now','fixture')").run(await pinHash('2750691834',pepper));
+ const pinReq=request('/api/auth/editor-pin',{pin:'2750691834'});
+ const login=await worker.fetch(pinReq,production);
+ assert.equal(login.status,200);
+ const cookie=login.headers.get('Set-Cookie').split(';')[0];
+ const asEditor=await worker.fetch(new Request(base+'/api/session',{headers:{Cookie:cookie}}),production);
+ assert.equal((await asEditor.json()).authMode,'editor');
+ const revoked=await worker.fetch(new Request(base+'/api/session',{headers:{Cookie:cookie}}),{
+   ...production,PRODUCTION_PUBLIC_PIN:'false',
+ });
+ assert.notEqual(revoked.status,200);
+ const wrongPepper=await worker.fetch(request('/api/auth/editor-pin',{pin:'2750691834'}),{
+  ...production,PRODUCTION_PASSWORD_PEPPER:'entirely-distinct-very-long-prod-secret-which-is-wrong',
+ });
+ assert.equal(wrongPepper.status,401);
+ const absentPepper=await worker.fetch(request('/api/auth/editor-pin',{pin:'2750691834'}),{
+  ...production,PRODUCTION_PASSWORD_PEPPER:undefined,
+ });
+ assert.equal(absentPepper.status,503);
+});
