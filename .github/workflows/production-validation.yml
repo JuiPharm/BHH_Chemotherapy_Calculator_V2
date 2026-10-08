@@ -15,6 +15,7 @@ jobs:
           node-version: 24
       - name: Syntax verification
         run: |
+          node --check renal-equations.js
           node --check app.bundle.js
           node --check publish-manager.js
           node --check regimen-builder.js
@@ -26,6 +27,7 @@ jobs:
       - name: Clinical and runtime regression
         run: |
           node tests/production-smoke.mjs
+          node tests/ckd-epi-2021.mjs
           node tests/production-safety.mjs
           node tests/rounding-security.mjs
           node tests/runtime-startup-static.mjs
