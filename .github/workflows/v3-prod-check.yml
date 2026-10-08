@@ -1,0 +1,13 @@
+name: Production Workflow Syntax Check
+on:
+  push:
+    branches: [production-v3-live]
+    paths: ['.github/workflows/v3-prod-check.yml']
+permissions:
+  contents: read
+jobs:
+  syntax:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify GitHub Action scheduling
+        run: echo "PRODUCTION_WORKFLOW_SYNTAX_OK"
