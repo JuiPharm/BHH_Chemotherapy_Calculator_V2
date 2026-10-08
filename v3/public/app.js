@@ -37,6 +37,7 @@ const state = {
   authMode: '',
   editorModal: false,
   pendingSubmit: false,
+  editConflict: false,
 };
 const statusLabel = (s) =>
   ({
@@ -119,8 +120,9 @@ function connection() {
     ? `Central protocols · revision ${state.revision} · checked ${new Date(state.checked).toLocaleTimeString()}`
     : `OFFLINE / CACHED PUBLISHED PROTOCOL · ${v ? `${v.document.name} · version ${v.version} · published ${v.published_at}` : 'เลือกสูตรที่เคยโหลดแล้ว'} · ไม่สามารถแก้ไขหรืออนุมัติได้`;
   $('#new-draft').disabled = !canEdit();
+  // Safety: a cached/offline regimen can be VIEWED, but never calculated.
   $('#calculate').disabled =
-    !state.selected || state.selected.version.status !== 'published';
+    !state.online || !state.selected || state.selected.version.status !== 'published';
 }
 async function api(path, options = {}) {
   const h = {
@@ -193,8 +195,15 @@ async function offline() {
   }
   connection();
 }
+let activeSync = null;
+// Concurrent refreshes share one promise; Calculate must await the in-flight check.
 async function sync() {
-  if (state.loading) return;
+  if (activeSync) return activeSync;
+  activeSync = syncNow();
+  try { return await activeSync; }
+  finally { activeSync = null; }
+}
+async function syncNow() {
   state.loading = true;
   try {
     const reconnect = !state.online;
@@ -206,18 +215,29 @@ async function sync() {
     } else {state.user=session.user;state.local=session.local;}
     state.online = true;
     const r = await api('/revision');
-    if (reconnect || r.revision !== state.revision || !state.catalog.length) {
+    const revisionChanged = state.revision !== 0 && r.revision !== state.revision;
+    if (reconnect || revisionChanged || !state.catalog.length) {
       $('#result').innerHTML = '';
       state.details.clear();
       const c = await api('/catalog');
       state.catalog = c.catalog;
       state.revision = c.revision;
+      if (revisionChanged && state.draft) {
+        // Keep unsaved changes: optimistic server revision guard prevents overwrite.
+        state.editConflict = true;
+        note('มีการแก้ไข Regimen บนเครื่องอื่นระหว่างที่คุณเปิด Draft อยู่ กรุณาตรวจ Registry/Reload Draft ก่อนบันทึก เพื่อป้องกันข้อมูลทับกัน');
+      }
       await cachePut('catalog', {
         revision: c.revision,
         catalog: c.catalog.filter((x) => x.status === 'published'),
         savedAt: new Date().toISOString(),
       });
       renderCatalog();
+      // Registry is a live D1-backed view, not a snapshot from the first visit.
+      if (!$('#registry').hidden && canEdit()) await registry();
+      if (revisionChanged && !state.draft) {
+        note('รายการ Regimen ได้รับการอัปเดตจากฐานข้อมูลกลางแล้ว', false);
+      }
       if (state.selected) {
         const active = c.catalog.find(
           (x) =>
@@ -799,14 +819,25 @@ $('#pin-form').onsubmit=async(e)=>{
     $('#pin-error').textContent=err.status===429?'Too many PIN attempts; try later':err.message;
   }finally{btn.disabled=false;$('#editor-pin').value='';}
 };
-$('#patient-form').onsubmit = (e) => {
+$('#patient-form').onsubmit = async (e) => {
   e.preventDefault();
+  const button=$('#calculate');
+  button.disabled=true;
   try {
     clearNote();
     $('#result').innerHTML = '';
+    if (!state.online) throw Error('ออฟไลน์: ไม่อนุญาตให้คำนวณจากสูตรที่อาจเป็นรุ่นเก่า กรุณาเชื่อมต่ออินเทอร์เน็ต');
     if (!state.selected) throw Error('เลือกสูตรยาก่อนคำนวณ');
-    if (state.online && Date.now() - state.checked > 35000)
-      throw Error('Protocol revision check expired. Please wait for refresh.');
+    // Always check D1's shared revision before dose calculation; no patient data sent.
+    const chosenId=state.selected.version.id;
+    const server=await api('/revision');
+    if (server.revision!==state.revision) {
+      await sync();
+      throw Error('Regimen ถูกอัปเดตจากเครื่องอื่นแล้ว กรุณาตรวจ Protocol Dose ฉบับล่าสุด และกด Calculate อีกครั้ง');
+    }
+    if (!state.selected || state.selected.version.id!==chosenId ||
+        state.selected.version.status!=='published')
+      throw Error('Regimen รุ่นนี้ไม่ได้ Published แล้ว กรุณาเลือกใหม่');
     const p = Object.fromEntries(new FormData(e.target));
     for (const k of [
       'ageYears',
@@ -850,7 +881,7 @@ $('#patient-form').onsubmit = (e) => {
   } catch (e) {
     $('#result').innerHTML =
       `<div class="blocked">BLOCKED: ${esc(e.message)}</div>`;
-  }
+  } finally { connection(); }
 };
 $('#regimen-search').oninput = () => {
   state.selected = null;
@@ -1084,7 +1115,12 @@ async function boot() {
       .catch(() =>
         note('Offline application shell could not be installed', false),
       );
-  setInterval(() => sync(), 15000);
+  // Multiple independent PCs receive D1 changes without manual refresh.
+  setInterval(() => { if (!document.hidden) sync(); }, 10000);
+  window.addEventListener('focus', () => sync());
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) sync();
+  });
   window.addEventListener('online', () => sync());
   window.addEventListener('offline', () => offline());
 }
