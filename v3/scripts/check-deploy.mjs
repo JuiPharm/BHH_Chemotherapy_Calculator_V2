@@ -16,7 +16,7 @@ if (c.d1_databases?.[0]?.database_id === c.env?.staging?.d1_databases?.[0]?.data
 if (stage === 'production') {
   if (e.vars.AUTH_MODE === 'internal' ||
       typeof e.vars.ACCESS_TEAM_DOMAIN !== 'string' ||
-      !/^[a-z0-9-]+\\.cloudflareaccess\\.com$/i.test(e.vars.ACCESS_TEAM_DOMAIN) ||
+      !/^[a-z0-9-]+\.cloudflareaccess\.com$/i.test(e.vars.ACCESS_TEAM_DOMAIN) ||
       e.vars.ACCESS_TEAM_DOMAIN.startsWith('REPLACE') ||
       typeof e.vars.ACCESS_AUD !== 'string' ||
       !e.vars.ACCESS_AUD.trim() ||
