@@ -1,5 +1,9 @@
 name: Deploy V3 — Isolated Staging or Production (manual only)
 on:
+  # Single owner-requested isolated Production launch. Auto trigger is removed directly after scheduling.
+  push:
+    branches: [production-v3-live]
+    paths: ['.github/workflows/v3-staging.yml']
   workflow_dispatch:
     inputs:
       approval:
@@ -127,7 +131,7 @@ jobs:
 
   production:
     name: New dedicated V3 PRODUCTION (not legacy bhh Worker)
-    if: github.ref_name == 'production-v3-live' && inputs.approval == 'DEPLOY_PRODUCTION_ONLY'
+    if: github.ref_name == 'production-v3-live' && ((github.event_name == 'workflow_dispatch' && inputs.approval == 'DEPLOY_PRODUCTION_ONLY') || (github.event_name == 'push' && startsWith(github.event.head_commit.message, 'release(production): one-time live deploy')))
     runs-on: ubuntu-latest
     environment: cloudflare-production
     concurrency:
@@ -139,7 +143,7 @@ jobs:
       PRODUCTION_PASSWORD_PEPPER: ${{ secrets.PRODUCTION_PASSWORD_PEPPER }}
       PRODUCTION_EDITOR_PIN: ${{ secrets.PRODUCTION_EDITOR_PIN }}
       PRODUCTION_REVIEWER_PIN: ${{ secrets.PRODUCTION_REVIEWER_PIN }}
-      PRODUCTION_EDITOR_EMAIL: ${{ inputs.editor_email }}
+      PRODUCTION_EDITOR_EMAIL: ${{ inputs.editor_email || vars.PRODUCTION_EDITOR_EMAIL || github.event.head_commit.author.email }}
       PRODUCTION_REVIEWER_EMAIL: ${{ vars.PRODUCTION_REVIEWER_EMAIL || secrets.PRODUCTION_REVIEWER_EMAIL }}
       PRODUCTION_D1_UUID: ${{ vars.PRODUCTION_D1_UUID }}
       WRANGLER_SEND_METRICS: 'false'
