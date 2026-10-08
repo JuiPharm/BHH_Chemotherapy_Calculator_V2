@@ -1,4 +1,5 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
+import { isInternalStaging, stagingIdentity } from './staging-auth.js';
 const keysets = new Map();
 export async function identity(request, env) {
   const host = new URL(request.url).hostname;
@@ -11,6 +12,7 @@ export async function identity(request, env) {
       request.headers.get('X-Local-User') || 'calculator@local.test';
     return { email, local: true };
   }
+  if (isInternalStaging(env)) return stagingIdentity(request, env);
   if (env.LOCAL_TEST_AUTH === 'true')
     throw Object.assign(
       Error(
