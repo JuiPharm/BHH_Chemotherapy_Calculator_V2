@@ -44,7 +44,7 @@ jobs:
           grep -q 'calculator@staging-fixture.test' v3/.staging-secrets/CODESPACES_LOGIN.txt
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/login)" = '200'
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/session)" = '200'
-          curl -sf http://127.0.0.1:8792/api/catalog | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const x=JSON.parse(s);if(x.catalog.length!==6 || x.catalog.some(a=>a.status!=='published'))process.exit(1)})"
+          curl -sf http://127.0.0.1:8792/api/catalog | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const x=JSON.parse(s);if(x.catalog.length!==142 || x.catalog.filter(a=>a.status==='published').length!==6 || x.catalog.filter(a=>a.status==='reference_only').length!==136)process.exit(1)})"
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/registry)" = '403'
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H 'Origin: http://127.0.0.1:8792' -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"pin":"1111111111"}' http://127.0.0.1:8792/api/auth/editor-pin)" = '401'
           curl -s --max-time 5 -D /tmp/bhh-editor.headers -o /dev/null -H 'Origin: http://127.0.0.1:8792' -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"pin":"8342719056"}' http://127.0.0.1:8792/api/auth/editor-pin
