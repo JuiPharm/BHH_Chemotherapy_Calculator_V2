@@ -409,6 +409,7 @@ async function selectVersion(id) {
   const r = d.version.document;
   $('#regimen-search').value = r.name;
   $('#cancer').value = r.cancerGroup;
+  $('#regimen-picker').value = id;
   $('#matches').hidden = true;
   $('#regimen-search').setAttribute('aria-expanded', 'false');
   $('#selected').innerHTML =
@@ -849,12 +850,19 @@ $('#matches').onkeydown = (e) => {
     e.preventDefault();
   }
 };
+$('#regimen-picker').onchange=async(e)=>{
+ if(e.target.value)try{await selectVersion(e.target.value);}catch(err){failure(err)}
+};
+$('#browse-regimens').onclick=()=>go('library');
+$('#registry-search').oninput=renderRegistry;
+$('#registry-status').onchange=renderRegistry;
 $('#cancer').onchange = () => {
   state.selected = null;
   $('#regimen-search').value = '';
   $('#selected').textContent = 'ยังไม่ได้เลือกสูตรยา';
   $('#result').innerHTML = '';
   $('#matches').hidden = true;
+  renderCatalog();
   connection();
 };
 $('#patient-form').oninput = (e) => {
@@ -865,6 +873,7 @@ $('#patient-form').oninput = (e) => {
 $('#rounding').onchange = () => ($('#result').innerHTML = '');
 $('#clear-patient').onclick = () => {
   $('#patient-form').reset();
+  $('#regimen-picker').value = '';
   state.selected = null;
   $('#selected').textContent = 'ยังไม่ได้เลือกสูตรยา';
   $('#result').innerHTML = '';
