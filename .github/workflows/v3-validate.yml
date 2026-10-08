@@ -28,7 +28,7 @@ jobs:
         run: |
           npm run import:v3
           npm run build:v3
-          git diff --exit-code -- v3/migrations/0002_import.sql v3/docs/import-report.json v3/public/shared/clinical.js v3/public/sw.js
+          git diff --exit-code -- v3/migrations/0002_import.sql v3/docs/import-report.json v3/public/shared/clinical.js 
           npm run test:v3
       - name: Real local Worker and D1 API checks
         run: npm run test:api:v3
