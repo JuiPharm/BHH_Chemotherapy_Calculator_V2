@@ -34,7 +34,7 @@ test('staging browser: unauthenticated assets blocked and real password/TOTP log
  page.on('pageerror',err=>errors.push(err.message));
  await expect.poll(async()=> (await page.request.get('/api/catalog')).status()).toBe(401);
  await login(page,users[0]);
- await expect(page.locator('#library-count')).toContainText('142 records');
+ await expect(page.locator('#library-count')).toContainText('142 sources');
  await page.locator('#cancer').selectOption('Breast');
  await page.locator('#regimen-search').fill('TCH');
  await page.locator('#matches [data-select="BHH-BREAST-TCH-EVIQ53:1"]').click();
