@@ -156,7 +156,11 @@ async function dispatch(request, env) {
       return new Response(a.body, { status: a.status, headers: h });
     }
   }
-  // Anonymous callers can only read Published clinical protocols in explicit STAGING mode.
+  if (env.APP_ENV==='production' && publicCalculator(env)) {
+    if (path === '/api/auth/editor-pin') return confirmEditorPin(request,env);
+    if (path === '/api/auth/editor-logout') return logoutEditorPin(request,env);
+  }
+  // Anonymous callers only read approved Published definitions or immutable original source references.
   // Every write, draft, registry, approval, and audit still requires an individual identity.
   let who;
   try { who = await identity(request, env); }
@@ -512,8 +516,8 @@ async function dispatch(request, env) {
       retire: ['published', 'retired', 'publish'],
     };
     const [from, to, permission] = rules[act];
-    // Independent named reviewer PIN can publish an already Approved version
-    // on STAGING ONLY; this does not provide clinical_admin or audit privileges.
+    // Named independent Oncology Pharmacist PIN can publish APPROVED versions
+    // in explicitly configured isolated public-calculator environments.
     const reviewerPinPublish = act==='publish' && publicCalculator(env) &&
       who.pin && who.pinRole==='oncology_pharmacist' &&
       user.role_code==='oncology_pharmacist';
