@@ -20,7 +20,6 @@
           <h1>BHH Chemotherapy Calculator</h1>
         </div>
       </div>
-      <div class="prod-badge">PRODUCTION v2.3.0<br><span>Central Regimen Master</span></div>
     </header>
 
     <nav class="tabs" aria-label="Main navigation">
@@ -45,9 +44,10 @@
                 <option value="" selected disabled></option>
               </select>
             </label>
-            <label class="field">
+            <label class="field" style="position: relative;">
               <span>Search Regimen</span>
-              <input id="regimen-search" type="search" autocomplete="off">
+              <input id="regimen-search" type="search" placeholder="ค้นหาชื่อสูตรยา เช่น AC, FOLFOX..." autocomplete="off">
+              <div id="regimen-search-dropdown" class="search-dropdown hidden"></div>
             </label>
             <label class="field">
               <span>Regimen <b>*</b></span>
@@ -214,7 +214,7 @@
       <div id="pin-auth-error" class="alert alert-error hidden"></div>
       <label class="field" style="margin: 18px 0;">
         <span>รหัส PIN *</span>
-        <input id="pin-auth-input" type="password" maxlength="10" placeholder="กรอกรหัส PIN (เช่น 1234)" required autocomplete="off" style="font-size: 1.3rem; letter-spacing: 4px; text-align: center;">
+        <input id="pin-auth-input" type="password" maxlength="10" required autocomplete="off" style="font-size: 1.3rem; letter-spacing: 4px; text-align: center;">
       </label>
       <div class="button-row" style="justify-content: flex-end; margin-top: 15px;">
         <button type="button" id="pin-auth-cancel" class="secondary">ยกเลิก</button>

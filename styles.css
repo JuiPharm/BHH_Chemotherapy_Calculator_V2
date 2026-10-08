@@ -9,4 +9,21 @@
 .radio-card input[type="radio"]{width:auto;margin:0;accent-color:var(--navy);cursor:pointer}
 .radio-card:has(input[type="radio"]:checked){border-color:var(--blue);background:#eef6ff;color:var(--navy)}
 #pin-auth-dialog{border:0;border-radius:14px;padding:0;max-width:440px;width:92vw;box-shadow:0 12px 36px rgba(11,44,85,.25);background:#fff}
-#pin-auth-dialog::backdrop{background:rgba(11,44,85,.4);backdrop-filter:blur(3px)}
+#pin-auth-dialog::backdrop{background:rgba(11,44,85,.4);backdrop-filter:blur(3px)}
+.output-card.has-result{background:linear-gradient(135deg,#f0fdf9 0%,#eef7fc 55%,#f4f9ff 100%)!important;border:1.5px solid #b8dbe8!important;border-radius:16px!important;box-shadow:0 6px 24px rgba(11,44,85,.08)!important;padding:22px!important;transition:all .3s ease}
+.output-card.has-result .result-header>div{background:rgba(255,255,255,.9)!important;border:1px solid #c8dfea!important;backdrop-filter:blur(4px);box-shadow:0 2px 6px rgba(11,44,85,.04)}
+.output-card.has-result .kpi-label{color:#165b8c!important;font-weight:700}
+.output-card.has-result .table-wrap{border:1px solid #bfd8e6!important;background:#fff!important;border-radius:12px;box-shadow:0 2px 8px rgba(11,44,85,.04)}
+.output-card.has-result table th{background:#e8f3fa!important;color:#0b2c55!important;font-weight:700;border-bottom:2px solid #cbdfe9}
+.output-card.has-result table tr:hover td{background:#f5fafd}
+.output-card.has-result table td:nth-child(5){background:#f0faf4!important;color:#11633d!important;font-weight:700}
+.search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:360px;overflow-y:auto;background:#fff;border:1.5px solid #9eb7d1;border-radius:10px;box-shadow:0 12px 32px rgba(11,44,85,.18);z-index:100}
+.search-match-item{padding:10px 14px;border-bottom:1px solid #eef2f6;cursor:pointer;transition:background .12s}
+.search-match-item:last-child{border-bottom:0}
+.search-match-item:hover,.search-match-item.highlighted{background:#eef6ff}
+.search-match-title{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.search-match-title strong{color:var(--navy);font-size:.95rem}
+.search-match-sub{color:#334e68;font-size:.85rem;margin-top:2px}
+.search-match-drugs{color:#526a82;font-size:.78rem;margin-top:4px}
+.search-empty{padding:14px;color:#627386;text-align:center;font-size:.88rem}
+

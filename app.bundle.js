@@ -492,14 +492,56 @@ function populateCancerTypes() {
     }
   }
 }
+function selectRegimenByKey(key) {
+  const item = catalog.find(x => x.key === key);
+  if (!item) return;
+  $('#cancer-type-select').value = item.cancerType;
+  $('#regimen-search').value = item.name;
+  $('#regimen-search-dropdown')?.classList.add('hidden');
+  populateRegimenOptions();
+  $('#regimen-select').value = item.key;
+  onRegimenSelected();
+}
+
 function bindCalculator() {
-  $('#cancer-type-select').addEventListener('change',()=>{ $('#regimen-search').value=''; populateRegimenOptions(); });
-  $('#regimen-search').addEventListener('input',populateRegimenOptions);
-  $('#regimen-select').addEventListener('change',onRegimenSelected);
-  $('#kidney-method').addEventListener('change',updateKidneyUi);
-  $('#calc-form').addEventListener('submit',e=>{e.preventDefault(); runCalculation();});
-  $('#export-calc-btn').addEventListener('click',exportLast);
-  $('#print-btn').addEventListener('click',()=>window.print());
+  $('#cancer-type-select').addEventListener('change', () => {
+    $('#regimen-search').value = '';
+    $('#regimen-search-dropdown')?.classList.add('hidden');
+    populateRegimenOptions();
+  });
+  
+  $('#regimen-search').addEventListener('input', () => {
+    populateRegimenOptions();
+  });
+
+  $('#regimen-search').addEventListener('keydown', e => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const first = document.querySelector('#regimen-search-dropdown .search-match-item');
+      if (first) {
+        selectRegimenByKey(first.dataset.selectKey);
+      }
+    }
+  });
+
+  document.addEventListener('click', e => {
+    if (!e.target.closest('#regimen-search') && !e.target.closest('#regimen-search-dropdown')) {
+      $('#regimen-search-dropdown')?.classList.add('hidden');
+    }
+  });
+
+  $('#regimen-search-dropdown')?.addEventListener('click', e => {
+    const itemEl = e.target.closest('[data-select-key]');
+    if (itemEl) {
+      selectRegimenByKey(itemEl.dataset.selectKey);
+    }
+  });
+
+  $('#regimen-select').addEventListener('change', onRegimenSelected);
+  $('#kidney-method').addEventListener('change', updateKidneyUi);
+  $('#calc-form').addEventListener('submit', e => { e.preventDefault(); runCalculation(); });
+  $('#export-calc-btn').addEventListener('click', exportLast);
+  $('#print-btn').addEventListener('click', () => window.print());
   
   // Real-time recalculation on changing Rounding Radio Button
   document.querySelectorAll('input[name="calc-rounding-choice"]').forEach(radio => {
@@ -512,43 +554,101 @@ function bindCalculator() {
 
   updateKidneyUi();
 }
+
 function populateRegimenOptions() {
-  const type=$('#cancer-type-select').value;
-  const q=$('#regimen-search').value.trim().toLowerCase();
-  const sel=$('#regimen-select');
-  sel.innerHTML='<option value="" selected disabled></option>';
-  if (!type) {sel.disabled=true;return;}
-  const items=catalog.filter(x=>x.cancerType===type && (!q || `${x.name} ${x.indication}`.toLowerCase().includes(q)))
-    .sort((a,b)=>{const rank=x=>x.structuredLink?0:x.status==='approved_published'?1:x.status==='published_review'?2:3;return rank(a)-rank(b)||a.name.localeCompare(b.name);});
-  for (const x of items) {
-    const o=document.createElement('option'); o.value=x.key;
-    o.textContent=`${x.structured||x.status==='approved_published'?'✓ ':''}${x.name} — ${x.indication}`;
-    sel.appendChild(o);
+  const type = $('#cancer-type-select').value;
+  const q = $('#regimen-search').value.trim().toLowerCase();
+  const sel = $('#regimen-select');
+  const dropdown = $('#regimen-search-dropdown');
+  
+  sel.innerHTML = '<option value="" selected disabled></option>';
+
+  let items = [];
+  if (q) {
+    items = catalog.filter(x => {
+      const cancer = (x.cancerTypeLabel || typeLabel(x.cancerType) || '').toLowerCase();
+      const drugs = (x.master?.drugs || []).map(d => `${d['ชื่อยา']} ${d['ขนาดยา']}`).join(' ').toLowerCase();
+      const text = `${x.name} ${x.indication} ${cancer} ${drugs}`.toLowerCase();
+      if (type && x.cancerType === type) return text.includes(q);
+      return text.includes(q);
+    }).sort((a,b)=>{const rank=x=>x.structuredLink?0:x.status==='approved_published'?1:x.status==='published_review'?2:3;return rank(a)-rank(b)||a.name.localeCompare(b.name);});
+
+    if (type && items.length === 0) {
+      items = catalog.filter(x => {
+        const cancer = (x.cancerTypeLabel || typeLabel(x.cancerType) || '').toLowerCase();
+        const drugs = (x.master?.drugs || []).map(d => `${d['ชื่อยา']} ${d['ขนาดยา']}`).join(' ').toLowerCase();
+        return `${x.name} ${x.indication} ${cancer} ${drugs}`.toLowerCase().includes(q);
+      }).sort((a,b)=>{const rank=x=>x.structuredLink?0:x.status==='approved_published'?1:x.status==='published_review'?2:3;return rank(a)-rank(b)||a.name.localeCompare(b.name);});
+    }
+
+    if (dropdown) {
+      if (items.length > 0) {
+        dropdown.innerHTML = items.slice(0, 15).map(x => {
+          const drugSummary = (x.master?.drugs || []).map(d => `${esc(d['ชื่อยา'])} (${esc(d['ขนาดยา'])})`).join(' · ');
+          return `<div class="search-match-item" data-select-key="${esc(x.key)}">
+            <div class="search-match-title">
+              <strong>${esc(x.name)}</strong>
+              <span class="badge ${x.structured ? 'badge-ok' : 'badge-neutral'}">${esc(x.cancerTypeLabel || typeLabel(x.cancerType))}</span>
+            </div>
+            <div class="search-match-sub">${esc(x.indication)}</div>
+            ${drugSummary ? `<div class="search-match-drugs micro">${drugSummary}</div>` : ''}
+          </div>`;
+        }).join('');
+        dropdown.classList.remove('hidden');
+      } else {
+        dropdown.innerHTML = '<div class="search-empty">ไม่พบสูตรยาที่ตรงกับคำค้นหา</div>';
+        dropdown.classList.remove('hidden');
+      }
+    }
+  } else {
+    if (dropdown) {
+      dropdown.innerHTML = '';
+      dropdown.classList.add('hidden');
+    }
+    if (type) {
+      items = catalog.filter(x => x.cancerType === type)
+        .sort((a,b)=>{const rank=x=>x.structuredLink?0:x.status==='approved_published'?1:x.status==='published_review'?2:3;return rank(a)-rank(b)||a.name.localeCompare(b.name);});
+    }
   }
-  sel.disabled=false;
-  selectedItem=null;
-  $('#cycle-input').disabled=true; $('#cycle-input').value='';
+
+  if (items.length > 0) {
+    for (const x of items) {
+      const o = document.createElement('option'); o.value = x.key;
+      const typePrefix = (!type || q) ? `[${typeLabel(x.cancerType)}] ` : '';
+      o.textContent = `${x.structured || x.status==='approved_published' ? '✓ ' : ''}${typePrefix}${x.name} — ${x.indication}`;
+      sel.appendChild(o);
+    }
+    sel.disabled = false;
+  } else {
+    sel.disabled = true;
+  }
+
+  selectedItem = null;
+  $('#cycle-input').disabled = true; $('#cycle-input').value = '';
   $('#regimen-context').classList.add('hidden');
-  $('#dose-selections').innerHTML='';
-  $('#calculate-btn').disabled=true;
+  $('#dose-selections').innerHTML = '';
+  $('#calculate-btn').disabled = true;
 }
 
 function onRegimenSelected() {
-  selectedItem=catalog.find(x=>x.key===$('#regimen-select').value)||null;
-  const cycle=$('#cycle-input');
-  cycle.value='1'; cycle.disabled=false; cycle.removeAttribute('max');
-  $('#dose-selections').innerHTML='';
+  selectedItem = catalog.find(x => x.key === $('#regimen-select').value) || null;
+  if (selectedItem && $('#cancer-type-select').value !== selectedItem.cancerType) {
+    $('#cancer-type-select').value = selectedItem.cancerType;
+  }
+  const cycle = $('#cycle-input');
+  cycle.value = '1'; cycle.disabled = false; cycle.removeAttribute('max');
+  $('#dose-selections').innerHTML = '';
   if (!selectedItem) return;
   if (!selectedItem.structured && selectedItem.master) {
     selectedItem.structured = buildStructuredFromMaster(selectedItem.master);
   }
-  if (selectedItem.structured?.cycleCount) cycle.max=String(selectedItem.structured.cycleCount);
+  if (selectedItem.structured?.cycleCount) cycle.max = String(selectedItem.structured.cycleCount);
   renderSelectedContext();
-  $('#calculate-btn').disabled=false;
+  $('#calculate-btn').disabled = false;
 }
 
 function originalDrugRows(item) {
-  const drugs=item.master?.drugs||[];
+  const drugs = item.master?.drugs || [];
   if (!drugs.length) return '';
   return `<div class="table-wrap"><table><thead><tr><th>Drug</th><th>Dose</th><th>Frequency</th><th>Maximum dose</th></tr></thead><tbody>${
     drugs.map(d=>`<tr><td><strong>${esc(d['ชื่อยา'])}</strong></td><td>${esc(d['ขนาดยา'])}</td><td>${esc(d['ความถี่ในการให้'])}</td><td>${esc(d.maximum_dose||'—')}</td></tr>`).join('')
@@ -556,27 +656,27 @@ function originalDrugRows(item) {
 }
 
 function renderSelectedContext() {
-  const box=$('#regimen-context'); box.classList.remove('hidden');
-  const r=selectedItem.structured;
+  const box = $('#regimen-context'); box.classList.remove('hidden');
+  const r = selectedItem.structured;
   if (r) {
-    box.innerHTML=`<div class="context-head"><div><span class="badge ${selectedItem.structuredLink?'badge-ok':'badge-neutral'}">${selectedItem.structuredLink?'APPROVED PILOT':'CATALOG MASTER'}</span> <strong>${esc(r.name)}</strong></div><span class="micro">${esc(selectedItem.cancerTypeLabel||r.cancerGroup)}</span></div>
-      <p>${esc(r.indication)}</p><div class="micro">Cycle interval: ${r.cycleIntervalDays} days · Version ${esc(r.version||'1.0.0')}</div>`;
+    box.innerHTML = `<div class="context-head"><div><span class="badge ${selectedItem.structuredLink?'badge-ok':'badge-neutral'}">${selectedItem.structuredLink?'APPROVED PILOT':'CATALOG MASTER'}</span> <strong>${esc(r.name)}</strong></div><span class="micro">${esc(selectedItem.cancerTypeLabel||r.cancerGroup)}</span></div>
+      <p>${esc(r.indication)}</p><div class="micro">Cycle interval: ${r.cycleIntervalDays} days · Version ${esc(r.version||'1.0.0')}</div>${originalDrugRows(selectedItem)}`;
     updateDoseSelections();
   } else {
-    const m=selectedItem.master;
-    box.innerHTML=`<div class="context-head"><div><span class="badge ${statusBadge(selectedItem)}">${displayStatus(selectedItem)}</span> <strong>${esc(m.name)}</strong></div><span class="micro">${esc(m.cancer_type_label)}</span></div>
+    const m = selectedItem.master;
+    box.innerHTML = `<div class="context-head"><div><span class="badge ${statusBadge(selectedItem)}">${displayStatus(selectedItem)}</span> <strong>${esc(m.name)}</strong></div><span class="micro">${esc(m.cancer_type_label)}</span></div>
       <p>${esc(m.indication)}</p><div class="micro">${esc(m.cycle_text)}</div>${referenceDetails(selectedItem)}${originalDrugRows(selectedItem)}`;
   }
 }
 
 function updateDoseSelections() {
   if (!selectedItem?.structured) return;
-  const r=selectedItem.structured;
-  const cycle=Number($('#cycle-input').value)||1;
-  const phase=r.phases.find(p=>cycle>=p.cycleStart&&(p.cycleEnd===undefined||cycle<=p.cycleEnd));
+  const r = selectedItem.structured;
+  const cycle = Number($('#cycle-input').value) || 1;
+  const phase = r.phases.find(p=>cycle>=p.cycleStart&&(p.cycleEnd===undefined||cycle<=p.cycleEnd));
   if (!phase) {$('#dose-selections').innerHTML='';return;}
-  const opts=phase.orders.filter(o=>o.dose.options?.length);
-  $('#dose-selections').innerHTML=opts.length?`<div class="section-title">Clinical Dose Selection</div>${opts.map(o=>`<label class="field"><span>${esc(o.drugName)} <b>*</b></span><select data-dose-select="${esc(o.id)}" required><option value="" selected disabled></option>${o.dose.options.map(v=>`<option value="${v}">${o.dose.basis==='auc'?'AUC ':''}${v}</option>`).join('')}</select></label>`).join('')}`:'';
+  const opts = phase.orders.filter(o=>o.dose.options?.length);
+  $('#dose-selections').innerHTML = opts.length?`<div class="section-title">Clinical Dose Selection</div>${opts.map(o=>`<label class="field"><span>${esc(o.drugName)} <b>*</b></span><select data-dose-select="${esc(o.id)}" required><option value="" selected disabled></option>${o.dose.options.map(v=>`<option value="${v}">${o.dose.basis==='auc'?'AUC ':''}${v}</option>`).join('')}</select></label>`).join('')}`:'';
 }
 $('#cycle-input').addEventListener('input',()=>{if(selectedItem?.structured) updateDoseSelections();});
 function updateKidneyUi() {
@@ -599,6 +699,7 @@ function runCalculation() {
   const form=$('#calc-form');
   if (!form.reportValidity()) return;
   if (!selectedItem?.structured) {
+    $('#calc-output').classList.remove('has-result');
     $('#calc-output').innerHTML='<div class="alert alert-warning">Selected regimen is not ready for calculation.</div>'; return;
   }
   try {
@@ -612,10 +713,12 @@ function runCalculation() {
     lastCalculation={generatedAt:new Date().toISOString(),regimenId:selectedItem.structured.id,cycle,patient,selections,result};
     renderResult(result,selectedItem.structured,cycle);
   } catch(e) {
+    $('#calc-output').classList.remove('has-result');
     $('#calc-output').innerHTML=`<div class="alert alert-error"><strong>Calculation blocked:</strong> ${esc(e.message||String(e))}</div>`;
   }
 }
 function renderResult(result,r,cycle) {
+  $('#calc-output').classList.add('has-result');
   const warnings=result.results.flatMap(x=>x.warnings).map(w=>`<div class="alert alert-warning">${esc(w)}</div>`).join('');
   const rows=result.results.map(x=>`<tr><td><strong>${esc(x.drugName)}</strong><div class="micro">${esc(x.route)} · ${esc(x.schedule)}</div></td>
     <td>${esc(x.protocol)}</td><td><strong>${fmt(x.raw)} ${esc(x.unit)}</strong></td><td><strong>${fmt(x.clinical)} ${esc(x.unit)}</strong>${x.notes.length?`<div class="micro">${x.notes.map(esc).join('<br>')}</div>`:''}</td>

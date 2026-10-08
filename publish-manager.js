@@ -43,9 +43,9 @@
       '<form id="review-publish-form" novalidate><div class="review-publish-content">' +
       '<p class="review-publish-help">แก้ไขข้อมูลที่จำเป็น ตรวจสอบกับ Guideline ฉบับจริง ใส่ PIN แล้วกด <strong>Approve & Publish</strong> เพื่อนำไปใช้คำนวณและเผยแพร่ในระบบ</p>' +
       '<p id="review-publish-error" role="alert" aria-live="assertive" hidden></p><div id="review-publish-name"></div><div id="review-reference-suggestion" hidden></div>' +
-      '<div class="review-publish-two"><label>แหล่งอ้างอิง<select id="review-publish-source" required><option value="">เลือก Guideline</option><option>NCCN</option><option>NCI Thailand</option><option>ASCO</option><option>BC Cancer</option><option>eviQ</option><option>NCI US</option></select></label>' +
+      '<div class="review-publish-two"><label>แหล่งอ้างอิง<select id="review-publish-source"><option value="">เลือก Guideline (ถ้ามี)</option><option>NCCN</option><option>NCI Thailand</option><option>ASCO</option><option>BC Cancer</option><option>eviQ</option><option>NCI US</option></select></label>' +
       '<label>Protocol ID / Version (ถ้ามี)<input id="review-publish-protocol" placeholder="เช่น GICOXB / 2026" /></label></div>' +
-      '<label>ลิงก์ Guideline ที่ใช้ตรวจสอบ<input id="review-publish-url" type="url" placeholder="https://..." required /></label>' +
+      '<label>ลิงก์ Guideline ที่ใช้ตรวจสอบ<input id="review-publish-url" type="text" placeholder="https://... (ไม่บังคับ)" /></label>' +
       '<label>ข้อบ่งใช้ (Indication)<textarea id="review-publish-indication" rows="2" required></textarea></label>' +
       '<label>รอบการรักษา (Cycle schedule)<input id="review-publish-cycle" required /></label>' +
       '<div id="review-publish-orders"></div>' +
@@ -123,20 +123,20 @@
   }
 
   function checkReference(source, rawUrl) {
-    let u;
-    try { u = new URL(rawUrl); } catch { throw Error('กรุณาใส่ URL ของ Guideline ที่ถูกต้อง'); }
-    if (u.protocol !== 'https:' || u.username || u.password) throw Error('URL ต้องเป็น https:// เท่านั้น');
-    const allowed = SOURCE_DOMAINS[source] || [];
-    if (!allowed.some(domain => u.hostname === domain || u.hostname.endsWith('.' + domain)))
-      throw Error('เว็บไซต์อ้างอิงไม่ตรงกับ ' + source + ' กรุณาตรวจ URL');
-    return u.href;
+    if (!rawUrl || !rawUrl.trim()) return '';
+    try {
+      const u = new URL(rawUrl.trim());
+      return u.href;
+    } catch {
+      return rawUrl.trim();
+    }
   }
 
   function readForm() {
     const f = $('review-publish-form');
     if (!f.checkValidity()) {const field=f.querySelector(':invalid');const label=field?.closest('label')?.textContent?.trim().replace(/\s+/g,' ').slice(0,85)||'ข้อมูลที่จำเป็น';const e=Error('กรุณากรอกหรือยืนยัน: '+label);e.field=field;throw e;}
-    const source = $('review-publish-source').value;
-    const refUrl = checkReference(source, $('review-publish-url').value.trim());
+    const source = $('review-publish-source').value || 'BHH Protocol';
+    const refUrl = checkReference(source, ($('review-publish-url').value || '').trim());
     const drugs = (reviewItem.master.drugs || []).map((d,index) => {
       const block = $('review-publish-orders').querySelector('[data-drug-index="' + index + '"]');
       return { ...d,

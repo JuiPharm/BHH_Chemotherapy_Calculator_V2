@@ -136,9 +136,13 @@ async function runBrowserTests() {
 
   const appReady = await evaluate(`!document.getElementById('app-shell').classList.contains('hidden')`);
   console.log('App Shell loaded successfully:', appReady);
-  if (!appReady) throw new Error('App Shell failed to load');
+  if (!appReady) {
+    const loadingHtml = await evaluate(`document.getElementById('app-loading')?.innerHTML`);
+    console.log('app-loading content:', loadingHtml);
+    throw new Error('App Shell failed to load: ' + loadingHtml);
+  }
 
-  // Test 1: Verify General User View (Only Calculator tab visible)
+  // Test 1: Verify General User View & Badge Removal
   console.log('\n--- Test 1: General User View ---');
   const adminTabsHidden = await evaluate(`
     Array.from(document.querySelectorAll('.admin-tab')).every(el => el.classList.contains('hidden'))
@@ -152,10 +156,18 @@ async function runBrowserTests() {
   console.log('Calculator tab is active by default:', calcTabActive);
   if (!calcTabActive) throw new Error('Calculator tab must be active by default');
 
+  const prodBadgeExists = await evaluate(`!!document.querySelector('.prod-badge')`);
+  console.log('PRODUCTION v2.3.0 badge removed:', !prodBadgeExists);
+  if (prodBadgeExists) throw new Error('PRODUCTION v2.3.0 badge must be removed');
+
   // Test 2: PIN Authentication Flow
   console.log('\n--- Test 2: PIN Authentication (Unlock Pharmacist Mode) ---');
   await evaluate(`document.getElementById('admin-pin-toggle-btn').click()`);
   await new Promise(r => setTimeout(r, 300));
+
+  const pinPlaceholder = await evaluate(`document.getElementById('pin-auth-input').getAttribute('placeholder')`);
+  console.log('PIN auth input placeholder is removed:', !pinPlaceholder);
+  if (pinPlaceholder) throw new Error('pin-auth-input placeholder should be empty');
 
   // Enter wrong PIN first
   await evaluate(`
@@ -180,8 +192,8 @@ async function runBrowserTests() {
   console.log('Admin tabs unlocked and visible after PIN 1234:', adminTabsVisible);
   if (!adminTabsVisible) throw new Error('Admin tabs should be visible after correct PIN');
 
-  // Test 3: Regimen Library & Review / Publish Flow
-  console.log('\n--- Test 3: Review & Publish Regimen Workflow ---');
+  // Test 3: Regimen Library & Review / Publish Flow WITHOUT Guideline URL
+  console.log('\n--- Test 3: Review & Publish Regimen Workflow (Without Guideline Link) ---');
   // Switch to Regimen Library tab
   await evaluate(`document.querySelector('[data-tab="library"]').click()`);
   await new Promise(r => setTimeout(r, 500));
@@ -202,17 +214,18 @@ async function runBrowserTests() {
   console.log('Review dialog opened:', dialogOpen);
   if (!dialogOpen) throw new Error('Review dialog did not open');
 
-  // Fill in valid guideline reference and PIN
-  console.log('Applying suggested protocol link and entering PIN 1234...');
+  // Clear guideline link and source to verify publishing works WITHOUT guideline validation
+  console.log('Clearing guideline link (testing publish without guideline URL)...');
   await evaluate(`
-    document.getElementById('review-use-suggestion')?.click();
+    document.getElementById('review-publish-url').value = '';
+    document.getElementById('review-publish-source').value = '';
     document.getElementById('review-publish-attest').checked = true;
     document.getElementById('review-publish-token').value = '1234';
   `);
   await new Promise(r => setTimeout(r, 300));
 
   // Submit Publish
-  console.log('Submitting Approve & Publish...');
+  console.log('Submitting Approve & Publish without guideline URL...');
   await evaluate(`
     document.getElementById('review-publish-form').dispatchEvent(new Event('submit', { cancelable: true }));
   `);
@@ -224,9 +237,36 @@ async function runBrowserTests() {
     throw new Error('Publish message did not indicate success: ' + publishMsg);
   }
 
-  // Test 4: Calculation Test with Rounding Radios
-  console.log('\n--- Test 4: Calculator Execution & Rounding Options ---');
+  // Test 4: Live Regimen Search & Calculation Test
+  console.log('\n--- Test 4: Live Regimen Search & Calculator Execution ---');
   await evaluate(`document.querySelector('[data-tab="calculator"]').click()`);
+  await new Promise(r => setTimeout(r, 400));
+
+  // Test live search by typing "AC"
+  console.log('Testing live regimen search input: typing "AC"...');
+  await evaluate(`
+    const searchInput = document.getElementById('regimen-search');
+    searchInput.value = 'AC';
+    searchInput.dispatchEvent(new Event('input'));
+  `);
+  await new Promise(r => setTimeout(r, 400));
+
+  const dropdownVisible = await evaluate(`!document.getElementById('regimen-search-dropdown').classList.contains('hidden')`);
+  const matchCount = await evaluate(`document.querySelectorAll('#regimen-search-dropdown .search-match-item').length`);
+  console.log(`Live search dropdown visible: ${dropdownVisible}, matches found: ${matchCount}`);
+  if (!dropdownVisible || matchCount === 0) throw new Error('Search dropdown should display matches for "AC"');
+
+  // Click on the first search result
+  console.log('Clicking the first search result...');
+  await evaluate(`
+    document.querySelector('#regimen-search-dropdown .search-match-item').click();
+  `);
+  await new Promise(r => setTimeout(r, 400));
+
+  const contextVisible = await evaluate(`!document.getElementById('regimen-context').classList.contains('hidden')`);
+  const contextText = await evaluate(`document.getElementById('regimen-context').textContent`);
+  console.log('Regimen context shown immediately:', contextVisible, '| Content snippet:', contextText.slice(0, 50));
+  if (!contextVisible) throw new Error('Regimen context should be visible after selecting from search');
   await new Promise(r => setTimeout(r, 400));
 
   // Select Cancer Type: Hematologic Malignancy
@@ -274,6 +314,10 @@ async function runBrowserTests() {
   const hasOutput10mg = await evaluate(`document.querySelectorAll('#calc-output table tr').length`);
   console.log(`Calculated drug rows (10mg): ${hasOutput10mg - 1}`);
   if (hasOutput10mg <= 1) throw new Error('Calculation output table not generated');
+
+  const hasPastelBg = await evaluate(`document.getElementById('calc-output').classList.contains('has-result')`);
+  console.log('Calculation output has pastel theme background class:', hasPastelBg);
+  if (!hasPastelBg) throw new Error('Calculation output should have has-result class for pastel styling');
 
   // Switch to "No operational rounding" Radio
   console.log('Switching to "No Rounding (Exact Dose)" Radio button...');
