@@ -59,6 +59,7 @@ jobs:
           test "$(curl -s --max-time 5 -D /tmp/codespaces-redirect.headers -o /dev/null -w '%{http_code}' -H 'Host: ci-bhh-synthetic-8792.app.github.dev' -H 'Accept: text/html' http://127.0.0.1:8792/)" = '303'
           cat /tmp/codespaces-redirect.headers
           grep -qi "^location: /login" /tmp/codespaces-redirect.headers
+          TEST_BASE_URL=http://127.0.0.1:8792 node node_modules/@playwright/test/cli.js test --config v3/playwright.public.config.mjs
           kill -TERM "$(cat v3/.staging-secrets/codespaces-preview.pid)"
           echo "CODESPACES_LOCAL_PREVIEW_PASS"
       - uses: actions/upload-artifact@v4
