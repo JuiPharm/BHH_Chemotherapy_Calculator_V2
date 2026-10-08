@@ -49,8 +49,17 @@ let worker,code=1;
 try{
   await execute(['d1','migrations','apply','DB',...common]);
   await execute(['d1','execute','DB','--file',seed,...common]);
+  const codespace = process.argv.includes('--serve') &&
+    /^[a-z0-9-]{3,100}$/i.test(process.env.CODESPACE_NAME || '');
+  const forwardOrigin = codespace ?
+    `https://${process.env.CODESPACE_NAME}-8792.app.github.dev` : null;
+  const extra = codespace ? [
+    '--var','CODESPACES_PREVIEW:true',
+    '--var',`CODESPACES_PREVIEW_ORIGIN:${forwardOrigin}`,
+  ] : [];
   worker=spawn(process.execPath,['node_modules/wrangler/bin/wrangler.js','dev',...common,
-    '--port',String(PORT),'--ip','127.0.0.1','--var',`STAGING_PASSWORD_PEPPER:${pepper}`],{env,stdio:['ignore','pipe','pipe']});
+    '--port',String(PORT),'--ip',codespace?'0.0.0.0':'127.0.0.1',
+    '--var',`STAGING_PASSWORD_PEPPER:${pepper}`,...extra],{env,stdio:['ignore','pipe','pipe']});
   let output='';
   worker.stdout.on('data',x=>output+=x);
   worker.stderr.on('data',x=>output+=x);
@@ -64,7 +73,7 @@ try{
   if(!ready)throw Error('Local staging Worker not ready: '+output.slice(-4000));
   if (process.argv.includes('--serve')) {
     console.log('\nBHH STAGING LOCAL PREVIEW (synthetic identities only)\n');
-    console.log('Open '+base+'/login');
+    console.log('Open '+(forwardOrigin || base)+'/login');
     console.log('LOCAL-TEST PASSWORD (not for real accounts): '+pass);
     console.log('Add each user to an Authenticator app with the listed test-only TOTP seed:');
     for(const f of fixtures.slice(0,4))
