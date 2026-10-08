@@ -1,5 +1,5 @@
 import { identity } from './auth.js';
-import { isInternalStaging, stagingLogin, stagingLogout } from './staging-auth.js';
+import { isInternalStaging, stagingLogin, stagingLogout, stagingSalt } from './staging-auth.js';
 import { validateDefinition, policies } from '../shared/clinical.js';
 import { projections } from '../shared/projections.js';
 const headers = {
@@ -115,6 +115,7 @@ async function dispatch(request, env) {
     path = url.pathname,
     db = env.DB;
   if (isInternalStaging(env)) {
+    if (path === '/api/auth/salt') return stagingSalt(request, env);
     if (path === '/api/auth/login') return stagingLogin(request, env);
     if (path === '/api/auth/logout') return stagingLogout(request, env);
     const publicAsset = {
