@@ -1,10 +1,5 @@
 name: Deploy V3 Staging — Public Calculator and PIN Editor
 on:
-  # One-time staging run is fired by this staging-branch workflow update.
-  # After successful deployment, the push trigger will be removed.
-  push:
-    branches: [staging-internal-auth-v3]
-    paths: ['.github/workflows/v3-staging.yml']
   workflow_dispatch:
     inputs:
       approval:
@@ -23,7 +18,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   staging:
-    if: github.ref_name == 'staging-internal-auth-v3' && ((github.event_name == 'workflow_dispatch' && inputs.approval == 'DEPLOY_STAGING_ONLY') || github.event_name == 'push')
+    if: github.ref_name == 'staging-internal-auth-v3' && inputs.approval == 'DEPLOY_STAGING_ONLY'
     runs-on: ubuntu-latest
     environment: cloudflare-staging
     env:
@@ -31,7 +26,7 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       STAGING_PASSWORD_PEPPER: ${{ secrets.STAGING_PASSWORD_PEPPER }}
       STAGING_EDITOR_PIN: ${{ secrets.STAGING_EDITOR_PIN }}
-      STAGING_EDITOR_EMAIL: ${{ inputs.editor_email || 'JuiPharm@users.noreply.github.com' }}
+      STAGING_EDITOR_EMAIL: ${{ inputs.editor_email }}
       WRANGLER_SEND_METRICS: 'false'
     steps:
       - uses: actions/checkout@v6
@@ -46,6 +41,23 @@ jobs:
             exit 1
           fi
           node -e "if (!/^[0-9]{10}$/.test(process.env.STAGING_EDITOR_PIN) || process.env.STAGING_PASSWORD_PEPPER.length<32) process.exit(1)"
+      - name: Verify Cloudflare token is valid for target Staging D1 before lengthy tests
+        run: |
+          node --input-type=module -e "
+          const account=process.env.CLOUDFLARE_ACCOUNT_ID;
+          const token=process.env.CLOUDFLARE_API_TOKEN;
+          const url='https://api.cloudflare.com/client/v4/accounts/'+account+'/d1/database';
+          let res;
+          try{res=await fetch(url,{headers:{Authorization:'Bearer '+token}})}
+          catch{throw Error('Cloudflare API unreachable. No deployment performed.')}
+          let data={};
+          try{data=await res.json()}catch{}
+          if(!res.ok||!data.success){
+            console.error('Cloudflare token authentication or D1 scope failed. Recreate CLOUDFLARE_API_TOKEN as an account-scoped API token with D1 read/edit and Workers deploy rights, and replace only the GitHub Actions secret. No migrations or deploy attempted.');
+            process.exit(1);
+          }
+          console.log('Cloudflare staging account API token accepted for D1 listing');
+          "
       - run: npm ci
       - name: Block known high/critical dependency advisories
         run: npm audit --audit-level=high
