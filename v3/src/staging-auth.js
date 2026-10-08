@@ -65,7 +65,7 @@ export async function stagingSalt(request, env) {
   let input;
   try { input = JSON.parse(raw); } catch { throw fail('Invalid JSON', 400); }
   const email = typeof input.email === 'string' ? input.email.trim().toLowerCase() : '';
-  if (!/^[^\\s@]{1,120}@[^\\s@]{1,180}$/.test(email)) throw fail('Email required', 400);
+  if (!/^[^\s@]{1,120}@[^\s@]{1,180}$/.test(email)) throw fail('Email required', 400);
   const db = env.DB;
   const now = Math.floor(Date.now()/1000);
   const ipFingerprint = await digest(request.headers.get('CF-Connecting-IP') || 'unknown-ip');
