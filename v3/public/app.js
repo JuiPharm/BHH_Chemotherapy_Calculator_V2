@@ -35,6 +35,8 @@ const state = {
   checked: 0,
   loading: false,
   authMode: '',
+  editorModal: false,
+  pendingSubmit: false,
 };
 const statusLabel = (s) =>
   ({
@@ -43,6 +45,7 @@ const statusLabel = (s) =>
     clinical_review_required: 'Clinical Review Required',
     approved: 'Approved',
     published: 'Published',
+    reference_only: 'Reference only · Review required',
     retired: 'Retired',
     rejected: 'Rejected',
   })[s] || s;
@@ -256,6 +259,16 @@ function renderCatalog() {
   }
   $('#library-count').textContent =
     `${state.catalog.length} records${state.authMode==='public'?' · Published only':' · Central regimen library'}${state.online ? '' : ' · cached published records only'}`;
+  const verified = state.catalog.filter(x => x.status === 'published');
+  const reference = state.catalog.filter(x => x.status === 'reference_only');
+  const picker = $('#regimen-picker');
+  const previous = picker.value, cancer = $('#cancer').value;
+  picker.innerHTML = '<option value="">เลือกสูตร Published สำหรับคำนวณ</option>' +
+    verified.filter(x => !cancer || x.cancerType === cancer)
+      .map(x => '<option value="' + esc(x.versionId) + '">' + esc(x.name) + ' — ' + esc(x.cancerType) + '</option>').join('');
+  if (verified.some(x => x.versionId === previous)) picker.value = previous;
+  $('#library-count').textContent = state.catalog.length +
+    ' sources · ' + verified.length + ' Published/Calculable · ' + reference.length + ' Reference only (clinical review required)';
   renderLibrary();
 }
 const matches = (r, q) =>
