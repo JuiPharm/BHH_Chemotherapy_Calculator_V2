@@ -82,6 +82,12 @@ test('password plus non-replayable TOTP grant a revocable HttpOnly staging sessi
     const pair=setCookie.split(';')[0];
     assert.equal((await stagingIdentity(new Request(host+'/api/session',{headers:{Cookie:pair}}),env)).email,'tester@example.org');
     assert.equal((await identity(new Request(host+'/api/session',{headers:{Cookie:pair}}),env)).local,false);
+    const authorized = await worker.fetch(new Request(host+'/api/session',{headers:{Cookie:pair}}),env);
+    assert.equal(authorized.status,200);
+    assert.equal((await authorized.json()).authMode,'internal');
+    const app = await worker.fetch(new Request(host+'/app.js',{headers:{Cookie:pair}}),env);
+    assert.equal(app.status,200);
+    assert.match(await app.text(),/PRIVATE ASSET/);
     await assert.rejects(()=>stagingLogin(post('/api/auth/login',{email:'tester@example.org',password,totp:code}),env),/Invalid credentials/);
     const signedOut=await stagingLogout(post('/api/auth/logout',{}, {Cookie:pair}),env);
     assert.equal(signedOut.status,200);
