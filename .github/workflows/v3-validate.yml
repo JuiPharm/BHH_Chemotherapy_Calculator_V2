@@ -38,6 +38,7 @@ jobs:
         run: npm run test:staging:v3
       - name: Browser-only Codespaces preview smoke (no deployment)
         run: |
+          set -x
           CODESPACE_NAME=ci-bhh-synthetic bash .devcontainer/start-preview.sh
           CODESPACE_NAME=ci-bhh-synthetic bash .devcontainer/start-preview.sh
           test -s v3/.staging-secrets/CODESPACES_LOGIN.txt
