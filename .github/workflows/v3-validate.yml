@@ -16,6 +16,10 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Report npm advisories (triage; does not assert staging safety)
+        run: |
+          npm audit --json > /tmp/bhh-npm-audit.json || true
+          node --input-type=module -e "import fs from 'node:fs'; const d=JSON.parse(fs.readFileSync('/tmp/bhh-npm-audit.json','utf8')); console.log('Audit totals:',JSON.stringify(d.metadata?.vulnerabilities)); for (const [name,v] of Object.entries(d.vulnerabilities||{})) console.log(JSON.stringify({name,severity:v.severity,isDirect:v.isDirect,range:v.range,via:v.via.map(x=>typeof x==='string'?x:{name:x.name,title:x.title,url:x.url,range:x.range}),fixAvailable:v.fixAvailable}));"
       - name: Preserve V2 regression checks
         run: npm test
       - name: Reproduce import and check structured engine
