@@ -121,3 +121,21 @@ test('guest source-only legacy detail never returns mutable unpublished draft fi
  const denied=await worker.fetch(new Request(base+'/api/versions/random-private-id'),env);
  assert.notEqual(denied.status,200);
 });
+
+test('different oncology reviewer PIN grants review role; it does not grant admin audit',async()=>{
+ const {sql,env}=fixture();
+ const other='5739026418';
+ sql.prepare("INSERT INTO users VALUES('r1','reviewer.named@staging.test','oncology_pharmacist',1,'now','fixture','now','fixture')").run();
+ sql.prepare("INSERT INTO staging_editor_pins VALUES('r1',?,'now','fixture')").run(await pinHash(other,pepper));
+ const login=await worker.fetch(request('/api/auth/editor-pin',{pin:other}),env);
+ assert.equal(login.status,200);
+ assert.equal((await login.json()).role,'oncology_pharmacist');
+ const cookie=login.headers.get('Set-Cookie').split(';')[0];
+ const sess=await worker.fetch(new Request(base+'/api/session',{headers:{Cookie:cookie}}),env);
+ assert.equal(sess.status,200);
+ const data=await sess.json();
+ assert.equal(data.authMode,'reviewer_pin');
+ assert.equal(data.user.role,'oncology_pharmacist');
+ assert.equal((await worker.fetch(new Request(base+'/api/registry',{headers:{Cookie:cookie}}),env)).status,200);
+ assert.equal((await worker.fetch(new Request(base+'/api/audit',{headers:{Cookie:cookie}}),env)).status,403);
+});
