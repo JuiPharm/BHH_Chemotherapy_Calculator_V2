@@ -84,7 +84,7 @@ check('12: successful publication and optimistic conflict',async()=>{
  const saved=new Map();
  const db={
   prepare(sql){
-   return {bind(...args){
+   return {async all(){return {results:[...saved.values()].filter(r=>r.status==='published').map(r=>({document:r.document}))};},bind(...args){
     return {sql,args,async first(){const r=saved.get(args[0]);return r?{status:r.status}:null;},
      async all(){return {results:[...saved.values()].filter(r=>r.status==='published').map(r=>({document:r.document}))}}};
    }};
