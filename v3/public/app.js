@@ -527,7 +527,7 @@ async function review(id) {
           `<tr><td>${esc(x.action)}</td><td>${esc(x.created_by)}</td><td>${esc(x.created_at)}</td><td>${esc(x.comment)}</td></tr>`,
       ),
     )}${actions.length ? `<label>Review / change comment<textarea id="review-comment" required placeholder="ระบุเหตุผลและผลการทบทวน"></textarea></label><div class="actions">${actions.map(([a, label]) => `<button data-transition="${a}" class="${a === 'approve' || a === 'publish' ? 'primary' : ''}">${label}</button>`).join('')}</div>` : ''}</div>`;
-  $('#review-detail').scrollIntoView({ behavior: 'smooth' });
+  openRegimenModal(v.document.name + ' — Clinical review','review');
 }
 async function transition(action) {
   if (!state.online) throw Error('Offline writes are disabled');
@@ -568,7 +568,7 @@ function newOrder() {
 function renderBuilder() {
   if (!state.draft) return;
   const r = state.draft.document;
-  $('#builder-content').innerHTML =
+  (state.editorModal ? $('#modal-builder') : $('#builder-content')).innerHTML =
     `<form id="builder-form"><h3>${esc(r.name)} · v${esc(state.draft.version)} · Draft</h3><div class="fields">${input('Regimen name', 'name', r.name)}${input('Cancer Type', 'cancerGroup', r.cancerGroup)}${input('Indication', 'indication', r.indication)}${select('Population', 'population', r.population || 'adult', ['adult', 'pediatric'])}${input('Cycle interval (days)', 'cycleIntervalDays', r.cycleIntervalDays || '', 'number', 'min="1"')}${input('Number of cycles', 'cycleCount', r.cycleCount || '', 'number', 'min="1"')}${input('Aliases (comma separated)', 'alias', (r.alias || []).join(', '))}</div>
  ${r.phases
    .map(
@@ -681,7 +681,9 @@ async function clone(id, same = false) {
     }),
   });
   state.draft = v.version;
+  state.editorModal = true;
   go('builder');
+  openRegimenModal(v.version.document.name+' — Edit/Clone','edit');
   renderBuilder();
   await sync();
 }
@@ -689,7 +691,9 @@ async function edit(id) {
   const d = await getDetail(id);
   if (d.version.status !== 'draft') throw Error('Only draft can be edited');
   state.draft = structuredClone(d.version);
+  state.editorModal = true;
   go('builder');
+  openRegimenModal(d.version.document.name+' — Edit Draft','edit');
   renderBuilder();
 }
 async function saveDraft() {
@@ -893,8 +897,13 @@ document.addEventListener('click', async (e) => {
       return;
     }
     if (b.dataset.view) {
+      await viewRegimen(b.dataset.view);
+      return;
+    }
+    if (b.dataset.use) {
+      $('#regimen-modal').close();
       go('calculator');
-      await selectVersion(b.dataset.view);
+      await selectVersion(b.dataset.use);
       return;
     }
     if (b.dataset.review) {
