@@ -1,9 +1,5 @@
 name: Deploy V3 — Isolated Staging or Production (manual only)
 on:
-  # Single owner-requested isolated Production launch. Auto trigger is removed directly after scheduling.
-  push:
-    branches: [production-v3-live]
-    paths: ['.github/workflows/v3-staging.yml']
   workflow_dispatch:
     inputs:
       approval:
@@ -131,7 +127,7 @@ jobs:
 
   production:
     name: New dedicated V3 PRODUCTION (not legacy bhh Worker)
-    if: github.ref_name == 'production-v3-live' && ((github.event_name == 'workflow_dispatch' && inputs.approval == 'DEPLOY_PRODUCTION_ONLY') || (github.event_name == 'push' && startsWith(github.event.head_commit.message, 'release(production): one-time live deploy')))
+    if: github.ref_name == 'production-v3-live' && inputs.approval == 'DEPLOY_PRODUCTION_ONLY'
     runs-on: ubuntu-latest
     environment: cloudflare-production
     concurrency:
