@@ -15,7 +15,7 @@ jobs:
       PRODUCTION_PASSWORD_PEPPER: ${{ secrets.PRODUCTION_PASSWORD_PEPPER }}
       PRODUCTION_EDITOR_PIN: ${{ secrets.PRODUCTION_EDITOR_PIN }}
       PRODUCTION_REVIEWER_PIN: ${{ secrets.PRODUCTION_REVIEWER_PIN }}
-      PRODUCTION_REVIEWER_EMAIL: ${{ vars.PRODUCTION_REVIEWER_EMAIL }}
+      PRODUCTION_REVIEWER_EMAIL: ${{ vars.PRODUCTION_REVIEWER_EMAIL || secrets.PRODUCTION_REVIEWER_EMAIL }}
       PRODUCTION_D1_UUID: ${{ vars.PRODUCTION_D1_UUID }}
     steps:
       - name: Check names/formats without printing secret contents or writing remote data
