@@ -62,6 +62,21 @@ try{
     await new Promise(r=>setTimeout(r,200));
   }
   if(!ready)throw Error('Local staging Worker not ready: '+output.slice(-4000));
+  if (process.argv.includes('--serve')) {
+    console.log('\nBHH STAGING LOCAL PREVIEW (synthetic identities only)\n');
+    console.log('Open '+base+'/login');
+    console.log('LOCAL-TEST PASSWORD (not for real accounts): '+pass);
+    console.log('Add each user to an Authenticator app with the listed test-only TOTP seed:');
+    for(const f of fixtures.slice(0,4))
+      console.log(f.role+' | '+f.email+' | TOTP secret: '+f.secret);
+    console.log('Local D1 is temporary. Press Ctrl+C to stop and delete test data.');
+    await new Promise(resolve=>{
+      process.once('SIGINT',resolve);
+      process.once('SIGTERM',resolve);
+      worker.once('exit',resolve);
+    });
+    code=0;
+  } else {
   const childEnv={...process.env,TEST_BASE_URL:base,
     TEST_STAGING_PASSWORD:pass,TEST_STAGING_FIXTURES:JSON.stringify(fixtures.map(({email,role,secret})=>({email,role,secret})))};
   const step=mode=>new Promise(resolve=>{
@@ -75,6 +90,7 @@ try{
   code=api||browser;
   mkdirSync('v3/test-results',{recursive:true});
   writeFileSync('v3/test-results/staging-local-worker.log',output,{mode:0o600});
+  }
 }finally{
   if(worker&&!worker.killed)worker.kill('SIGTERM');
   rmSync(temp,{recursive:true,force:true});
