@@ -205,7 +205,7 @@ test('Browser clone, builder, save, submit, independent approve, publish and sec
   expect(errors).toEqual([]);
   for (const c of [editor, reviewer, admin, consumer]) await c.close();
 });
-test('Offline published snapshot calculation, writes disabled, reconnect and mobile layout', async ({
+test('Offline published snapshot read-only, Calculate blocked, reconnect and mobile layout', async ({
   browser,
 }) => {
   const ctx = await browser.newContext(),
@@ -221,22 +221,20 @@ test('Offline published snapshot calculation, writes disabled, reconnect and mob
   await expect(page.locator('#connection')).toContainText(
     'OFFLINE / CACHED PUBLISHED PROTOCOL',
   );
-  await page.locator('#calculate').click();
-  await expect(page.locator('#result')).toContainText('690 mg');
-  await expect(page.locator('#result')).toContainText(
-    'OFFLINE / CACHED PUBLISHED PROTOCOL',
-  );
+  await expect(page.locator('#calculate')).toBeDisabled();
+  await expect(page.locator('#result')).toBeEmpty();
   await expect(page.locator('#new-draft')).toBeDisabled();
   await page.reload();
   await expect(page.locator('#connection')).toContainText('OFFLINE');
   await expect(page.locator('[name=ageYears]')).toHaveValue('');
   await selectTCH(page);
   await patient(page);
-  await page.locator('#calculate').click();
-  await expect(page.locator('#result')).toContainText('690 mg');
+  await expect(page.locator('#calculate')).toBeDisabled();
   await ctx.setOffline(false);
   await expect(page.locator('#connection')).toContainText('Central protocols');
-  await expect(page.locator('#result')).toBeEmpty();
+  await expect(page.locator('#calculate')).toBeEnabled();
+  await page.locator('#calculate').click();
+  await expect(page.locator('#result')).toContainText('690 mg');
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
     await page.evaluate(
