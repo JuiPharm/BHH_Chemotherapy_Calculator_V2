@@ -82,6 +82,18 @@
     const serverMessage=await evalJS("document.getElementById('builder-message').textContent");
     assert(!/saved draft.+central|published.+central/i.test(serverMessage),'Offline/server error must not show central success');
     console.log('BROWSER_PASS 08: draft fails closed without central API');
+    await evalJS("(()=>{const vals={'age-input':'65','sex-input':'female','height-input':'160','weight-input':'60','scr-input':'1.2'}; for(const [id,value] of Object.entries(vals))document.getElementById(id).value=value; document.getElementById('kidney-method').value='ckd_epi_2021_cr';updateKidneyUi();})()");
+    const renalPreview=await evalJS("document.getElementById('renal-preview').textContent");
+    const renalMethodVisible=await evalJS("!document.getElementById('scr-wrap').classList.contains('hidden')&&document.getElementById('kidney-value-wrap').classList.contains('hidden')");
+    assert(renalMethodVisible&&renalPreview.includes('Indexed eGFR')&&renalPreview.includes('De-indexed eGFR')&&renalPreview.includes('2021')&&renalPreview.includes('2009'),'CKD-EPI 2021 renal preview should show indexed/de-indexed values and eviQ caution');
+    console.log('BROWSER_PASS 09: CKD-EPI 2021 UI shows indexed/de-indexed eGFR with protocol warning');
+    const expectedRenal=await evalJS("window.BHH_RENAL.ckdEpi2021WithBsa({ageYears:65,sex:'female',serumCreatinineMgDl:1.2},Math.sqrt(160*60/3600))");
+    assert(Math.abs(expectedRenal.indexedEgfr-50.234665676)<1e-6 && Math.abs(expectedRenal.deindexedEgfr-50.234665676*Math.sqrt(160*60/3600)/1.73)<1e-6,'Browser CKD values diverged from NKF reference');
+    console.log('BROWSER_PASS 10: browser arithmetic matches NKF 2021 reference');
+    await evalJS("document.getElementById('kidney-method').value='cockcroft_gault_legacy';updateKidneyUi()");
+    const cgSelected=await evalJS("document.getElementById('kidney-method').value==='cockcroft_gault_legacy' && document.getElementById('scr-input').value==='1.2'");
+    assert(cgSelected,'Switching back must retain the serum creatinine input');
+    console.log('BROWSER_PASS 11: existing Cockcroft-Gault option and SCr retained after switching methods');
     console.log('BROWSER_FLOW_PASS');
   }finally{
     socket?.close();child.kill();await new Promise(r=>server.close(r));
