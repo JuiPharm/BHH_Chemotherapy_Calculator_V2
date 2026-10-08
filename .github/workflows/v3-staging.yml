@@ -51,8 +51,14 @@ jobs:
           npm run build:v3
           npm run test:v3
           npm run test:api:v3
+          npm run test:browser:v3
           npm run test:staging:v3
           npm run check:deploy:v3
+      - name: Public Calculator and editor-PIN Browser UAT before remote changes
+        run: |
+          CODESPACE_NAME=deploy-local-smoke bash .devcontainer/start-preview.sh
+          trap 'kill -TERM "$(cat v3/.staging-secrets/codespaces-preview.pid)" 2>/dev/null || true' EXIT
+          TEST_BASE_URL=http://127.0.0.1:8792 node node_modules/@playwright/test/cli.js test --config v3/playwright.public.config.mjs
       - name: Verify exact staging D1 config (never production)
         run: |
           node --input-type=module -e "import fs from 'node:fs';const j=JSON.parse(fs.readFileSync('v3/wrangler.jsonc','utf8')); const e=j.env.staging; if(e.name!=='bhh-chemotherapy-v3-staging'||e.d1_databases?.[0]?.database_name!=='bhh-chemo-staging'||e.d1_databases?.[0]?.database_id!=='3d936db6-eed1-4880-9561-1f22101cb27e'||e.vars.PUBLIC_CALCULATOR!=='true'||e.vars.AUTH_MODE!=='internal'||j.name===e.name)process.exit(1);"
