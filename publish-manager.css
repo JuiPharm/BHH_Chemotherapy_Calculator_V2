@@ -37,3 +37,11 @@
 
 #review-publish-error{background:#fff0f0;border:2px solid #d12c3a;color:#8c1620;border-radius:9px;padding:12px 14px;font-weight:700;margin:8px 0;overflow-wrap:anywhere}
 #review-publish-error[hidden]{display:none!important}
+
+#review-reference-suggestion{border:1px solid #b5cbdc;background:#f6faff;border-radius:10px;padding:12px;display:grid;gap:8px}
+#review-reference-suggestion[hidden]{display:none!important}
+.reference-suggestion-title{font-weight:700;color:#0b2c55}
+#review-reference-suggestion a{overflow-wrap:anywhere;color:#145da0}
+.reference-suggestion-warning{font-size:.88rem;line-height:1.5;color:#704800;margin:0;background:#fff6dc;padding:10px;border-radius:8px}
+#review-use-suggestion{width:auto;justify-self:start;background:#145da0;color:#fff;font-weight:700;border:0;border-radius:8px;padding:9px 14px;cursor:pointer}
+#review-publish-url{font-size:16px}
