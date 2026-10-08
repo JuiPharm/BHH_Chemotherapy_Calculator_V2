@@ -58,7 +58,6 @@ const actor = 'staging-security-provisioning';
 const stamp = "strftime('%Y-%m-%dT%H:%M:%fZ','now')";
 const sql = `-- STAGING D1 ONLY. CONFIDENTIAL: contains a TOTP seed; securely delete after import.
 -- Do not run on production or commit to GitHub.
-BEGIN TRANSACTION;
 INSERT INTO users(id,email,role_code,active,created_at,created_by,updated_at,updated_by)
 VALUES(${q(id)},${q(email)},${q(role)},1,${stamp},${q(actor)},${stamp},${q(actor)});
 INSERT INTO staging_auth_credentials(user_id,salt,password_hash,totp_secret,created_at)
@@ -68,7 +67,6 @@ VALUES(${q(auditId)},'user',${q(id)},NULL,'provision',NULL,
 ${q(JSON.stringify({ role, active:true, method:'staging-password-totp' }))},
 ${q(actor)},${stamp},'Reviewed staging tester provision',
 ${stamp},${q(actor)},${stamp},${q(actor)});
-COMMIT;
 `;
 const dir = 'v3/.staging-secrets';
 mkdirSync(dir,{recursive:true,mode:0o700});
