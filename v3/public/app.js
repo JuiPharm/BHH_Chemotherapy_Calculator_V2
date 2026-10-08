@@ -673,6 +673,32 @@ async function audit() {
     ),
   );
 }
+$('#manage-pin').onclick=()=>{
+  if(canEdit()){go('builder');return;}
+  $('#pin-error').textContent='';
+  $('#pin-form').reset();
+  $('#pin-dialog').showModal();
+};
+$('#pin-cancel').onclick=()=>$('#pin-dialog').close();
+$('#pin-form').onsubmit=async(e)=>{
+  e.preventDefault();
+  const btn=$('#pin-submit');
+  btn.disabled=true;$('#pin-error').textContent='';
+  try{
+    const pin=$('#editor-pin').value.trim();
+    if(!/^[0-9]{10}$/.test(pin))throw Error('Enter an individual 10-digit PIN');
+    await api('/auth/editor-pin',{method:'POST',body:JSON.stringify({pin})});
+    $('#pin-form').reset();$('#pin-dialog').close();
+    state.catalog=[];state.details.clear();
+    const session=await api('/session');
+    renderAccount(session);
+    await sync();
+    go('builder');
+    note('Editor permission confirmed. Every Draft needs independent clinical review.',false);
+  }catch(err){
+    $('#pin-error').textContent=err.status===429?'Too many PIN attempts; try later':err.message;
+  }finally{btn.disabled=false;$('#editor-pin').value='';}
+};
 $('#patient-form').onsubmit = (e) => {
   e.preventDefault();
   try {
