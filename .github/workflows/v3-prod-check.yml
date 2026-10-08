@@ -9,5 +9,10 @@ jobs:
   syntax:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify GitHub Action scheduling
-        run: echo "PRODUCTION_WORKFLOW_SYNTAX_OK"
+      - uses: actions/checkout@v6
+      - name: Diagnose deployment workflow syntax (no Cloudflare writes)
+        run: |
+          curl -fsSL https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz -o /tmp/actionlint.tar.gz
+          tar -xzf /tmp/actionlint.tar.gz -C /tmp actionlint
+          /tmp/actionlint .github/workflows/v3-production-launch.yml .github/workflows/v3-staging.yml || true
+          echo ACTIONLINT_DIAGNOSTIC_COMPLETED
