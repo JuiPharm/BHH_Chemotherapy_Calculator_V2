@@ -186,6 +186,8 @@ test('Browser clone, builder, save, submit, independent approve, publish and sec
   await expect(cp.locator('#matches')).toContainText(title);
   await cp.locator('#matches button').first().click();
   await patient(cp);
+  const invalid=await cp.locator('#patient-form').evaluate(f=>[...f.elements].filter(e=>e.willValidate&&!e.validity.valid).map(e=>({id:e.id,name:e.name,value:e.value,message:e.validationMessage})));
+  expect(invalid).toEqual([]);
   await cp.locator('#calculate').click();
   await expect(cp.locator('#result')).toContainText('690 mg');
   await cp.reload();
