@@ -573,7 +573,7 @@ function newOrder() {
     id: crypto.randomUUID(),
     drugId: '',
     drugName: '',
-    dose: { basis: 'bsa', unit: 'mg', value: 1 },
+    dose: { basis: 'fixed', unit: 'mg' }, // No invented clinical dose default
     route: 'IV',
     schedule: { days: [1] },
     roundingProfileId: 'NO_ROUND',
@@ -608,6 +608,7 @@ function renderBuilder() {
    .join('')}</div>`,
    )
    .join('')}
+ ${r.sourceRecord && !(r.phases||[]).length ? '<div class="warning">Legacy regimen source only — verify every dose, route, phase and reference before submitting</div><button type="button" id="source-scaffold">Create editable drug rows (DOSES NOT FILLED)</button>' : ''}
  <button type="button" id="add-phase">Add phase</button><h3>Clinical references</h3><label>Reference label<input id="reference-label" value="${esc(r.references?.[0]?.label || '')}"></label><label>Reference URL<input id="reference-url" type="url" value="${esc(r.references?.[0]?.url || '')}"></label><small>Additional existing references are preserved.</small><label>Clinical notes<textarea id="clinical-notes">${esc((r.clinicalNotes || []).join('\n'))}</textarea></label>${r.sourceRecord ? `<details><summary>Original regimen details — use for clinical review</summary><pre class="source">${esc(JSON.stringify(r.sourceRecord, null, 2))}</pre></details>` : ''}<label>Reason for change<textarea id="draft-reason" required></textarea></label><div class="actions"><button class="primary" type="submit">Save Draft</button><button type="button" id="draft-submit">Submit Review</button></div></form>`;
   $('#builder-form').onsubmit = (e) => {
     e.preventDefault();
@@ -997,6 +998,32 @@ document.addEventListener('click', async (e) => {
       } else {
         await submitDraftForReview();
       }
+      return;
+    }
+    if (b.id === 'source-scaffold') {
+      const original=state.draft?.document?.sourceRecord;
+      if (!original || !Array.isArray(original['รายการยา']) || !original['รายการยา'].length)
+        throw Error('Original source drug rows unavailable');
+      if (state.draft.document.phases.length) throw Error('Edit the existing phase instead');
+      readBuilder();
+      const orders=original['รายการยา'].map((src,i)=>{
+        const o=newOrder();
+        o.drugName=String(src['ชื่อยา']||'').trim();
+        o.drugId=o.drugName.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'') || 'verify-drug-'+(i+1);
+        o.route=''; // Mandatory human confirmation.
+        o.schedule={days:[1],note:'UNVERIFIED ORIGINAL: '+String(src['ขนาดยา']||'missing dose')+
+          '; frequency '+String(src['ความถี่ในการให้']||'not specified')+
+          (src.maximum_dose?'; source max '+String(src.maximum_dose):'')};
+        return o;
+      });
+      state.draft.document.phases.push({
+        id:crypto.randomUUID(),name:'VERIFY PHASE AND CYCLES',
+        cycleStart:1,cycleEnd:1,orders
+      });
+      state.draft.document.cycleCount=0;
+      state.draft.document.cycleIntervalDays=0;
+      renderBuilder();
+      note('Drug names populated, but no dose/route/interval was assigned; clinical pharmacist must verify every field.',false);
       return;
     }
     if (b.id === 'add-phase') {
