@@ -78,7 +78,7 @@ try{
   if(!ready)throw Error('Local staging Worker not ready: '+output.slice(-4000));
   if (process.argv.includes('--serve')) {
     console.log('\nBHH STAGING LOCAL PREVIEW (synthetic identities only)\n');
-    console.log('Open '+(forwardOrigin || base)+'/login');
+    console.log('Open PUBLIC Calculator: '+(forwardOrigin || base)+'/');
     console.log('LOCAL-TEST PASSWORD (not for real accounts): '+pass);
     console.log('EDITOR Confirm PIN (synthetic test only): '+editorPin);
     console.log('Add each user to an Authenticator app with the listed test-only TOTP seed:');
