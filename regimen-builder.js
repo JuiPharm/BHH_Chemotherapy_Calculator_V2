@@ -14,9 +14,9 @@
     return `<section data-order="${pi}:${oi}" style="border-top:1px solid #d8e3ef;padding:12px 0">
       <div class="section-heading"><strong>Drug ${oi+1}</strong><button type="button" class="secondary" data-del-order="${pi}:${oi}">Remove</button></div>
       <div class="form-grid">
-        <label class="field"><span>Drug name *</span>${basics('','', '')}<input data-o="name" value="${E(o.drugName)}" placeholder="Generic name"></label>
+        <label class="field"><span>Drug name *</span><input data-o="name" value="${E(o.drugName)}" placeholder="Generic name"></label>
         <label class="field"><span>Dose basis *</span><select data-o="basis">${options([['','เลือก'],['fixed','Fixed'],['bsa','BSA (per m²)'],['weight','Weight (per kg)'],['auc','Carboplatin AUC']],d.basis)}</select></label>
-        <label class="field"><span>Dose value *</span><input type="number" data-o="value" min="0" step="any" value="${E(d.value??'')}"></label>
+        <label class="field"><span>Dose value *</span><input type="number" data-o="value" min="0" step="any" value="${E(d.value??d.defaultOption??'')}"></label>
         <label class="field"><span>Unit *</span><select data-o="unit">${options([['','เลือก'],['mg','mg'],['mcg','mcg'],['g','g'],['IU','IU']],d.unit)}</select></label>
         <label class="field"><span>Route *</span><input data-o="route" value="${E(o.route)}" placeholder="IV, PO, SC ..."></label>
         <label class="field"><span>Days *</span><input data-o="days" value="${E((s.days||[]).join(','))}" placeholder="1 or 1,8,15"></label>
