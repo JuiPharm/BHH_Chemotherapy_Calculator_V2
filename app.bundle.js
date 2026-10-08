@@ -81,12 +81,13 @@ function referenceDetails(item) {
 }
 function normalizeMaster(raw) {
   return raw.map((r,i)=>{
-    const indication=String(r['ชนิดของมะเร็ง']||'');
+    const approval=getGuidelineRecord(`BHH-CATALOG-${String(i+1).padStart(3,'0')}`);
+    const indication=String(approval?.corrected_indication||r['ชนิดของมะเร็ง']||'');
     const name=String(r['ชื่อสูตรยา']||'');
     const ct=cancerTypeFromText(indication);
     const sid=structuredLink(name,indication);
     return {regimen_id:`BHH-MASTER-${String(i+1).padStart(3,'0')}`,name,cancer_type:ct,cancer_type_label:TYPE_LABELS[ct]||ct,
-      indication,cycle_text:String(r['รอบการรักษา']||''),drugs:Array.isArray(r['รายการยา'])?r['รายการยา']:[],
+      indication,cycle_text:String(approval?.corrected_cycle_text||r['รอบการรักษา']||''),drugs:Array.isArray(approval?.corrected_drugs)&&approval.corrected_drugs.length?approval.corrected_drugs:(Array.isArray(r['รายการยา'])?r['รายการยา']:[]),
       clinical_status:sid?'approved':'clinical_review_required',structured_regimen_id:sid,catalog_id:`BHH-CATALOG-${String(i+1).padStart(3,'0')}`};
   });
 }
@@ -408,9 +409,13 @@ function renderLibrary() {
     arr.map(x=>`<article class="regimen-card"><div><span class="badge ${statusBadge(x)}">${displayStatus(x)}</span></div>
       <h4>${esc(x.name)}</h4><p>${esc(x.indication)}</p><div class="micro">${esc(x.master?.cycle_text||`${x.structured?.cycleIntervalDays||''} days/cycle`)}</div>${referenceDetails(x)}
       ${x.master?.drugs?.length?`<details><summary>Drug details</summary><div class="drug-list">${x.master.drugs.map(d=>`<div class="drug-row"><strong>${esc(d['ชื่อยา'])}</strong><span>${esc(d['ขนาดยา'])}</span></div>`).join('')}</div></details>`:''}
-      <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button></div></article>`).join('')
+      <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button>${x.master&&!x.structured?`<button type="button" class="secondary" data-review-regimen="${esc(x.key)}">Review / Publish</button>`:''}</div></article>`).join('')
   }</div></section>`).join('');
   document.querySelectorAll('[data-use-regimen]').forEach(b=>b.addEventListener('click',()=>useFromLibrary(b.dataset.useRegimen)));
+  document.querySelectorAll('[data-review-regimen]').forEach(b=>b.addEventListener('click',()=>{
+    const item=catalog.find(x=>x.key===b.dataset.reviewRegimen);
+    if(item&&window.BHH_PUBLISH)window.BHH_PUBLISH.open(item);
+  }));
 }
 function useFromLibrary(key) {
   const item=catalog.find(x=>x.key===key); if(!item)return;
