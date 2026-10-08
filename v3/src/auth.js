@@ -14,9 +14,12 @@ export async function identity(request, env) {
     return { email, local: true };
   }
   if (isInternalStaging(env)) {
+    // A named password+TOTP reviewer/admin session takes precedence over a PIN editor session.
+    try {return await stagingIdentity(request,env);}
+    catch(e) {if(e.status!==401)throw e;}
     const editor=await pinIdentity(request,env);
     if(editor)return editor;
-    return stagingIdentity(request,env);
+    throw Object.assign(Error('Sign in required'),{status:401});
   }
   if (env.LOCAL_TEST_AUTH === 'true')
     throw Object.assign(
