@@ -13,7 +13,9 @@
   const paths=['/usr/bin/google-chrome','/usr/bin/google-chrome-stable','/usr/bin/chromium','/usr/bin/chromium-browser','C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'];
   const chromePath=paths.find(p=>fs.existsSync(p));
   if(!chromePath)throw Error('Chromium/Chrome not available for browser E2E');
-  const child=cp.spawn(chromePath,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--remote-debugging-port='+debug,'--remote-allow-origins=*','--user-data-dir=/tmp/bhh-clinical-browser-9235','http://127.0.0.1:'+port+'/'],{stdio:'ignore'});
+  const child=cp.spawn(chromePath,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--remote-debugging-port='+debug,'--remote-allow-origins=*','--user-data-dir=/tmp/bhh-clinical-browser-9235','http://127.0.0.1:'+port+'/'],{stdio:['ignore','pipe','pipe']});
+  let chromeErrors='';child.stderr.on('data',x=>{chromeErrors+=x.toString().slice(0,2000);});
+  child.on('exit',(code,signal)=>console.error('Chrome exited:',code,signal));
   let socket;
   try{
     let target;
@@ -21,7 +23,7 @@
       try {const pages=await (await fetch('http://127.0.0.1:'+debug+'/json/list')).json();target=pages.find(x=>x.type==='page'&&x.webSocketDebuggerUrl);if(target)break;}catch{}
       await new Promise(r=>setTimeout(r,150));
     }
-    if(!target)throw Error('Chrome CDP did not start');
+    if(!target)throw Error('Chrome CDP did not start. path='+chromePath+' stderr='+chromeErrors.slice(-1200));
     socket=new WebSocket(target.webSocketDebuggerUrl);
     await new Promise((resolve,reject)=>{socket.onopen=resolve;socket.onerror=reject;});
     let seq=0;const responses=new Map();
