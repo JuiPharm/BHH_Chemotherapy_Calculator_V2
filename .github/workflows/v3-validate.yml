@@ -43,7 +43,16 @@ jobs:
           test -s v3/.staging-secrets/CODESPACES_LOGIN.txt
           grep -q 'calculator@staging-fixture.test' v3/.staging-secrets/CODESPACES_LOGIN.txt
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/login)" = '200'
-          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/session)" = '401'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/session)" = '200'
+          curl -sf http://127.0.0.1:8792/api/catalog | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const x=JSON.parse(s);if(x.catalog.length!==6 || x.catalog.some(a=>a.status!=='published'))process.exit(1)})"
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' http://127.0.0.1:8792/api/registry)" = '403'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H 'Origin: http://127.0.0.1:8792' -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"pin":"1111111111"}' http://127.0.0.1:8792/api/auth/editor-pin)" = '401'
+          curl -s --max-time 5 -D /tmp/bhh-editor.headers -o /dev/null -H 'Origin: http://127.0.0.1:8792' -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"pin":"8342719056"}' http://127.0.0.1:8792/api/auth/editor-pin
+          grep -qi 'HttpOnly; Secure; SameSite=Strict' /tmp/bhh-editor.headers
+          cookie="$(grep -i '^set-cookie:' /tmp/bhh-editor.headers | tr -d '\r' | cut -d' ' -f2 | cut -d';' -f1)"
+          curl -sf -H "Cookie: $cookie" http://127.0.0.1:8792/api/session | grep -q '"authMode":"editor"'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Cookie: $cookie" http://127.0.0.1:8792/api/registry)" = '200'
+          test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Cookie: $cookie" http://127.0.0.1:8792/api/audit)" = '403'
           target="https://ci-bhh-synthetic-8792.app.github.dev"
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Host: ci-bhh-synthetic-8792.app.github.dev" -H "Origin: $target" -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"email":"calculator@staging-fixture.test"}' http://127.0.0.1:8792/api/auth/salt)" = '200'
           test "$(curl -s --max-time 5 -o /dev/null -w '%{http_code}' -H "Host: ci-bhh-synthetic-8792.app.github.dev" -H "Origin: https://evil.example" -H 'Content-Type: application/json' -H 'X-Requested-With: BHH-V3' --data '{"email":"calculator@staging-fixture.test"}' http://127.0.0.1:8792/api/auth/salt)" = '403'
