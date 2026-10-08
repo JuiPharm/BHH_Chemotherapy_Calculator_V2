@@ -150,3 +150,23 @@ test('Salt endpoint protects account existence and enforces same-origin requests
   assert.equal(payload.iterations,600000);
   await assert.rejects(()=>stagingSalt(post('/api/auth/salt',{email:'tester@example.org'},{Origin:'https://evil.example'}),env),/Same-origin/);
 });
+
+test('Codespaces forwarded origin is restricted to local-preview binding only', async () => {
+  const { env } = fixture();
+  const url = 'https://example.test/api/auth/salt';
+  const email = { email: 'tester@example.org' };
+  const forwarded = 'https://expert-meme-v65r7rpxvxwgh7jr-8792.app.github.dev';
+  const request = (origin) => new Request(url, {
+    method: 'POST',
+    headers: { Origin: origin, 'Content-Type': 'application/json', 'X-Requested-With': 'BHH-V3' },
+    body: JSON.stringify(email),
+  });
+  const preview = { ...env, CODESPACES_PREVIEW: 'true', CODESPACES_PREVIEW_ORIGIN: forwarded };
+  const accepted = await stagingSalt(request(forwarded), preview);
+  assert.equal(accepted.status, 200);
+  await assert.rejects(() => stagingSalt(request('https://evil.example'), preview), /Same-origin/);
+  await assert.rejects(() => stagingSalt(request(forwarded), env), /Same-origin/);
+  await assert.rejects(() => stagingSalt(request(forwarded), {
+    ...preview, CODESPACES_PREVIEW_ORIGIN: 'https://evil.example',
+  }), /Same-origin/);
+});
