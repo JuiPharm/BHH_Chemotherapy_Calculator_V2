@@ -223,9 +223,12 @@ async function syncNow() {
       state.catalog = c.catalog;
       state.revision = c.revision;
       if (revisionChanged && state.draft) {
-        // Keep unsaved changes: optimistic server revision guard prevents overwrite.
-        state.editConflict = true;
-        note('มีการแก้ไข Regimen บนเครื่องอื่นระหว่างที่คุณเปิด Draft อยู่ กรุณาตรวจ Registry/Reload Draft ก่อนบันทึก เพื่อป้องกันข้อมูลทับกัน');
+        // Warn only if THIS draft changed, not when another unrelated regimen is updated.
+        const current = c.catalog.find(x=>x.versionId===state.draft.id);
+        if (!current || current.revision!==state.draft.revision || current.status!=='draft') {
+          state.editConflict = true;
+          note('Draft ที่กำลังแก้ไขถูกเปลี่ยนจากเครื่องอื่นแล้ว กรุณาเปิด Draft ฉบับใหม่จาก Registry ก่อนบันทึก เพื่อป้องกันการเขียนทับ');
+        }
       }
       await cachePut('catalog', {
         revision: c.revision,
@@ -739,6 +742,7 @@ async function edit(id) {
 }
 async function saveDraft() {
   if (!canEdit()) throw Error('Offline / permission: saving is unavailable');
+  if (state.editConflict) throw Error('Draft นี้มีการแก้ไขจากเครื่องอื่น กรุณาเปิด Draft ใหม่จาก Registry เพื่อตรวจเปรียบเทียบก่อนบันทึก');
   const doc = readBuilder();
   const reason = $('#draft-reason').value;
   const r = await api(`/versions/${encodeURIComponent(state.draft.id)}`, {
@@ -750,6 +754,7 @@ async function saveDraft() {
     }),
   });
   state.draft = r.version;
+  state.editConflict = false;
   state.details.clear();
   await sync();
   renderBuilder();
