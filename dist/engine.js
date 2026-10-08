@@ -1,3 +1,4 @@
+import '../renal-equations.js';
 const EPS = Number.EPSILON * 10;
 export function mostellerBsa(heightCm, weightKg) {
     if (!(heightCm > 0) || !(weightKg > 0))
@@ -23,12 +24,25 @@ export function resolveKidneyFunction(patient, bsaM2) {
             throw new Error('Measured GFR is required');
         return { value: patient.kidneyValue, label: 'Measured GFR (mL/min)' };
     }
+    if (method === 'ckd_epi_2021_cr') {
+        const result = globalThis.BHH_RENAL.ckdEpi2021WithBsa(patient, bsaM2);
+        return {
+            value: result.deindexedEgfr,
+            indexedEgfr: result.indexedEgfr,
+            deindexedEgfr: result.deindexedEgfr,
+            label: 'CKD-EPI 2021 (race-free), BSA de-indexed (mL/min)',
+            warning: 'CKD-EPI 2021 is NOT the CKD-EPI 2009 equation used by eviQ/ADDIKD Carboplatin guidance. Confirm the protocol-approved renal method; measured GFR may be preferred.',
+        };
+    }
     if (method === 'bsa_adjusted_egfr') {
         if (!(patient.kidneyValue && patient.kidneyValue > 0))
             throw new Error('eGFR is required');
+        const adjusted = globalThis.BHH_RENAL.deindexEgfr(patient.kidneyValue, bsaM2);
         return {
-            value: patient.kidneyValue * (bsaM2 / 1.73),
-            label: 'BSA-adjusted eGFR (mL/min)',
+            value: adjusted,
+            indexedEgfr: patient.kidneyValue,
+            deindexedEgfr: adjusted,
+            label: 'Lab-reported eGFR, BSA de-indexed (mL/min)',
         };
     }
     if (method === 'cockcroft_gault_legacy') {
