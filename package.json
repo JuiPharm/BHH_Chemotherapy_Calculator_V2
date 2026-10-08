@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/production-smoke.mjs && node tests/runtime-startup-static.mjs",
+    "test": "node tests/production-smoke.mjs && node tests/production-safety.mjs && node tests/runtime-startup-static.mjs",
     "smoke": "node tests/production-smoke.mjs",
     "serve": "python3 -m http.server 8080"
   }
