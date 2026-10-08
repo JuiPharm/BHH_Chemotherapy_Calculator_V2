@@ -26,5 +26,8 @@
   "dependencies": {
     "@fontsource/noto-sans-thai": "^5.3.0",
     "jose": "^6.2.12"
+  },
+  "overrides": {
+    "sharp": "0.35.5"
   }
 }
