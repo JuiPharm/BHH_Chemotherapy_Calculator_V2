@@ -1,0 +1,39 @@
+name: Inspect V3 Production prerequisites (no deploy)
+on:
+  push:
+    branches: [production-v3-live]
+    paths: ['.github/workflows/v3-production-preflight.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    name: Check required secret/variable presence only
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      PRODUCTION_PASSWORD_PEPPER: ${{ secrets.PRODUCTION_PASSWORD_PEPPER }}
+      PRODUCTION_EDITOR_PIN: ${{ secrets.PRODUCTION_EDITOR_PIN }}
+      PRODUCTION_REVIEWER_PIN: ${{ secrets.PRODUCTION_REVIEWER_PIN }}
+      PRODUCTION_REVIEWER_EMAIL: ${{ vars.PRODUCTION_REVIEWER_EMAIL }}
+      PRODUCTION_D1_UUID: ${{ vars.PRODUCTION_D1_UUID }}
+    steps:
+      - name: Check names/formats without printing secret contents or writing remote data
+        shell: bash
+        run: |
+          node <<'NODE'
+          const e=process.env;
+          const results=[
+            ['CLOUDFLARE_API_TOKEN',typeof e.CLOUDFLARE_API_TOKEN==='string'&&e.CLOUDFLARE_API_TOKEN.length>=15],
+            ['PRODUCTION_PASSWORD_PEPPER',typeof e.PRODUCTION_PASSWORD_PEPPER==='string'&&e.PRODUCTION_PASSWORD_PEPPER.length>=40],
+            ['PRODUCTION_EDITOR_PIN',/^[0-9]{10}$/.test(e.PRODUCTION_EDITOR_PIN||'')],
+            ['PRODUCTION_REVIEWER_PIN',/^[0-9]{10}$/.test(e.PRODUCTION_REVIEWER_PIN||'')],
+            ['PRODUCTION_REVIEWER_EMAIL',/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.PRODUCTION_REVIEWER_EMAIL||'')],
+            ['Distinct editor/reviewer PINs',!!e.PRODUCTION_EDITOR_PIN&&!!e.PRODUCTION_REVIEWER_PIN&&e.PRODUCTION_EDITOR_PIN!==e.PRODUCTION_REVIEWER_PIN],
+          ];
+          for(const [name,ok] of results)console.log(name+': '+(ok?'SET / FORMAT OK':'MISSING / INVALID'));
+          console.log('PRODUCTION_D1_UUID: '+(e.PRODUCTION_D1_UUID?'SET (existing D1 must match)':'NOT SET (permitted for first dedicated D1 creation)'));
+          console.log('Editor email: supplied as workflow dispatch input at deployment; not checked here.');
+          console.log('READ-ONLY: no Cloudflare API calls, migrations, Worker deployment, secret values or PINs logged.');
+          if(results.some(([,ok])=>!ok))process.exitCode=1;
+          NODE
