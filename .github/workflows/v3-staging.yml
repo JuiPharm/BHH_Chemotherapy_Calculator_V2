@@ -158,8 +158,7 @@ jobs:
            !pin(e.PRODUCTION_EDITOR_PIN)||!pin(e.PRODUCTION_REVIEWER_PIN)||
            e.PRODUCTION_EDITOR_PIN===e.PRODUCTION_REVIEWER_PIN||
            !mail(e.PRODUCTION_EDITOR_EMAIL)||!mail(e.PRODUCTION_REVIEWER_EMAIL)||
-           e.PRODUCTION_EDITOR_EMAIL.toLowerCase()===e.PRODUCTION_REVIEWER_EMAIL.toLowerCase()||
-){
+           e.PRODUCTION_EDITOR_EMAIL.toLowerCase()===e.PRODUCTION_REVIEWER_EMAIL.toLowerCase()){
             console.error('Production blocked: dedicated credentials and two distinct named professionals required. No remote operation performed.');
             process.exit(1);
           }
