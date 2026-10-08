@@ -1,18 +1,21 @@
-// Individual STAGING PINs: Editor can draft/submit; a DIFFERENT named Oncology
-// Reviewer can independently approve and publish validated protocols. No Admin PIN.
+// Named PIN verification with distinct Staging and Production secrets. A second
+// independent pharmacist is required to Approve/Publish clinical definitions.
 import { sameOrigin } from './preview-origin.js';
 const enc=new TextEncoder();
 const COOKIE='__Host-bhh_regimen_editor';
 const fail=(message,status)=>Object.assign(Error(message),{status});
-export const publicCalculator=env=>env.APP_ENV==='staging' &&
+export const publicCalculator=env=>
+  ['staging','production'].includes(env.APP_ENV) &&
   env.AUTH_MODE==='internal' && env.PUBLIC_CALCULATOR==='true' &&
+  (env.APP_ENV!=='production'||env.PRODUCTION_PUBLIC_PIN==='true') &&
   env.LOCAL_TEST_AUTH!=='true';
 const hexb=a=>Array.from(a,x=>x.toString(16).padStart(2,'0')).join('');
 const sha=async t=>hexb(new Uint8Array(await crypto.subtle.digest('SHA-256',enc.encode(t))));
 const pepper=env=>{
-  if(typeof env.STAGING_PASSWORD_PEPPER!=='string'||env.STAGING_PASSWORD_PEPPER.length<32)
-    throw fail('Staging editor security secret required',503);
-  return env.STAGING_PASSWORD_PEPPER;
+  const value=env.APP_ENV==='production'?env.PRODUCTION_PASSWORD_PEPPER:env.STAGING_PASSWORD_PEPPER;
+  if(typeof value!=='string'||value.length<32)
+    throw fail('Individual PIN verification secret required',503);
+  return value;
 };
 export async function pinHash(pin,secret){
   if(!/^\d{10}$/.test(pin)||typeof secret!=='string'||secret.length<32)throw Error('Invalid PIN parameters');
