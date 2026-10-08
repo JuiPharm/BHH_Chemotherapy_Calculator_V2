@@ -34,6 +34,7 @@ const state = {
   draft: null,
   checked: 0,
   loading: false,
+  authMode: '',
 };
 const statusLabel = (s) =>
   ({
@@ -104,7 +105,7 @@ async function api(path, options = {}) {
     }
     const e = Error(value.error || `API error ${r.status}`);
     e.status = r.status;
-    if (r.status === 401 && r.headers.get('X-BHH-Auth') === 'internal') {
+    if (r.status === 401 && r.headers.get('X-BHH-Auth') === 'internal' && state.authMode!=='public') {
       await clearPrivateClientState();
       window.location.replace('/login');
     }
@@ -214,7 +215,7 @@ function renderCatalog() {
     $(selector).value = value;
   }
   $('#library-count').textContent =
-    `${state.catalog.length} records · 136 original source regimens + 6 independently approved pilot protocols${state.online ? '' : ' · cached published records only'}`;
+    `${state.catalog.length} records${state.authMode==='public'?' · Published only':' · Central regimen library'}${state.online ? '' : ' · cached published records only'}`;
   renderLibrary();
 }
 const matches = (r, q) =>
@@ -373,6 +374,10 @@ function updateClinicalInputs() {
     .join('');
 }
 function go(page) {
+  if(['registry','builder','audit'].includes(page) && !canEdit()){
+    note('Manage Regimen: Confirm PIN required');
+    return;
+  }
   document
     .querySelectorAll('main>section')
     .forEach((s) => (s.hidden = s.id !== page));
