@@ -17,6 +17,8 @@
         <label class="field"><span>Drug name *</span><input data-o="name" value="${E(o.drugName)}" placeholder="Generic name"></label>
         <label class="field"><span>Dose basis *</span><select data-o="basis">${options([['','เลือก'],['fixed','Fixed'],['bsa','BSA (per m²)'],['weight','Weight (per kg)'],['auc','Carboplatin AUC']],d.basis)}</select></label>
         <label class="field"><span>Dose value *</span><input type="number" data-o="value" min="0" step="any" value="${E(d.value??d.defaultOption??'')}"></label>
+        <label class="field"><span>Dose Options (Optional, comma separated)</span><input data-o="options" value="${E((d.options||[]).join(','))}" placeholder="เช่น 5,6"></label>
+        <label class="field"><span>Default option</span><input type="number" step="any" data-o="defaultOption" value="${E(d.defaultOption??'')}"></label>
         <label class="field"><span>Unit *</span><select data-o="unit">${options([['','เลือก'],['mg','mg'],['mcg','mcg'],['g','g'],['IU','IU']],d.unit)}</select></label>
         <label class="field"><span>Route *</span><input data-o="route" value="${E(o.route)}" placeholder="IV, PO, SC ..."></label>
         <label class="field"><span>Days *</span><input data-o="days" value="${E((s.days||[]).join(','))}" placeholder="1 or 1,8,15"></label>
@@ -76,12 +78,19 @@
         orders:[...el.querySelectorAll('[data-order]')].map((row,oi)=>{
           const g=k=>row.querySelector('[data-o="'+k+'"]')?.value??'';
           const value=number(g('value')),unit=g('unit'),hard=number(g('max')),times=number(g('times')),hours=number(g('hours'));
+          const optionsText=g('options').trim(),doseOptions=optionsText?optionsText.split(/[,\s]+/).filter(Boolean).map(Number):[];
+          const defaultOption=number(g('defaultOption'));
           return {id:'phase-'+(pi+1)+'-order-'+(oi+1),drugName:g('name').trim(),
-            dose:{basis:g('basis'),value,unit},route:g('route').trim(),roundingProfileId:g('round'),
+            dose:{basis:g('basis'),value,unit,...(doseOptions.length?{options:doseOptions,defaultOption:defaultOption??doseOptions[0]}:{})},route:g('route').trim(),roundingProfileId:g('round'),
             schedule:{days:g('days').split(/[,\s]+/).filter(Boolean).map(Number),...(times?{administrationsPerDay:times}:{}),...(hours?{continuousInfusionHours:hours}:{})},
             clinicalRules:hard>0?[{type:'hard_max',value:hard,unit,reason:'Approved protocol max'}]:[]};
         })};
     });
+  }
+  function cloneAsDraft() {
+    collect();model.id=(model.id||'BHH-REGIMEN')+'-DRAFT-'+Date.now().toString().slice(-6);
+    model.revision=0;model.status='draft';model.localApproval=false;
+    render();message('Clone เป็น Draft ใหม่แล้ว · กรุณาทบทวนก่อนบันทึก');
   }
   function open(item,fields){
     const original=item?.structured;
@@ -134,6 +143,7 @@
     $('builder-export').onclick=download;
     $('builder-load').onclick=load;
     $('builder-new').onclick=()=>{model=empty();render();message('New Draft');};
+    $('builder-clone').onclick=cloneAsDraft;
     render();
   }
   window.BHH_BUILDER={open,init};
