@@ -52,7 +52,7 @@ if [[ -f "$log" ]]; then
 fi
 echo "BHH_CODESPACES_PREVIEW_OK port=8792 endpoint=/login"
 if [[ -n "${CODESPACE_NAME:-}" ]]; then
-  echo "Visit https://${CODESPACE_NAME}-8792.app.github.dev/login"
+  echo "Visit https://${CODESPACE_NAME}-8792.app.github.dev/ (Calculator opens without Login)"
 fi
 echo "Use the PORTS tab and keep port 8792 PRIVATE."
 echo "See v3/.staging-secrets/CODESPACES_LOGIN.txt for SYNTHETIC credentials."
