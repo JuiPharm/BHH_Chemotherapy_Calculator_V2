@@ -25,6 +25,7 @@ export function validateRegimen(r, publishing = true) {
   if (!Number.isInteger(r.cycleIntervalDays) || r.cycleIntervalDays < 1 || r.cycleIntervalDays > 365) add('cycleIntervalDays', 'Invalid interval');
   if (!Number.isInteger(r.cycleCount) || r.cycleCount < 1 || r.cycleCount > 200) add('cycleCount', 'Invalid cycle count');
   if (!Array.isArray(r.phases) || (publishing && !r.phases.length)) add('phases', 'Structured phases required');
+  if (!publishing) return errors; // Incomplete drafts may be saved; publication always validates all structured orders.
   const orderIds = new Set();
   for (const [pi, phase] of (Array.isArray(r.phases) ? r.phases : []).entries()) {
     const pp = `phases[${pi}]`;
