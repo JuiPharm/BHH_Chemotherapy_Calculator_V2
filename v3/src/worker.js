@@ -123,6 +123,7 @@ async function dispatch(request, env) {
       '/login.js': '/login.js',
       '/login.css': '/login.css',
       '/logo.png': '/logo.png',
+      '/fonts/thai-400.woff2': '/fonts/thai-400.woff2',
     }[path];
     if (publicAsset && request.method === 'GET') {
       const a = await env.ASSETS.fetch(new Request(new URL(publicAsset, url), request));
