@@ -163,6 +163,7 @@
       const inputToken = $('review-publish-token').value.trim();
       if(inputToken) token=inputToken;
       if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยันการอนุมัติ');
+      if(token === '1234') throw Error('รหัส PIN 1234 ถูกยกเลิกแล้ว กรุณาใช้รหัส PIN ใหม่ที่ตั้งค่าไว้ใน Cloudflare');
       busy=true;
       $('review-publish-confirm').disabled=true;
       $('review-publish-save').disabled=true;
@@ -186,18 +187,7 @@
         approval_method: toPublish ? 'pharmacist_pin_approved' : 'draft_correction',
       };
 
-      // 1. Save approval record to LocalStorage
-      try {
-        const key = 'bhh_custom_approvals_v2';
-        const existing = JSON.parse(window.localStorage.getItem(key) || '[]');
-        const idx = existing.findIndex(row => row.catalog_id === id);
-        if (idx >= 0) existing[idx] = replacement; else existing.push(replacement);
-        window.localStorage.setItem(key, JSON.stringify(existing));
-      } catch (err) {
-        console.warn('LocalStorage error:', err);
-      }
-
-      // 2. Cloudflare API synchronization & verification
+      // 1. Cloudflare API synchronization & verification
       try {
         const cfRes = await fetch('/api/publish', {
           method: 'POST',
@@ -215,6 +205,23 @@
         if (err.message && (err.message.includes('PIN') || err.message.includes('APPROVE_PIN'))) {
           throw err;
         }
+      }
+
+      // Static host fallback: verify against configured localPin if present
+      const localPin = window.localStorage.getItem('bhh_approve_pin');
+      if (localPin && token !== localPin) {
+        throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง');
+      }
+
+      // 2. Save approval record to LocalStorage only after verification
+      try {
+        const key = 'bhh_custom_approvals_v2';
+        const existing = JSON.parse(window.localStorage.getItem(key) || '[]');
+        const idx = existing.findIndex(row => row.catalog_id === id);
+        if (idx >= 0) existing[idx] = replacement; else existing.push(replacement);
+        window.localStorage.setItem(key, JSON.stringify(existing));
+      } catch (err) {
+        console.warn('LocalStorage error:', err);
       }
 
       // 3. Update memory model and notify application
@@ -338,6 +345,7 @@
       const t=$('bhh-bulk-token').value.trim();
       if(t) token=t;
       if(!token) throw Error('กรุณากรอกรหัส PIN เพื่อยืนยัน');
+      if(token === '1234') throw Error('รหัส PIN 1234 ถูกยกเลิกแล้ว กรุณาใช้รหัส PIN ใหม่ที่ตั้งค่าไว้ใน Cloudflare');
 
       try {
         const vRes = await fetch('/api/verify-pin', {
@@ -355,6 +363,13 @@
           throw err;
         }
       }
+
+      // Static host fallback: verify against configured localPin if present
+      const localPin = window.localStorage.getItem('bhh_approve_pin');
+      if (localPin && token !== localPin) {
+        throw Error('รหัส PIN สำหรับอนุมัติไม่ถูกต้อง');
+      }
+
       busy=true;
       $('bhh-bulk-confirm').disabled=true;
       $('bhh-bulk-close').disabled=true;

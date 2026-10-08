@@ -44,11 +44,11 @@
                 <option value="" selected disabled></option>
               </select>
             </label>
-            <label class="field" style="position: relative;">
-              <span>Search Regimen</span>
-              <input id="regimen-search" type="search" placeholder="ค้นหาชื่อสูตรยา เช่น AC, FOLFOX..." autocomplete="off">
-              <div id="regimen-search-dropdown" class="search-dropdown hidden"></div>
-            </label>
+            <div class="field" style="position: relative;">
+              <label for="regimen-search"><span>Search Regimen</span></label>
+              <input id="regimen-search" type="search" placeholder="ค้นหาชื่อสูตรยา เช่น AC, FOLFOX..." autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="regimen-search-dropdown">
+              <div id="regimen-search-dropdown" class="search-dropdown hidden" role="listbox"></div>
+            </div>
             <label class="field">
               <span>Regimen <b>*</b></span>
               <select id="regimen-select" required disabled>
