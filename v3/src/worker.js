@@ -652,7 +652,26 @@ async function dispatch(request, env) {
       ),
     );
     await batch(statements);
-    return response({ version: await version(db, v.id) });
+    const persisted=await version(db,v.id);
+    if(act==='publish'){
+      // Independent read-after-write integrity check, NOT a clinical dose-signoff.
+      validateDefinition(persisted.document);
+      const active=await dbQuery(db,
+        "SELECT COUNT(*) AS count FROM regimen_versions WHERE regimen_id=? AND status='published'",
+        persisted.regimen_id).first();
+      const auditTrail=await dbQuery(db,
+        "SELECT COUNT(*) AS count FROM approval_history WHERE version_id=? AND action='publish'",
+        persisted.id).first();
+      if(persisted.status!=='published' || !persisted.published_at ||
+         !persisted.approved_by || !persisted.approved_at ||
+         Number(active?.count)!==1 || Number(auditTrail?.count)!==1)
+        error('Post-Publish integrity verification FAILED; block clinical use and contact Pharmacy Admin',503);
+      return response({version:persisted,postPublishCheck:{
+        structuralValidation:'passed',singleActiveVersion:true,approvalAudit:true,
+        clinicalContentVerification:'requires independent pharmacist review',
+      }});
+    }
+    return response({version:persisted});
   }
   error('Not found', 404);
 }
