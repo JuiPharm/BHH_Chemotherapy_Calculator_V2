@@ -1,3 +1,4 @@
+import { sameOrigin } from './preview-origin.js';
 // Staging-only authentication. Production continues to use Cloudflare Access JWTs.
 // No self-registration, shared PIN, browser-stored bearer tokens or patient records.
 const enc = new TextEncoder();
@@ -58,7 +59,7 @@ function requirePepper(env) {
 }
 export async function stagingSalt(request, env) {
   if (!isInternalStaging(env)) throw fail('Not found', 404);
-  requirePost(request);
+  requirePost(request, env);
   const pepper = requirePepper(env);
   const raw = await request.text();
   if (raw.length > 1024) throw fail('Request too large', 413);
@@ -108,10 +109,9 @@ const json = (payload, status = 200, extra = {}) => new Response(JSON.stringify(
     ...extra,
   },
 });
-function requirePost(request) {
-  const origin = new URL(request.url).origin;
+function requirePost(request, env) {
   if (request.method !== 'POST' ||
-      request.headers.get('Origin') !== origin ||
+      !sameOrigin(request, env) ||
       request.headers.get('X-Requested-With') !== 'BHH-V3' ||
       !request.headers.get('Content-Type')?.startsWith('application/json'))
     throw fail('Same-origin JSON request required', 403);
@@ -142,7 +142,7 @@ export async function stagingIdentity(request, env) {
 }
 export async function stagingLogin(request, env) {
   if (!isInternalStaging(env)) throw fail('Not found', 404);
-  requirePost(request);
+  requirePost(request, env);
   const raw = await request.text();
   if (raw.length > 4096) throw fail('Request too large', 413);
   let input;
@@ -200,7 +200,7 @@ export async function stagingLogin(request, env) {
 }
 export async function stagingLogout(request, env) {
   if (!isInternalStaging(env)) throw fail('Not found', 404);
-  requirePost(request);
+  requirePost(request, env);
   const token = getCookie(request);
   if (token) await env.DB.prepare('DELETE FROM staging_auth_sessions WHERE token_hash=?')
     .bind(await digest(token)).run();
