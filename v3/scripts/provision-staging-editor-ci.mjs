@@ -7,7 +7,7 @@ const email=(process.env.STAGING_EDITOR_EMAIL||'').trim().toLowerCase();
 const pin=process.env.STAGING_EDITOR_PIN||'';
 const pepper=process.env.STAGING_PASSWORD_PEPPER||'';
 if(!/^[^\s@]{1,120}@[^\s@]{1,180}$/.test(email) ||
-   !/^[0-9]{10}$/.test(pin) || pepper.length<32 ||
+   !/^[0-9]{10}$/.test(pin) || pin==='8342719056' || pepper.length<32 ||
    !process.env.RUNNER_TEMP)throw Error('Missing approved staging editor email, individual 10-digit PIN or pepper');
 const h=createHmac('sha256',pepper).update('bhh-editor-pin-v1:'+pin).digest('hex');
 const id=randomUUID();
