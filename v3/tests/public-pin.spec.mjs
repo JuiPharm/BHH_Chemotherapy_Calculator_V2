@@ -9,6 +9,17 @@ test('public calculator needs no login, only published available and PIN unlocks
  await expect(page.locator('#builder-tab')).toBeHidden();
  await expect(page.locator('#manage-pin')).toBeVisible();
  await expect(page.locator('#account')).toContainText('Public calculator');
+ await expect(page.locator('#regimen-picker')).toBeVisible();
+ await page.locator('#browse-regimens').click();
+ await expect(page.locator('#library-count')).toContainText('136 Reference only');
+ await page.locator('#library-search').fill('Pembrolizumab + Pemetrexed');
+ await page.locator('#library-list [data-view="BHH-CATALOG-001:1"]').click();
+ await expect(page.locator('#regimen-modal')).toBeVisible();
+ await expect(page.locator('#modal-view')).toContainText('Reference only');
+ await expect(page.locator('#modal-view')).toContainText('AUC 5-6');
+ await expect(page.locator('#modal-view [data-use]')).toHaveCount(0);
+ await page.locator('#regimen-modal-close').click();
+ await page.locator('[data-page="calculator"]').click();
  await page.locator('#cancer').selectOption('Breast');
  await page.locator('#regimen-search').fill('TCH');
  await page.locator('#matches [data-select="BHH-BREAST-TCH-EVIQ53:1"]').click();
@@ -19,6 +30,7 @@ test('public calculator needs no login, only published available and PIN unlocks
  if(await page.locator('[name=kidneyValue]').isVisible())await page.locator('[name=kidneyValue]').fill('90');
  await page.locator('#calculate').click();
  await expect(page.locator('#result')).toContainText('690 mg');
+ await expect(page.locator('#result')).toContainText('Protocol Dose');
  await page.locator('#manage-pin').click();
  await expect(page.locator('#pin-dialog')).toBeVisible();
  await page.locator('#editor-pin').fill('0000000000');
