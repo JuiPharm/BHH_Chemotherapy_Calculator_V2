@@ -223,31 +223,8 @@ function rebuildCatalog() {
       status:isPilot ? 'approved' : (a?.status||'approved_published')
     };
   });
-  // Pediatric reference-only records are intentionally withheld from the live regimen catalog.
-  // The uploaded ThaiPOG 2023 PDF supports phases, risks and age-based dosing, but
-  // a tested pediatric calculation engine is not yet implemented. Do not expose
-  // source-only records as actionable regimens.
-  for(const p of []) {
-    // A source-approved pediatric protocol is NOT a calculator-ready medication order set.
-    const m={
-      regimen_id:p.catalog_id,catalog_id:p.catalog_id,name:p.name,indication:p.indication,
-      cycle_text:'ThaiPOG 2566 · '+p.reference_detail+' · '+p.cancer_group,
-      cancer_type:'Pediatric Oncology',cancer_type_label:TYPE_LABELS['Pediatric Oncology'],
-      drugs:(p.verified_source_examples||[]).map(d=>({
-        'ชื่อยา':d.drug,'ขนาดยา':d.dose,'ความถี่ในการให้':(d.phase||'')+' · Day '+d.day,maximum_dose:null
-      }))
-    };
-    catalog.push({
-      key:'pediatric:'+p.catalog_id,master:m,structured:null,structuredLink:null,isPediatric:true,
-      pediatricRecord:p,cancerType:'Pediatric Oncology',cancerTypeLabel:TYPE_LABELS['Pediatric Oncology'],
-      name:p.name,indication:p.indication,status:p.status,
-      guidelineReference:{
-        catalog_id:p.catalog_id,protocol:p.protocol_id,source:p.source,
-        reference_url:p.reference_url,
-        note:p.reference_detail+' · '+p.indication+' · '+p.note
-      }
-    });
-  }
+  // ThaiPOG 2023 pediatric source records remain archived in the repository,
+  // not actionable in the Production library until the risk/phase/age dose engine passes validation.
   for (const r of BHH_ACTIVE) if (!linked.has(r.id)) {
     const ct=activeCancerType(r);
     catalog.push({key:`active:${r.id}`,master:null,structured:r,structuredLink:r.id,cancerType:ct,cancerTypeLabel:typeLabel(ct),name:r.name,indication:r.indication,status:'approved'});
