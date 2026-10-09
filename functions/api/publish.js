@@ -32,6 +32,8 @@ export async function onRequestPost({ request, env }) {
     const existing = await db.prepare('SELECT status, document, revision FROM regimens WHERE id=?').bind(supplied.id).first();
     const stored = existing?.document ? JSON.parse(existing.document) : null;
     const archived = stored?.archived === true;
+    if ((existing && Number(existing.revision) !== expected) || (!existing && expected !== 0))
+      return json({ success:false, message:'Regimen changed or no longer exists. Reload the current Central D1 revision.', code:'VERSION_CONFLICT' },409);
 
     if (action === 'archive' || action === 'restore') {
       if (!existing) return json({ success: false, message: 'Only saved central regimens can be archived or restored.' }, 404);
@@ -70,7 +72,7 @@ export async function onRequestPost({ request, env }) {
         WHERE regimens.revision=?`)
         .bind(document.id,expected+1,document.status,JSON.stringify(document),now,expected),
       db.prepare(`INSERT INTO regimen_audit (regimen_id,revision,action,happened_at)
-        SELECT id,revision,?,? FROM regimens WHERE id=? AND revision=?`)
+        SELECT id,revision,?,? FROM regimens WHERE id=? AND revision=? AND changes()=1`)
         .bind(auditAction,now,document.id,expected+1),
     ];
     const results = await db.batch(queries);
