@@ -13,6 +13,17 @@ assert(bundle.includes("loadJson('./data/regimens.published.json?v=2.3.0')"), 'R
 assert(bundle.includes("loadJson('./data/legacy-regimens.v1.json?v=2.3.0')"), 'Runtime must load the central 136-regimen master');
 assert(bundle.includes("loadJson('./data/rounding-profiles.json?v=2.3.0')"), 'Runtime must load central rounding defaults');
 assert(index.includes('app.bundle.js?v=2.7.2'), 'Index is not using v2.7.2 runtime');
+assert(index.includes('data-tab="pediatric"'), 'Pediatric calculator must have a visible main navigation tab');
+assert(index.includes('id="tab-pediatric"'), 'Pediatric calculator screen must exist');
+assert(index.includes('pediatric-calc-ui.mjs?v=2.8.0'), 'Pediatric calculator UI module must be loaded');
+assert(index.includes('pediatric-calc.css?v=2.8.0'), 'Pediatric calculator CSS must be loaded');
+const pediatricStructured=JSON.parse(fs.readFileSync(new URL('../data/pediatric-all-1301.structured.json',import.meta.url),'utf8'));
+assert(pediatricStructured.id==='ThaiPOG-ALL-1301' && pediatricStructured.phases.length===5, 'Pediatric structured ALL protocol must contain five complete phases');
+assert(pediatricStructured.phases.every(p=>p.orders.length>0&&p.pdf_page>=24&&p.pdf_page<=30), 'Each pediatric phase must be traced to source page');
+const pediatricUi=fs.readFileSync(new URL('../pediatric-calc-ui.mjs',import.meta.url),'utf8');
+assert(pediatricUi.includes('calculatePediatric(protocol,p,s)'), 'UI must invoke tested pediatric calculation core');
+assert(pediatricUi.includes('r.holds.length>0'), 'UI must surface hard-stop clinical messages');
+assert(pediatricUi.includes('Never')||pediatricUi.includes('never administer solely'), 'UI must warn against treatment decisions from arithmetic alone');
 assert(index.includes('publish-manager.js?v=2.6.4'), 'Review/Publish UI script must load');
 assert(index.includes('publish-manager.css?v=2.6.3'), 'Review/Publish styling missing');
 assert(index.includes('https://api.github.com'), 'GitHub publication API not permitted by CSP');
