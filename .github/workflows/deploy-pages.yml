@@ -32,6 +32,7 @@ jobs:
       - name: Run production clinical and D1 safety tests
         run: |
           node tests/production-safety.mjs
+          node tests/regimen-lifecycle.mjs
           node tests/rounding-security.mjs
           node tests/ckd-epi-2021.mjs
 
