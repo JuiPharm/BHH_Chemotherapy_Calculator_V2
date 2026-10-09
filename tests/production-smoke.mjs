@@ -16,7 +16,26 @@ const legacyRegimens = legacyRoot['สูตรยาเคมีบำบัด
 const profiles = Object.fromEntries(rounding.map(p => [p.id, p]));
 
 assert(regimens.length === 6, 'Expected exactly 6 approved pilot regimens in v2.3.0');
-assert(legacyRegimens.length === 136, `Expected 136 preserved V1 regimens, got ${legacyRegimens.length}`);
+
+assert(legacyRegimens.length === 144, `Expected 136 original + 8 source-backed regimen variants, got ${legacyRegimens.length}`);
+const oxfordHigh=legacyRegimens[47];
+const ramaFac=legacyRegimens[66];
+const low=legacyRegimens[136];
+assert(oxfordHigh['ชื่อสูตรยา'].includes('Oxford NSSG') && oxfordHigh['รายการยา'].some(x=>x['ชื่อยา']==='Doxorubicin' && x['ขนาดยา'].includes('40 mg/m²')), 'Oxford R-CODOX-M doxorubicin dose incorrect');
+assert(oxfordHigh['รายการยา'].some(x=>x['ชื่อยา']==='Cyclophosphamide' && x['ขนาดยา'].includes('200 mg/m²') && x['ความถี่ในการให้'].includes('2–5')), 'Oxford CODOX-M follow-on cyclophosphamide schedule missing');
+assert(oxfordHigh['รายการยา'].some(x=>x['ชื่อยา']==='Cytarabine' && x['ความถี่ในการให้'].includes('days 1–2')), 'Oxford IVAC high-dose cytarabine must be days 1–2');
+assert(oxfordHigh['รายการยา'].some(x=>x['ชื่อยา'].includes('Methotrexate IV (continuation)') && x['ขนาดยา'].includes('2700 mg/m²')), 'Oxford 23-hour MTX continuation missing');
+assert(ramaFac['รายการยา'].find(x=>x['ชื่อยา']==='Fluorouracil')?.['ขนาดยา']==='500 mg/m² IV day 1', 'Ramathibodi 2561 FAC requires 5-FU Day 1 in the referenced variant');
+assert(low['ชื่อสูตรยา'].includes('Low-risk') && low['รอบการรักษา'].includes('×3'), 'Low-risk R-CODOX-M must be separate and only three cycles');
+assert(legacyRegimens[139]['รายการยา'].find(x=>x['ชื่อยา']==='Paclitaxel')?.['ขนาดยา']==='80 mg/m² IV', 'Weekly adjuvant paclitaxel variant missing');
+const sourceStatus=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json', import.meta.url),'utf8'));
+for(const n of [48,67,137,138,139,140,141,142,143,144]){
+ const id='BHH-CATALOG-'+String(n).padStart(3,'0');
+ const p=sourceStatus.find(x=>x.catalog_id===id);
+ assert(p?.status==='published_review' && p?.calculator_enabled===false && p?.approved===false,
+   'Unvalidated source variant must remain review-only with calculator disabled: '+id);
+}
+
 assert(regimens.every(r => r.localApproval === true), 'All six pilot regimens must have localApproval=true');
 let schemaErrors = 0;
 for (const regimen of regimens) schemaErrors += validateRegimen(regimen).filter(x => x.severity === 'error').length;
