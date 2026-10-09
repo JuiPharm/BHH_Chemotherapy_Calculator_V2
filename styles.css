@@ -17,7 +17,7 @@
 .output-card.has-result table th{background:#e8f3fa!important;color:#0b2c55!important;font-weight:700;border-bottom:2px solid #cbdfe9}
 .output-card.has-result table tr:hover td{background:#f5fafd}
 .output-card.has-result table td:nth-child(5){background:#f0faf4!important;color:#11633d!important;font-weight:700}
-.search-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:360px;overflow-y:auto;background:#fff;border:1.5px solid #9eb7d1;border-radius:10px;box-shadow:0 12px 32px rgba(11,44,85,.18);z-index:100}
+.search-dropdown{position:fixed;left:0;top:0;width:min(440px,95vw);max-height:320px;overflow-y:auto;overscroll-behavior:contain;background:#fff;border:1.5px solid #9eb7d1;border-radius:11px;box-shadow:0 14px 32px rgba(11,44,85,.22);z-index:2000}
 .search-match-item{padding:10px 14px;border-bottom:1px solid #eef2f6;cursor:pointer;transition:background .12s}
 .search-match-item:last-child{border-bottom:0}
 .search-match-item:hover,.search-match-item.highlighted{background:#eef6ff}
@@ -26,4 +26,16 @@
 .search-match-sub{color:#334e68;font-size:.85rem;margin-top:2px}
 .search-match-drugs{color:#526a82;font-size:.78rem;margin-top:4px}
 .search-empty{padding:14px;color:#627386;text-align:center;font-size:.88rem}
-
+
+/* Search popup: concise, viewport anchored and readable on desktop/mobile. */
+.search-match-item{padding:7px 12px;min-width:0;outline-offset:-2px}
+.search-match-title{min-width:0;gap:8px}
+.search-match-title strong{display:block;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem}
+.search-match-sub,.search-match-drugs{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-top:1px}
+.search-match-sub{font-size:.77rem}
+.search-match-drugs{font-size:.73rem}
+.search-match-state{flex-shrink:0;font-weight:800;font-size:.68rem;border-radius:999px;padding:1px 7px;background:#f1f5f9;color:#465971}
+.search-match-state.ready{background:#e1f5e9;color:#116b3d}
+.search-match-item.highlighted,.search-match-item:focus-visible{outline:2px solid #145da0;background:#edf6ff}
+.search-count{padding:6px 10px;text-align:center;color:#52677d;background:#f4f8fd;border-top:1px solid #e2eaf3;font-size:.72rem;position:sticky;bottom:0}
+@media(max-width:680px){.search-dropdown{border-radius:9px;box-shadow:0 10px 24px rgba(11,44,85,.22)}.search-match-item{padding:9px 10px}}
