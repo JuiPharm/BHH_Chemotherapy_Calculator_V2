@@ -427,5 +427,35 @@
     "protocol": null,
     "reference_url": null,
     "note": "มีชื่อสูตรที่รู้จัก แต่ยังขาดการยืนยัน protocol variant และรายละเอียดบริหารยาก่อน Approved"
+  },
+  {
+    "catalog_id": "BHH-CATALOG-046",
+    "name": "R-CHOP regimen",
+    "status": "blocked",
+    "approved": false,
+    "published": false,
+    "calculator_enabled": false,
+    "source": "NHSO / ThaiPOG 2566",
+    "protocol": "BL-13LR / BL-13SR / BL-13HR (distinct pediatric protocols)",
+    "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
+    "note": "Legacy Pediatric Burkitt linkage is not equivalent to ThaiPOG mature B-cell lymphoma protocols (BL-13LR/SR/HR). Use pediatric risk-stratified reference instead; original retained for audit.",
+    "review_note": "Legacy Pediatric Burkitt linkage is not equivalent to ThaiPOG mature B-cell lymphoma protocols (BL-13LR/SR/HR). Use pediatric risk-stratified reference instead; original retained for audit.",
+    "population": "pediatric",
+    "corrective_action": "DO_NOT_USE_LEGACY_FOR_CHILDREN"
+  },
+  {
+    "catalog_id": "BHH-CATALOG-048",
+    "name": "R-CODOX-M/IVAC regimen",
+    "status": "blocked",
+    "approved": false,
+    "published": false,
+    "calculator_enabled": false,
+    "source": "NHSO / ThaiPOG 2566",
+    "protocol": "BL-13LR / BL-13SR / BL-13HR (distinct pediatric protocols)",
+    "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
+    "note": "Adult-style R-CODOX-M/IVAC is not automatically interchangeable with ThaiPOG-BL-13HR; phase and dose schedules need separate clinical evaluation. Use ThaiPOG pediatric catalog for childhood cases.",
+    "review_note": "Adult-style R-CODOX-M/IVAC is not automatically interchangeable with ThaiPOG-BL-13HR; phase and dose schedules need separate clinical evaluation. Use ThaiPOG pediatric catalog for childhood cases.",
+    "population": "pediatric",
+    "corrective_action": "DO_NOT_USE_LEGACY_FOR_CHILDREN"
   }
 ]
