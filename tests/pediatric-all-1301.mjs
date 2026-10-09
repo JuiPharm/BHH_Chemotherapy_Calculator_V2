@@ -36,15 +36,15 @@ run('IT-age below 1 rejected',()=>assert.throws(()=>intrathecalMtxMg(.99,9)));
 run('Induction day1 vincristine, pred BID, IT',()=>{
  const r=calculatePediatric(protocol,patient,select('induction',1));
  assert.equal(r.orders.length,3);
- approx(dose(r,'Vincristine').dosePerAdministration,r.bsa*1.5);
- approx(dose(r,'Prednisolone').dosePerAdministration,r.bsa*30);
+ approx(dose(r,'Vincristine').dosePerAdministration,bsaMosteller(patient.weightKg,patient.heightCm)*1.5);
+ approx(dose(r,'Prednisolone').dosePerAdministration,bsaMosteller(patient.weightKg,patient.heightCm)*30);
  assert.equal(dose(r,'Prednisolone').frequency,'BID');
  assert.equal(dose(r,'Methotrexate (intrathecal)').dosePerAdministration,12);
  assert.equal(r.canReleaseOrder,false);
 });
 run('Induction day4 only asparaginase and prednisone',()=>{
  const r=calculatePediatric(protocol,patient,select('induction',4));
- assert.equal(r.orders.length,2);approx(dose(r,'L-Asparaginase').dosePerAdministration,r.bsa*10000,0.004);
+ assert.equal(r.orders.length,2);approx(dose(r,'L-Asparaginase').dosePerAdministration,bsaMosteller(patient.weightKg,patient.heightCm)*10000,0.004);
 });
 run('Day15 IT only traumatic tap',()=>{
  const no=calculatePediatric(protocol,patient,select('induction',15));
@@ -61,7 +61,7 @@ run('Vincristine maximum 2 mg',()=>{
 run('Consolidation day1 VCR/6MP/IT',()=>{
  const r=calculatePediatric(protocol,patient,select('consolidation',1));
  assert.equal(r.orders.length,3);
- approx(dose(r,'Mercaptopurine').dosePerAdministration,r.bsa*75);
+ approx(dose(r,'Mercaptopurine').dosePerAdministration,bsaMosteller(patient.weightKg,patient.heightCm)*75);
 });
 run('Consolidation day15 IT schedule',()=>assert.ok(dose(calculatePediatric(protocol,patient,select('consolidation',15)),'Methotrexate (intrathecal)')));
 run('Consolidation day28 mercaptopurine only',()=>{
@@ -70,7 +70,7 @@ run('Consolidation day28 mercaptopurine only',()=>{
 });
 run('Interim HD-MTX and six-dose rescue H42..H72',()=>{
  const r=calculatePediatric(protocol,patient,select('interim_maintenance',1));
- approx(dose(r,'Methotrexate (high dose)').dosePerAdministration,r.bsa*2.5);
+ approx(dose(r,'Methotrexate (high dose)').dosePerAdministration,bsaMosteller(patient.weightKg,patient.heightCm)*2.5);
  const rescue=dose(r,'Leucovorin');assert.deepEqual(rescue.timedHours,[42,48,54,60,66,72]);
  assert.equal(rescue.frequency,'six doses');
  assert.equal(r.holds.length,0);
@@ -102,7 +102,7 @@ run('CBC missing does not grant readiness',()=>{
 run('Delayed intensification day29 mesna three timed doses',()=>{
  const r=calculatePediatric(protocol,patient,select('delayed_intensification',29));
  const mesna=dose(r,'Mesna');
- assert.ok(mesna);assert.deepEqual(mesna.timedHours,[0,4,8]);approx(mesna.dosePerAdministration,r.bsa*250);
+ assert.ok(mesna);assert.deepEqual(mesna.timedHours,[0,4,8]);approx(mesna.dosePerAdministration,bsaMosteller(patient.weightKg,patient.heightCm)*250);
 });
 run('Delayed intensification day29 blood count block',()=>{
  const r=calculatePediatric(protocol,{...patient,ancPerUl:700},select('delayed_intensification',29));
