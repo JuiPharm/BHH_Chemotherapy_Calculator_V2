@@ -5,6 +5,13 @@
   const newOrder=()=>({drugName:'',id:'',dose:{value:null,unit:'',basis:''},route:'',schedule:{days:[]},roundingProfileId:'NO_ROUND'});
   const newPhase=()=>({name:'',cycleStart:null,cycleEnd:null,orders:[newOrder()]});
   const empty=()=>({id:'',name:'',indication:'',cancerGroup:'',version:'1.0.0',population:'adult',cycleIntervalDays:null,cycleCount:null,phases:[newPhase()],references:[],revision:0,status:'draft'});
+  // Six pilot protocols are part of the signed static clinical baseline.
+  // Archiving only a D1 override would not retire their packaged definition.
+  const BASELINE_IDS = new Set([
+    'BHH-BREAST-TCH-EVIQ53','BHH-CRC-MFOLFOX6-EVIQ637',
+    'BHH-HEME-RCHOP21-EVIQ70','BHH-HODGKIN-ABVD-ADV-EVIQ56',
+    'BHH-TESTICULAR-BEP-MET-EVIQ320','BHH-OVARIAN-CARBO-TAXOL-EVIQ252'
+  ]);
   let model=empty(),loaded=[];
   const message=(v,kind='info')=>{const el=$('builder-message');el.textContent=v;el.className='alert alert-'+kind;};
   const options=(choices,value)=>choices.map(([k,v])=>`<option value="${E(k)}" ${k===value?'selected':''}>${E(v)}</option>`).join('');
@@ -153,7 +160,9 @@
         <small>${E(x.id)} · ${x.archived?'ARCHIVED':E(x.status)} · revision ${E(x.revision)}</small>
         <div class="builder-draft-actions">
           <button type="button" class="secondary" data-loaded="${i}">Open</button>
-          <button type="button" class="${x.archived?'secondary':'builder-danger'}" data-lifecycle="${i}">${x.archived?'Restore as Draft':'Archive'}</button>
+          ${BASELINE_IDS.has(x.id)
+          ? '<span class="micro" title="สูตรมาตรฐานอยู่ใน Static Clinical Baseline">🔒 Baseline protected</span>'
+          : `<button type="button" class="${x.archived?'secondary':'builder-danger'}" data-lifecycle="${i}">${x.archived?'Restore as Draft':'Archive'}</button>`}
         </div>
       </article>`).join('')||'<p class="micro">ยังไม่มี Regimen ที่บันทึกใน Central D1</p>';
   }
