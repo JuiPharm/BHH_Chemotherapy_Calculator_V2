@@ -87,6 +87,23 @@
         })};
     });
   }
+  function hasDraftContent() {
+    return Boolean(model.id || model.name || model.indication || model.cancerGroup ||
+      model.cycleIntervalDays || model.cycleCount || model.revision ||
+      (model.phases||[]).some(p=>p.cycleStart || p.cycleEnd ||
+        (p.name && p.name!=='Phase') || (p.orders||[]).some(o=>
+          o.drugName || o.dose?.value || o.dose?.basis || o.route || o.schedule?.days?.length)));
+  }
+  function clearForm() {
+    collect();
+    if (hasDraftContent() && !window.confirm('ล้างข้อมูลในฟอร์มนี้ทั้งหมด? ข้อมูลที่บันทึกไว้ใน Central D1 จะไม่ถูกลบ')) return;
+    model=empty();
+    $('builder-pin').value='';
+    $('builder-attest').checked=false;
+    render();
+    message('ล้างข้อมูลในฟอร์มเรียบร้อยแล้ว · Central D1 ไม่ถูกเปลี่ยน','success');
+    $('be-id')?.focus();
+  }
   function cloneAsDraft() {
     collect();model.id=(model.id||'BHH-REGIMEN')+'-DRAFT-'+Date.now().toString().slice(-6);
     model.revision=0;model.status='draft';model.localApproval=false;
@@ -107,6 +124,7 @@
   }
   async function send(action){
     collect();
+    if(model.archived){message('สูตรนี้ถูก Archive แล้ว กรุณา Restore as Draft จากรายการก่อนแก้ไขหรือ Publish','error');return;}
     if(!model.id||!model.name||!model.indication){message('กรุณาระบุ ID, ชื่อสูตรยา และ Indication','error');return;}
     if(action==='publish'&&!$('builder-attest').checked){message('โปรดยืนยัน Clinical Review ก่อน Publish','error');return;}
     const pin=$('builder-pin').value.trim();if(!pin){message('กรุณากรอก Pharmacist PIN','error');return;}
@@ -125,24 +143,79 @@
     collect();const u=URL.createObjectURL(new Blob([JSON.stringify(model,null,2)],{type:'application/json'}));
     const a=document.createElement('a');a.href=u;a.download=(model.id||'regimen-draft')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),500);
   }
+  function renderLoaded() {
+    $('builder-drafts').innerHTML=loaded.map((x,i)=>`
+      <article class="builder-draft-card">
+        <strong>${E(x.name||x.id)}</strong>
+        <small>${E(x.id)} · ${x.archived?'ARCHIVED':E(x.status)} · revision ${E(x.revision)}</small>
+        <div class="builder-draft-actions">
+          <button type="button" class="secondary" data-loaded="${i}">Open</button>
+          <button type="button" class="${x.archived?'secondary':'builder-danger'}" data-lifecycle="${i}">${x.archived?'Restore as Draft':'Archive'}</button>
+        </div>
+      </article>`).join('')||'<p class="micro">ยังไม่มี Regimen ที่บันทึกใน Central D1</p>';
+  }
+  async function changeLifecycle(index) {
+    const item=loaded[index];
+    if(!item)return;
+    const archive=!item.archived;
+    const pin=$('builder-pin').value.trim();
+    if(!pin){message('กรอก Pharmacist PIN เพื่อดำเนินการกับ Regimen นี้','error');$('builder-pin').focus();return;}
+    if(archive) {
+      const typed=window.prompt('ยืนยัน Archive: พิมพ์ Regimen ID ให้ตรงทุกตัว เพื่อถอนออกจากการใช้งาน\\n'+item.id,'');
+      if(typed!==item.id){message('ยกเลิกการ Archive (Regimen ID ไม่ตรง)','info');return;}
+    } else if(!window.confirm('Restore '+item.id+' เป็น Draft? ต้องทบทวน Clinical Review ใหม่ก่อน Publish'))return;
+    const buttons=[...$('builder-drafts').querySelectorAll('button')];
+    buttons.forEach(b=>b.disabled=true);
+    try {
+      const res=await fetch('/api/publish',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({pin,action:archive?'archive':'restore',regimen:item,expectedRevision:item.revision})
+      });
+      const data=await res.json().catch(()=>({}));
+      if(!res.ok||!data.success)throw Error(data.message||'Unable to update regimen');
+      loaded[index]=data.regimen;
+      if(model.id===data.regimen.id){model=JSON.parse(JSON.stringify(data.regimen));render();}
+      renderLoaded();
+      message(archive
+        ?'Archive สำเร็จ · ถอนออกจากรายการ Published กลางแล้ว ข้อมูลต้นฉบับยังอยู่ใน D1'
+        :'Restore เป็น Draft สำเร็จ · ต้องตรวจสอบและ Publish ใหม่','success');
+      await window.BHH_REFRESH_REGIMENS?.();
+    } catch(error){
+      message('Central D1 ไม่ได้รับการเปลี่ยนแปลง: '+error.message,'error');
+    } finally{
+      $('builder-pin').value='';
+      buttons.forEach(b=>b.disabled=false);
+    }
+  }
   async function load(){
-    const pin=$('builder-pin').value.trim();if(!pin){message('กรอก PIN เพื่อโหลด Draft','error');return;}
+    const pin=$('builder-pin').value.trim();if(!pin){message('กรอก PIN เพื่อโหลด Regimen จาก Central D1','error');return;}
     try{const res=await fetch('/api/regimens',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin})});
       const data=await res.json();if(!res.ok)throw Error(data.message||'Unable to load');
-      loaded=data.regimens;
-      $('builder-drafts').innerHTML=loaded.map((x,i)=>`<button type="button" class="secondary" data-loaded="${i}">${E(x.name)} · ${E(x.status)} · revision ${E(x.revision)}</button>`).join(' ')||'ยังไม่มี Draft';
-      $('builder-drafts').onclick=e=>{const b=e.target.closest('[data-loaded]');if(!b)return;model=JSON.parse(JSON.stringify(loaded[Number(b.dataset.loaded)]));render();message('Loaded: '+model.name);};
-      message('Loaded from Central D1','success');
+      loaded=data.regimens||[];
+      renderLoaded();
+      $('builder-drafts').onclick=e=>{
+        const b=e.target.closest('button');if(!b)return;
+        if(b.dataset.loaded!==undefined){
+          model=JSON.parse(JSON.stringify(loaded[Number(b.dataset.loaded)]));
+          render();
+          $('builder-attest').checked=false;
+          message('Loaded: '+model.name+(model.archived?' (Archived — Restore before editing)':''));
+          document.getElementById('builder-content')?.scrollIntoView({block:'start',behavior:'smooth'});
+        } else if(b.dataset.lifecycle!==undefined)changeLifecycle(Number(b.dataset.lifecycle));
+      };
+      message('Loaded '+loaded.length+' records from Central D1','success');
     }catch(e){message(e.message,'error');}
     finally{$('builder-pin').value='';}
   }
+
   function init(){
     if(!$('builder-content'))return;
     $('builder-save').onclick=()=>send('draft');
     $('builder-publish').onclick=()=>send('publish');
     $('builder-export').onclick=download;
     $('builder-load').onclick=load;
-    $('builder-new').onclick=()=>{model=empty();render();message('New Draft');};
+    $('builder-new').onclick=clearForm;
+    $('builder-clear').onclick=clearForm;
     $('builder-clone').onclick=cloneAsDraft;
     render();
   }
