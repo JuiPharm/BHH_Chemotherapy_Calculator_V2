@@ -48,11 +48,13 @@ assert(!bundle.includes("loadJson('./data/pediatric-regimens.thaipog-2566.json")
 assert(bundle.includes('BHH_PEDIATRIC=[]; // Reference-only pediatric catalog not displayed'),'Pediatric archive must remain hidden');
 assert(!bundle.includes("catalog.push({\n      key:'pediatric:'"),'Do not render reference-only pediatric regimens as active library items');
 assert(bundle.includes("['BHH-CATALOG-046','BHH-CATALOG-048']"),'Unsafe legacy Burkitt automated calculation must stay blocked');
+assert(bundle.includes("sourceRecord?.approval_scope==='SOURCE_REFERENCE_PUBLICATION_PENDING_LOCAL_REVIEW'"),'Source-derived regimen corrections must never trigger synthetic generic 21-day calculator');
 const legacyApproval=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
-for(const id of ['BHH-CATALOG-046','BHH-CATALOG-048']){
- const row=legacyApproval.find(x=>x.catalog_id===id);
- assert(row && row.status==='blocked' && row.calculator_enabled===false, 'Unsafe legacy pediatric Burkitt protocol must be blocked: '+id);
-}
+const pediatricBurkitt=legacyApproval.find(x=>x.catalog_id==='BHH-CATALOG-046');
+assert(pediatricBurkitt?.status==='blocked' && pediatricBurkitt.calculator_enabled===false,'Pediatric Burkitt legacy protocol must remain blocked');
+const oxfordBurkitt=legacyApproval.find(x=>x.catalog_id==='BHH-CATALOG-048');
+assert(oxfordBurkitt?.status==='published_review' && oxfordBurkitt.population==='adult' && oxfordBurkitt.calculator_enabled===false, 'Corrected Oxford adult R-CODOX-M / R-IVAC must stay visible but uncalculated');
+
 
 const nhso=JSON.parse(fs.readFileSync(new URL('../data/nhso-pediatric-oncology-2566-source.json', import.meta.url), 'utf8'));
 assert(nhso.ingestion_status==='PRIMARY_PDF_PROVIDED_PROTOCOL_INDEX_EXTRACTED', 'PDF source provenance must be updated after receiving document');
@@ -81,6 +83,14 @@ assert(bundle.includes("fetch('/api/verify-pin'"),'Existing PIN verification log
 
 assert(bundle.includes("loadJson('./data/guideline-status.v2.4.json?v=2.4.0')"), 'Runtime must load guideline approval and review statuses');
 const guideline=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
+const master=JSON.parse(fs.readFileSync(new URL('../data/legacy-regimens.v1.json',import.meta.url),'utf8'))['สูตรยาเคมีบำบัด'];
+assert(master.length===144, 'Adult central master must contain 136 original and 8 new sourced variants');
+for(let n=137;n<=144;n++){
+ const id='BHH-CATALOG-'+String(n).padStart(3,'0');
+ assert(guideline.find(x=>x.catalog_id===id)?.status==='published_review', 'New source variant must be available for review: '+id);
+}
+assert(guideline.find(x=>x.catalog_id==='BHH-CATALOG-067')?.calculator_enabled===false, 'Historical FAC correction must not enable unvalidated calculation');
+
 assert(guideline.length>=33,'Baseline 33 guideline-status records must be preserved');
 assert(guideline.filter(x=>x.approved&&x.published).length>=3,'Original three exact BC Cancer approvals must be preserved');
 assert(new Set(guideline.map(x=>x.catalog_id)).size===guideline.length,'Duplicate reviewed catalog IDs are not permitted');
