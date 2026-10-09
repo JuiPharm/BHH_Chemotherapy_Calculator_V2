@@ -12,7 +12,7 @@ assert(!/\\binit;\\s*$/.test(bundle), 'Runtime ends with init; instead of init()
 assert(bundle.includes("loadJson('./data/regimens.published.json?v=2.3.0')"), 'Runtime must load central published regimen data');
 assert(bundle.includes("loadJson('./data/legacy-regimens.v1.json?v=2.3.0')"), 'Runtime must load the central 136-regimen master');
 assert(bundle.includes("loadJson('./data/rounding-profiles.json?v=2.3.0')"), 'Runtime must load central rounding defaults');
-assert(index.includes('app.bundle.js?v=2.7.2'), 'Index is not using v2.7.2 runtime');
+assert(index.includes('app.bundle.js?v=2.9.2'), 'Index is not using v2.9.2 adult source-regimen runtime');
 // Pediatric Dosing Calculator is being moved to a separate project.
 assert(!index.includes('data-tab="pediatric"'), 'Pediatric tab must not appear in adult Production');
 assert(!index.includes('id="tab-pediatric"'), 'Pediatric form must not ship on adult Production');
@@ -85,6 +85,14 @@ assert(bundle.includes("loadJson('./data/guideline-status.v2.4.json?v=2.4.0')"),
 const guideline=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
 const master=JSON.parse(fs.readFileSync(new URL('../data/legacy-regimens.v1.json',import.meta.url),'utf8'))['สูตรยาเคมีบำบัด'];
 assert(master.length===144, 'Adult central master must contain 136 original and 8 new sourced variants');
+const oxford=JSON.parse(fs.readFileSync(new URL('../data/oxford-l49-rcodox-ivac-v5.json',import.meta.url),'utf8'));
+const ramathibodi=JSON.parse(fs.readFileSync(new URL('../data/rama-breast-2561-reconciliation.json',import.meta.url),'utf8'));
+assert(oxford.protocol_id==='Oxford-NSSG-L49-v5' && oxford.risk_stratification.length===2, 'Oxford high and low risk schedules required');
+assert(oxford.orders.filter(x=>x.block==='R-IVAC'&&x.drug==='Cytarabine'&&x.route==='IV').every(x=>x.days.join(',')==='1,2'), 'R-IVAC cytarabine BID MUST be days 1–2');
+assert(oxford.orders.some(x=>x.drug==='Calcium folinate (IV-MTX rescue)'&&x.timing.includes('H36')), 'Oxford timed HD-MTX rescue required');
+assert(ramathibodi.new_regimens.length===7&&ramathibodi.total_after_update===144,'Breast source reconciliation must explain seven novel breast setting variants');
+assert(bundle.includes("sourceRecord?.approval_scope==='SOURCE_REFERENCE_PUBLICATION_PENDING_LOCAL_REVIEW'"),'Local clinical approval required for newly revised dose regimens');
+
 for(let n=137;n<=144;n++){
  const id='BHH-CATALOG-'+String(n).padStart(3,'0');
  assert(guideline.find(x=>x.catalog_id===id)?.status==='published_review', 'New source variant must be available for review: '+id);
