@@ -1,0 +1,388 @@
+{
+  "schema_version": "2026-10-09.1",
+  "protocol_id": "Oxford-NSSG-L49-v5",
+  "version": "5.0",
+  "date": "September 2025",
+  "title": "R-CODOX-M / R-IVAC (Adult Burkitt / high-risk lymphoma)",
+  "source_url": "https://nssg.oxford-haematology.org.uk/lymphoma/documents/lymphoma-chemo-protocols/L-49-r-codox-m-r-ivac.pdf",
+  "source_pages": "PDF pp.2–9",
+  "population": "ADULT",
+  "pediatric_interchangeable": false,
+  "calc_mode": "REFERENCE_ONLY_PENDING_PHASE_TIMING_AND_SUPPORTIVE_CARE_VALIDATION",
+  "indication": "Adult Burkitt lymphoma, double/triple-hit or high-IPI DLBCL with CNS-relapse risk; histology & MDT review",
+  "risk_stratification": [
+    {
+      "group": "low",
+      "criteria": "At least 3 of normal LDH, ECOG 0–1, Ann Arbor I–II, ≤1 extranodal site",
+      "cycles": [
+        "R-CODOX-M",
+        "R-CODOX-M",
+        "R-CODOX-M"
+      ]
+    },
+    {
+      "group": "high",
+      "criteria": "At least 2 of elevated LDH, ECOG 2–4, Ann Arbor III–IV, >1 extranodal site",
+      "cycles": [
+        "R-CODOX-M",
+        "R-IVAC",
+        "R-CODOX-M",
+        "R-IVAC"
+      ]
+    }
+  ],
+  "repeat_interval": "21–28 days according to blood count recovery",
+  "cycle_release_counts": "ANC >1.0 × 10^9/L and platelets >75 × 10^9/L maintained 24h after stopping G-CSF (Oxford p.7)",
+  "orders": [
+    {
+      "block": "R-CODOX-M",
+      "drug": "Rituximab",
+      "dose": 375,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1
+      ],
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Doxorubicin",
+      "dose": 40,
+      "unit": "mg/m²",
+      "route": "IV bolus",
+      "days": [
+        1
+      ],
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Vincristine",
+      "dose": 1.5,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1,
+        8
+      ],
+      "max_mg": 2,
+      "age_over_70_max_mg": 1,
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Cyclophosphamide",
+      "dose": 800,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1
+      ],
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Cyclophosphamide",
+      "dose": 200,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Cytarabine",
+      "dose": 70,
+      "unit": "mg fixed",
+      "route": "IT",
+      "days": [
+        2,
+        4
+      ],
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Cytarabine",
+      "dose": 70,
+      "unit": "mg fixed",
+      "route": "IT",
+      "days": [
+        6
+      ],
+      "only_when": "CNS disease AND overall cycle 1",
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Methotrexate loading",
+      "dose": 300,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        10
+      ],
+      "infusion_hours": 1,
+      "age_max": 65,
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Methotrexate continuation",
+      "dose": 2700,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        10
+      ],
+      "infusion_hours": 23,
+      "age_max": 65,
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Methotrexate loading (age >65)",
+      "dose": 100,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        10
+      ],
+      "infusion_hours": 1,
+      "age_min_exclusive": 65,
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Methotrexate continuation (age >65)",
+      "dose": 900,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        10
+      ],
+      "infusion_hours": 23,
+      "age_min_exclusive": 65,
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Calcium folinate (IV-MTX rescue)",
+      "dose": 15,
+      "unit": "mg/m²",
+      "route": "IV then IV/PO",
+      "days": [
+        12
+      ],
+      "timing": "Start H36 from IV-MTX start: q3h ×5; then q6h until plasma MTX <0.1 µmol/L; adjust based on drug levels",
+      "pdf_page": 4
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Methotrexate",
+      "dose": 12.5,
+      "unit": "mg fixed",
+      "route": "IT",
+      "days": [
+        15
+      ],
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Methotrexate",
+      "dose": 12.5,
+      "unit": "mg fixed",
+      "route": "IT",
+      "days": [
+        17
+      ],
+      "only_when": "CNS disease AND overall cycle 1",
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Calcium folinate post-IT MTX",
+      "dose": 15,
+      "unit": "mg fixed",
+      "route": "PO",
+      "days": [
+        16
+      ],
+      "timing": "H24 after IT MTX",
+      "pdf_page": 3
+    },
+    {
+      "block": "R-CODOX-M",
+      "drug": "Calcium folinate post-IT MTX",
+      "dose": 15,
+      "unit": "mg fixed",
+      "route": "PO",
+      "days": [
+        18
+      ],
+      "only_when": "Day 17 IT-MTX given",
+      "pdf_page": 3
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Rituximab",
+      "dose": 375,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1
+      ],
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Etoposide",
+      "dose": 60,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "infusion_hours": 1,
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Mesna pre-ifosfamide",
+      "dose": 300,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "15–30 minutes pre-ifosfamide",
+      "age_max": 65,
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Ifosfamide",
+      "dose": 1500,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "age_max": 65,
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Mesna concurrent",
+      "dose": 1500,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "Along with ifosfamide",
+      "age_max": 65,
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Mesna post-ifosfamide",
+      "dose": 450,
+      "unit": "mg/m² per dose",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "Twice daily H+4 and H+8 from ifosfamide START",
+      "age_max": 65,
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Cytarabine",
+      "dose": 2000,
+      "unit": "mg/m² per dose",
+      "route": "IV",
+      "days": [
+        1,
+        2
+      ],
+      "frequency": "BID",
+      "age_max": 65,
+      "infusion_hours": 3,
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Methotrexate",
+      "dose": 12.5,
+      "unit": "mg fixed",
+      "route": "IT",
+      "days": [
+        5
+      ],
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Calcium folinate post-IT MTX",
+      "dose": 15,
+      "unit": "mg fixed",
+      "route": "PO",
+      "days": [
+        6
+      ],
+      "timing": "H24 post IT MTX",
+      "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Cytarabine",
+      "dose": 70,
+      "unit": "mg fixed",
+      "route": "IT",
+      "days": [
+        7,
+        9
+      ],
+      "only_when": "CNS disease AND overall cycle 2",
+      "pdf_page": 5
+    }
+  ],
+  "critical_safety": [
+    "Not a pediatric ThaiPOG protocol.",
+    "Do not run unstructured synthetic dosing builder: multiple blocks, timed rescue, age modifiers, IT medications.",
+    "Age >65: dose modifications to both MTX block and R-IVAC mesna/ifosfamide/cytarabine; requires specific protocol fields.",
+    "HD-MTX requires hydration, urine alkalinization pH≥7, MTX levels at H36/H42/H48 and repeated clearance monitoring.",
+    "Review renal function, third space fluid, interactions (co-trimoxazole, NSAIDs, PPIs) and leucovorin rescue; glucarpidase protocol when indicated.",
+    "IT administration must comply with dedicated institutional intrathecal policy.",
+    "Cycle timing depends on count recovery; cannot assume fixed 21-day interval."
+  ]
+}
