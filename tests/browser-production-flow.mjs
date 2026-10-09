@@ -89,6 +89,7 @@
     assert(escaped,'Escape must dismiss search results');
     console.log('BROWSER_PASS 14: stale regimen selection reset, Escape closes popup');
     await call('Emulation.setDeviceMetricsOverride',{width:390,height:750,deviceScaleFactor:1,mobile:true});
+    await evalJS("document.getElementById('regimen-search').scrollIntoView({block:'center'})");
     await evalJS("(()=>{const input=document.getElementById('regimen-search');input.value='R';input.dispatchEvent(new Event('input',{bubbles:true}));})()");
     const mobilePopup=await evalJS("(()=>{const a=document.getElementById('regimen-search').getBoundingClientRect(),b=document.getElementById('regimen-search-dropdown').getBoundingClientRect();return {inTop:a.top,inBottom:a.bottom,top:b.top,bottom:b.bottom,left:b.left,right:b.right,vh:innerHeight,vw:innerWidth};})()");
     assert(mobilePopup.left>=0 && mobilePopup.right<=mobilePopup.vw+3 && mobilePopup.top>=0 && mobilePopup.bottom<=mobilePopup.vh+3,'Mobile search popup must remain on-screen');
