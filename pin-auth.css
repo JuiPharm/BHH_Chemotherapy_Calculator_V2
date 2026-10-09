@@ -1,0 +1,231 @@
+/* BHH Pharmacist PIN Dialog — dedicated responsive styles for adult Production. */
+#pin-auth-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  box-sizing: border-box;
+  display: none;
+  width: min(520px, calc(100vw - 32px));
+  max-width: 520px;
+  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 1px solid #d2ddec;
+  border-radius: 24px;
+  background: #ffffff;
+  color: #122f53;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-shadow: 0 24px 80px rgba(7, 34, 70, 0.30);
+}
+#pin-auth-dialog[open] { display: block; }
+#pin-auth-dialog::backdrop {
+  background: rgba(11, 33, 67, .62);
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+#pin-auth-dialog .bhh-pin-header {
+  padding: 24px 28px;
+  min-height: 112px;
+  background: linear-gradient(115deg, #0b2c55 5%, #145a92 100%);
+}
+#pin-auth-dialog .bhh-pin-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+#pin-auth-dialog .bhh-pin-icon {
+  width: 62px;
+  height: 62px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 17px;
+  background: rgba(255, 255, 255, .13);
+  color: #fff;
+  font-size: 29px;
+  line-height: 1;
+}
+#pin-auth-dialog .bhh-pin-close {
+  border: 0;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .17);
+  color: #fff;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 350;
+  cursor: pointer;
+  transition: background .16s ease, transform .16s ease;
+}
+#pin-auth-dialog .bhh-pin-close:hover { background: rgba(255,255,255,.29); }
+#pin-auth-dialog .bhh-pin-body { padding: 27px 29px 30px; }
+#pin-auth-dialog .bhh-pin-eyebrow {
+  color: #155790;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .095em;
+  line-height: 1.5;
+}
+#pin-auth-dialog h2 {
+  margin: 7px 0 9px;
+  color: #0b2c55;
+  font-size: clamp(23px, 4.8vw, 29px);
+  line-height: 1.2;
+  letter-spacing: -.02em;
+  font-weight: 780;
+}
+#pin-auth-dialog .bhh-pin-description {
+  margin: 0 0 27px;
+  color: #526980;
+  line-height: 1.65;
+  font-size: 14px;
+}
+#pin-auth-dialog #pin-auth-form {
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+#pin-auth-dialog .bhh-pin-label {
+  display: block;
+  margin: 0 0 9px;
+  color: #244767;
+  font-size: 14px;
+  font-weight: 740;
+}
+#pin-auth-dialog .bhh-pin-input-wrap {
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-width: 0;
+}
+#pin-auth-dialog #pin-auth-input {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 58px;
+  margin: 0;
+  padding: 13px 83px 13px 18px;
+  border: 1.5px solid #b8cee3;
+  border-radius: 13px;
+  outline: 0;
+  background: #fff;
+  color: #0b2c55;
+  font: inherit;
+  font-size: 18px;
+  letter-spacing: .18em;
+  text-align: left;
+  box-shadow: none;
+  transition: border-color .16s ease, box-shadow .16s ease;
+}
+#pin-auth-dialog #pin-auth-input::placeholder {
+  letter-spacing: normal;
+  color: #8c99a7;
+  font-size: 16px;
+}
+#pin-auth-dialog #pin-auth-input:focus {
+  border-color: #2d7fc3;
+  box-shadow: 0 0 0 4px rgba(45,127,195,.13);
+}
+#pin-auth-dialog .bhh-pin-visibility {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #145a92;
+  font-size: 13px;
+  font-weight: 750;
+  cursor: pointer;
+  width: auto;
+  line-height: 1.2;
+}
+#pin-auth-dialog .bhh-pin-visibility:hover { background: #edf5fc; }
+#pin-auth-dialog .bhh-pin-hint {
+  margin: 8px 0 0;
+  color: #68809a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+#pin-auth-dialog .bhh-pin-error {
+  margin: 13px 0 0;
+  padding: 11px 13px;
+  border: 1px solid #e8b4b4;
+  border-radius: 10px;
+  background: #fff2f2;
+  color: #942222;
+  font-size: 13px;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+#pin-auth-dialog .bhh-pin-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+  gap: 12px;
+  margin-top: 27px;
+}
+#pin-auth-dialog .bhh-pin-actions button {
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: 53px;
+  margin: 0;
+  padding: 11px 13px;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 790;
+  line-height: 1.3;
+  cursor: pointer;
+  transition: background .16s ease, transform .16s ease;
+}
+#pin-auth-dialog .bhh-pin-cancel {
+  background: #edf3f9;
+  border-color: #cbdbea !important;
+  color: #20466d;
+}
+#pin-auth-dialog .bhh-pin-cancel:hover { background: #dfeaf5; }
+#pin-auth-dialog .bhh-pin-submit {
+  background: #0b2c55;
+  color: #fff;
+}
+#pin-auth-dialog .bhh-pin-submit:hover { background: #164c80; }
+#pin-auth-dialog .bhh-pin-submit:disabled {
+  opacity: .65;
+  cursor: wait;
+}
+#pin-auth-dialog button:focus-visible {
+  outline: 3px solid #60a5fa;
+  outline-offset: 2px;
+}
+@media (max-width: 520px) {
+  #pin-auth-dialog {
+    width: calc(100vw - 24px);
+    max-height: calc(100dvh - 24px);
+    border-radius: 20px;
+  }
+  #pin-auth-dialog .bhh-pin-header { min-height: 96px; padding: 17px 20px; }
+  #pin-auth-dialog .bhh-pin-icon { width: 54px; height: 54px; border-radius: 15px; font-size: 25px; }
+  #pin-auth-dialog .bhh-pin-body { padding: 22px 20px 24px; }
+  #pin-auth-dialog .bhh-pin-description { margin-bottom: 23px; }
+  #pin-auth-dialog .bhh-pin-actions { gap: 9px; }
+  #pin-auth-dialog .bhh-pin-actions button { font-size: 14px; padding: 10px 9px; }
+}
+@media (max-width: 350px) {
+  #pin-auth-dialog .bhh-pin-header { padding: 14px 16px; }
+  #pin-auth-dialog .bhh-pin-body { padding: 18px 16px 22px; }
+  #pin-auth-dialog .bhh-pin-actions { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #pin-auth-dialog *, #pin-auth-dialog *::before, #pin-auth-dialog *::after { transition: none !important; }
+}
