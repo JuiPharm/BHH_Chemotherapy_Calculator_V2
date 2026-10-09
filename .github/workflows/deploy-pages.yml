@@ -26,13 +26,6 @@ jobs:
         with:
           node-version: 24
 
-      - name: Test ThaiPOG pediatric calculations and clinical hard-stop rules
-        run: |
-          node --check pediatric-calc-core.mjs
-          node --check pediatric-calc-ui.mjs
-          node tests/pediatric-all-1301.mjs
-          node tests/pediatric-all-1302.mjs
-
       - name: Run production smoke tests
         run: node tests/production-smoke.mjs
 
@@ -58,11 +51,6 @@ jobs:
           test -f data/guideline-status.v2.4.json
           test -f data/nhso-pediatric-oncology-2566-source.json
           test -f data/pediatric-regimens.thaipog-2566.json
-          test -f data/pediatric-all-1301.structured.json
-          test -f data/pediatric-all-1302.structured.json
-          test -f pediatric-calc-core.mjs
-          test -f pediatric-calc-ui.mjs
-          test -f pediatric-calc.css
           test -f publish-manager.js
           test -f publish-manager.css
           test -f .nojekyll
@@ -85,12 +73,14 @@ jobs:
       - name: Assemble static site
         run: |
           mkdir -p _site/data
-          cp index.html styles.css publish-manager.css publish-manager.js pediatric-calc-core.mjs pediatric-calc-ui.mjs pediatric-calc.css manifest.json cleanup.js app.bundle.js 404.html .nojekyll _site/
+          cp index.html styles.css publish-manager.css publish-manager.js manifest.json cleanup.js app.bundle.js 404.html .nojekyll _site/
           cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json data/guideline-status.v2.4.json _site/data/
-          cp data/pediatric-all-1301.structured.json data/pediatric-all-1302.structured.json _site/data/
           test -s _site/data/guideline-status.v2.4.json
-          test -s _site/data/pediatric-all-1301.structured.json
-          test -s _site/data/pediatric-all-1302.structured.json
+          test ! -e _site/pediatric-calc-core.mjs
+          test ! -e _site/pediatric-calc-ui.mjs
+          test ! -e _site/pediatric-calc.css
+          test ! -e _site/data/pediatric-all-1301.structured.json
+          test ! -e _site/data/pediatric-all-1302.structured.json
           test ! -e _site/data/pediatric-regimens.thaipog-2566.json
           test ! -e _site/data/nhso-pediatric-oncology-2566-source.json
 
