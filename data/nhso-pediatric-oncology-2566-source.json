@@ -12,8 +12,8 @@
   "official_flipbook_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
   "user_requested_locator": "https://stream.nhso.go.th/ebook/flipbook/182/1/1#%E0%B9%81%E0%B8%99%E0%B8%A7%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%A3%E0%B8%B1%E0%B8%81%E0%B8%A9%E0%B8%B2%E0%B9%82%E0%B8%A3%E0%B8%84%E0%B8%A1%E0%B8%B0%E0%B9%80%E0%B8%94%E0%B9%87%E0%B8%81%20%E0%B8%9E.%E0%B8%A8.%202566%20%20Protocal_Final/37",
   "ingestion_status": "PRIMARY_PDF_PROVIDED_PROTOCOL_INDEX_EXTRACTED",
-  "clinical_approval_status": "SOURCE_REFERENCE_APPROVED_AND_PUBLISHED; DOSE_CALCULATOR_NOT_VALIDATED",
-  "default_published": true,
+  "clinical_approval_status": "SOURCE_ARCHIVED_NOT_PRODUCTION_CALCULATION_APPROVED",
+  "default_published": false,
   "default_calculator_enabled": false,
   "last_checked_date": "2026-10-09",
   "source_integrity_note": "Full 412-page primary PDF supplied by user and used to identify 62 protocol identifiers/variants and clinical risk groups. Only selected source-dose examples have been transcribed; dose calculation remains disabled for all pediatric regimens.",
@@ -34,11 +34,9 @@
     }
   ],
   "extracted_protocols": [
-    "data/pediatric-regimens.thaipog-2566.json"
+    "data/pediatric-regimens.thaipog-2566.json (archived)"
   ],
-  "approved_protocols": [
-    "62 guideline-reference records; publication only, not approved for automated dose calculation"
-  ],
+  "approved_protocols": [],
   "requirements_for_pediatric_regimens": [
     "diagnosis_and_risk_group",
     "protocol_name_and_variant",
@@ -52,7 +50,7 @@
     "source_page",
     "pharmacist_clinical_verification"
   ],
-  "change_scope": "Pediatric reference registry of 62 identifiers added to production. Legacy BHH-046 and BHH-048 blocked for pediatric use. Six validated pilot dose calculators unchanged.",
+  "change_scope": "The 62 pediatric protocol reference records are archived and hidden from Production UI until a reviewed risk/phase/day/age-aware dosing engine is ready. Source PDF and transcribed evidence retained.",
   "source_pdf_filename": "แนวทางการรักษาโรคมะเร็งในเด็ก พ_ศ_ 2566  Protocal_Final.pdf",
   "source_pdf_pages": 412
 }
