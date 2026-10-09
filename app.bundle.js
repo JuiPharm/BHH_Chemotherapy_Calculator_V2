@@ -574,61 +574,108 @@ function populateCancerTypes() {
     }
   }
 }
+// Compact viewport-anchored instant search. Result list never extends the page height.
+const SEARCH_MAX_RESULTS=6;
+let searchActiveIndex=-1;
 function closeSearchDropdown() {
-  const dropdown = $('#regimen-search-dropdown');
-  if (dropdown) {
+  const dropdown=$('#regimen-search-dropdown');
+  if(dropdown){
     dropdown.classList.add('hidden');
-    dropdown.innerHTML = '';
+    dropdown.innerHTML='';
   }
-  $('#regimen-search')?.setAttribute('aria-expanded', 'false');
+  searchActiveIndex=-1;
+  const input=$('#regimen-search');
+  input?.setAttribute('aria-expanded','false');
+  input?.removeAttribute('aria-activedescendant');
 }
 
-function handleSearchInput() {
-  const input = $('#regimen-search');
-  const dropdown = $('#regimen-search-dropdown');
-  if (!input || !dropdown) return;
-
-  const q = input.value.trim().toLowerCase();
-  if (!q) {
-    closeSearchDropdown();
-    return;
-  }
-
-  const matches = catalog.filter(x => {
-    const cancer = (x.cancerTypeLabel || typeLabel(x.cancerType) || '').toLowerCase();
-    const drugs = (x.master?.drugs || []).map(d => `${d['ชื่อยา']} ${d['ขนาดยา']}`).join(' ').toLowerCase()
-      || (x.structured?.phases?.[0]?.orders || []).map(o => `${o.drugName} ${protocolText(o.dose)}`).join(' ').toLowerCase();
-    const text = `${x.name} ${x.indication} ${cancer} ${drugs}`.toLowerCase();
-    return text.includes(q);
-  }).sort((a, b) => {
-    const aNameStart = a.name.toLowerCase().startsWith(q) ? 0 : 1;
-    const bNameStart = b.name.toLowerCase().startsWith(q) ? 0 : 1;
-    if (aNameStart !== bNameStart) return aNameStart - bNameStart;
-    const aRank = a.structuredLink ? 0 : a.status === 'approved_published' ? 1 : 2;
-    const bRank = b.structuredLink ? 0 : b.status === 'approved_published' ? 1 : 2;
-    return aRank - bRank || a.name.localeCompare(b.name);
+function placeSearchDropdown(){
+  const dropdown=$('#regimen-search-dropdown'),input=$('#regimen-search');
+  if(!dropdown||!input||dropdown.classList.contains('hidden'))return;
+  // Mount on document.body to avoid grid/card overflow and stretching the grid row.
+  if(dropdown.parentElement!==document.body)document.body.appendChild(dropdown);
+  const rect=input.getBoundingClientRect(),margin=8;
+  const vh=window.visualViewport?.height||window.innerHeight;
+  const vw=window.visualViewport?.width||window.innerWidth;
+  const below=vh-rect.bottom-margin,above=rect.top-margin;
+  const flip=below<160&&above>below;
+  const space=Math.max(100,flip?above:below);
+  const maxHeight=Math.min(284,Math.max(100,space-4));
+  const width=Math.max(220,Math.min(rect.width,vw-margin*2));
+  const left=Math.max(margin,Math.min(rect.left,vw-width-margin));
+  Object.assign(dropdown.style,{
+    position:'fixed',
+    left:left+'px',
+    width:width+'px',
+    top:flip?'auto':Math.max(margin,rect.bottom+4)+'px',
+    bottom:flip?Math.max(margin,vh-rect.top+4)+'px':'auto',
+    maxHeight:maxHeight+'px'
   });
+}
 
-  if (matches.length > 0) {
-    dropdown.innerHTML = matches.slice(0, 15).map(x => {
-      const drugSummary = (x.master?.drugs || []).map(d => `${esc(d['ชื่อยา'])} (${esc(d['ขนาดยา'])})`).join(' · ')
-        || (x.structured?.phases?.[0]?.orders || []).map(o => `${esc(o.drugName)} (${esc(protocolText(o.dose))})`).join(' · ');
-      return `<div class="search-match-item" data-select-key="${esc(x.key)}" role="option">
-        <div class="search-match-title">
-          <strong>${esc(x.name)}</strong>
-          <span class="badge ${x.structured ? 'badge-ok' : 'badge-neutral'}">${esc(x.cancerTypeLabel || typeLabel(x.cancerType))}</span>
-        </div>
-        <div class="search-match-sub">${esc(x.indication)}</div>
-        ${drugSummary ? `<div class="search-match-drugs micro">${drugSummary}</div>` : ''}
-      </div>`;
-    }).join('');
-    dropdown.classList.remove('hidden');
-    input.setAttribute('aria-expanded', 'true');
-  } else {
-    dropdown.innerHTML = `<div class="search-empty">ไม่พบสูตรยาที่ตรงกับ "${esc(q)}"</div>`;
-    dropdown.classList.remove('hidden');
-    input.setAttribute('aria-expanded', 'true');
+function searchMatches(q){
+  const selectedCancer=$('#cancer-type-select')?.value||'';
+  return catalog.filter(x=>{
+    const cancer=(x.cancerTypeLabel||typeLabel(x.cancerType)||'').toLowerCase();
+    const drugs=(x.master?.drugs||[]).map(d=>[d['ชื่อยา'],d['ขนาดยา']].join(' ')).join(' ').toLowerCase()
+      ||(x.structured?.phases?.[0]?.orders||[]).map(o=>[o.drugName,protocolText(o.dose)].join(' ')).join(' ').toLowerCase();
+    return [x.name,x.indication,cancer,drugs].join(' ').toLowerCase().includes(q);
+  }).sort((a,b)=>{
+    // Prefer matching regimen names, then current cancer type and approved calculations.
+    const rank=x=>{
+      const name=x.name.toLowerCase();
+      return [name===q?0:name.startsWith(q)?1:name.split(/[\s/-]+/).some(t=>t.startsWith(q))?2:3,
+        x.cancerType===selectedCancer?0:1,
+        x.structured?.status==='published'&&x.structured.localApproval?0:1];
+    };
+    const ra=rank(a),rb=rank(b);
+    for(let i=0;i<ra.length;i++)if(ra[i]!==rb[i])return ra[i]-rb[i];
+    return a.name.localeCompare(b.name);
+  });
+}
+
+function highlightSearchItem(index){
+  const dropdown=$('#regimen-search-dropdown'),input=$('#regimen-search');
+  const items=[...dropdown.querySelectorAll('[data-select-key]')];
+  searchActiveIndex=index;
+  items.forEach((el,i)=>{
+    el.classList.toggle('highlighted',i===index);
+    el.setAttribute('aria-selected',String(i===index));
+  });
+  if(index>=0&&items[index]){
+    input.setAttribute('aria-activedescendant',items[index].id);
+    // Scroll ONLY the small search result panel, not the document.
+    const itemRect=items[index].getBoundingClientRect(),panelRect=dropdown.getBoundingClientRect();
+    if(itemRect.bottom>panelRect.bottom)dropdown.scrollTop+=itemRect.bottom-panelRect.bottom+3;
+    else if(itemRect.top<panelRect.top)dropdown.scrollTop-=panelRect.top-itemRect.top+3;
+  }else input.removeAttribute('aria-activedescendant');
+}
+
+function handleSearchInput(){
+  const input=$('#regimen-search'),dropdown=$('#regimen-search-dropdown');
+  if(!input||!dropdown)return;
+  const q=input.value.trim().toLocaleLowerCase();
+  if(!q){closeSearchDropdown();return;}
+  const results=searchMatches(q),visible=results.slice(0,SEARCH_MAX_RESULTS);
+  searchActiveIndex=-1;
+  if(visible.length){
+    dropdown.innerHTML=visible.map((x,i)=>{
+      const ready=x.structured?.status==='published'&&x.structured.localApproval;
+      const drugs=(x.master?.drugs||[]).map(d=>[d['ชื่อยา'],d['ขนาดยา']].filter(Boolean).join(' ')).join(' · ')
+        ||(x.structured?.phases?.[0]?.orders||[]).map(o=>[o.drugName,protocolText(o.dose)].filter(Boolean).join(' ')).join(' · ');
+      return '<div class="search-match-item" id="regimen-option-'+i+'" data-select-key="'+esc(x.key)+'" role="option" aria-selected="false" tabindex="-1">'+
+        '<div class="search-match-title"><strong>'+esc(x.name)+'</strong><span class="search-match-state '+(ready?'ready':'review')+'">'+(ready?'✓ Ready':'Review')+'</span></div>'+
+        '<div class="search-match-sub">'+esc(x.indication||'')+' · '+esc(x.cancerTypeLabel||typeLabel(x.cancerType))+'</div>'+
+        (drugs?'<div class="search-match-drugs" title="'+esc(drugs)+'">'+esc(drugs)+'</div>':'')+
+        '</div>';
+    }).join('')+
+    '<div class="search-count" role="status">แสดง '+visible.length+' จาก '+results.length+' สูตร'+(results.length>SEARCH_MAX_RESULTS?' · พิมพ์ต่อเพื่อจำกัดผลค้นหา':'')+'</div>';
+  }else{
+    dropdown.innerHTML='<div class="search-empty" role="status">ไม่พบสูตรยาที่ตรงกับ "'+esc(input.value.trim())+'"</div>';
   }
+  dropdown.classList.remove('hidden');
+  input.setAttribute('aria-expanded','true');
+  placeSearchDropdown();
 }
 
 function populateRegimenOptionsForType(type, selectedKey = null) {
@@ -706,42 +753,49 @@ function bindCalculator() {
     $('#calculate-btn').disabled = true;
   });
   
-  $('#regimen-search').addEventListener('input', () => { invalidateCalculation(); handleSearchInput(); });
+  $('#regimen-search').addEventListener('input', () => {
+    // Typing a new query must invalidate the previous regimen selection and dose.
+    const input=$('#regimen-search');
+    if(selectedItem && input.value.trim()!==selectedItem.name){
+      selectedItem=null;
+      $('#regimen-select').value='';
+      $('#cycle-input').value='';
+      $('#cycle-input').disabled=true;
+      $('#regimen-context').classList.add('hidden');
+      $('#dose-selections').innerHTML='';
+      $('#calculate-btn').disabled=true;
+    }
+    invalidateCalculation();
+    handleSearchInput();
+  });
+  window.addEventListener('resize',placeSearchDropdown);
+  window.addEventListener('scroll',placeSearchDropdown,{passive:true});
+  window.visualViewport?.addEventListener('resize',placeSearchDropdown);
   $('#regimen-search').addEventListener('focus', () => {
     if ($('#regimen-search').value.trim()) {
       handleSearchInput();
     }
   });
 
-  $('#regimen-search').addEventListener('keydown', e => {
-    const dropdown = $('#regimen-search-dropdown');
-    if (!dropdown || dropdown.classList.contains('hidden')) return;
-
-    const items = Array.from(dropdown.querySelectorAll('.search-match-item'));
-    if (!items.length) return;
-
-    let currentIndex = items.findIndex(el => el.classList.contains('highlighted'));
-
-    if (e.key === 'ArrowDown') {
+  $('#regimen-search').addEventListener('keydown',e=>{
+    const dropdown=$('#regimen-search-dropdown');
+    if(e.key==='Escape'){
+      if(!dropdown.classList.contains('hidden')){e.preventDefault();closeSearchDropdown();}
+      return;
+    }
+    if(dropdown.classList.contains('hidden'))return;
+    const options=[...dropdown.querySelectorAll('[data-select-key]')];
+    if(!options.length)return;
+    if(e.key==='ArrowDown'){
       e.preventDefault();
-      if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
-      currentIndex = (currentIndex + 1) % items.length;
-      items[currentIndex].classList.add('highlighted');
-      items[currentIndex].scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'ArrowUp') {
+      highlightSearchItem((searchActiveIndex+1)%options.length);
+    }else if(e.key==='ArrowUp'){
       e.preventDefault();
-      if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
-      currentIndex = currentIndex <= 0 ? items.length - 1 : currentIndex - 1;
-      items[currentIndex].classList.add('highlighted');
-      items[currentIndex].scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'Enter') {
+      highlightSearchItem(searchActiveIndex<=0?options.length-1:searchActiveIndex-1);
+    }else if(e.key==='Enter'){
       e.preventDefault();
-      const target = currentIndex >= 0 ? items[currentIndex] : items[0];
-      if (target && target.dataset.selectKey) {
-        selectRegimenByKey(target.dataset.selectKey);
-      }
-    } else if (e.key === 'Escape') {
-      closeSearchDropdown();
+      const target=options[searchActiveIndex<0?0:searchActiveIndex];
+      if(target?.dataset.selectKey)selectRegimenByKey(target.dataset.selectKey);
     }
   });
 
