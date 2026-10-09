@@ -39,3 +39,38 @@
 .search-match-item.highlighted,.search-match-item:focus-visible{outline:2px solid #145da0;background:#edf6ff}
 .search-count{padding:6px 10px;text-align:center;color:#52677d;background:#f4f8fd;border-top:1px solid #e2eaf3;font-size:.72rem;position:sticky;bottom:0}
 @media(max-width:680px){.search-dropdown{border-radius:9px;box-shadow:0 10px 24px rgba(11,44,85,.22)}.search-match-item{padding:9px 10px}}
+
+/* Pharmacist Mode: accessible, focused authorization dialog (v2.7.3). */
+#pin-auth-dialog{box-sizing:border-box;position:fixed;width:min(440px,calc(100vw - 24px));max-width:440px;max-height:min(680px,calc(100dvh - 28px));margin:auto;border:1px solid #dae7f4;border-radius:22px;overflow-y:auto;color:#173452;background:#fff;box-shadow:0 22px 72px rgba(11,44,85,.30)}
+#pin-auth-dialog::backdrop{background:rgba(5,28,61,.6);backdrop-filter:blur(5px)}
+#pin-auth-dialog .pin-auth-top{height:94px;display:flex;align-items:flex-start;justify-content:space-between;padding:22px 26px 0;background:linear-gradient(120deg,#0b2c55,#175e9b)}
+#pin-auth-dialog .pin-auth-icon{width:52px;height:52px;border-radius:15px;display:grid;place-items:center;font-size:26px;background:rgba(255,255,255,.16);box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+#pin-auth-dialog .pin-auth-close{appearance:none;border:0;background:rgba(255,255,255,.16);color:white;border-radius:9px;width:34px;height:34px;padding:0;display:grid;place-items:center;font-size:17px;cursor:pointer}
+#pin-auth-dialog .pin-auth-close:hover{background:rgba(255,255,255,.29)}
+#pin-auth-dialog .pin-auth-heading{padding:22px 26px 6px}
+#pin-auth-dialog .pin-auth-eyebrow{font-weight:800;letter-spacing:.12em;color:#185c91;font-size:10px;margin:0 0 6px}
+#pin-auth-dialog h2{margin:0 0 9px;color:#0b2c55;font-size:24px;line-height:1.2}
+#pin-auth-dialog #pin-auth-description{margin:0;color:#576f84;font-size:13px;line-height:1.7}
+#pin-auth-dialog .pin-auth-form{padding:16px 26px 26px}
+#pin-auth-dialog .pin-auth-form>.field{margin:0 0 8px;font-size:13px;font-weight:700}
+#pin-auth-dialog .pin-auth-input-wrap{position:relative;display:flex;align-items:center}
+#pin-auth-dialog #pin-auth-input{box-sizing:border-box;width:100%;min-height:50px;padding:10px 80px 10px 17px;border:1.5px solid #bdcede;border-radius:12px;background:#f8fbff;letter-spacing:.12em;font-size:18px;text-align:left}
+#pin-auth-dialog #pin-auth-input:focus{outline:3px solid #d5eafd;border-color:#1769a7;background:#fff}
+#pin-auth-dialog #pin-auth-visibility{position:absolute;right:7px;top:6px;bottom:6px;border:0;background:transparent;color:#165b8c;padding:0 10px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer}
+#pin-auth-dialog #pin-auth-visibility:hover{background:#e8f2fa}
+#pin-auth-dialog .pin-auth-tip{color:#627c92;font-size:11px;line-height:1.6;margin:9px 0 14px}
+#pin-auth-dialog .pin-auth-error{border:1px solid #ffc6c6;background:#fff4f3;color:#992f36;padding:11px 12px;border-radius:10px;font-size:12px;line-height:1.6;margin:0 0 15px}
+#pin-auth-dialog .pin-auth-actions{display:grid;grid-template-columns:1fr 1.45fr;gap:10px;margin-top:14px}
+#pin-auth-dialog .pin-auth-actions button{min-height:44px;border-radius:11px;margin:0;font-weight:750}
+#pin-auth-dialog .pin-auth-actions button:disabled{opacity:.65;cursor:wait}
+#pin-auth-dialog .pin-auth-close:focus-visible,#pin-auth-dialog button:focus-visible{outline:3px solid #8fc4ed;outline-offset:2px}
+#pin-auth-dialog .hidden{display:none!important}
+.builder-drafts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:12px;margin-top:14px}
+.builder-draft-card{border:1px solid #d6e3ef;background:#f7fafe;border-radius:13px;padding:14px;min-width:0}
+.builder-draft-card strong{display:block;overflow-wrap:anywhere;color:#0b2c55}
+.builder-draft-card small{display:block;color:#607489;overflow-wrap:anywhere;margin:4px 0 11px}
+.builder-draft-actions{display:flex;gap:7px;flex-wrap:wrap}
+.builder-draft-actions button{font-size:12px;padding:7px 12px}
+.builder-danger{border:1px solid #fac8ca!important;background:#fff2f1!important;color:#a3242e!important}
+.builder-danger:hover{background:#ffe2e2!important}
+@media(max-width:480px){#pin-auth-dialog{border-radius:16px}#pin-auth-dialog .pin-auth-top{padding:18px 20px 0;height:84px}#pin-auth-dialog .pin-auth-heading{padding:18px 20px 4px}#pin-auth-dialog .pin-auth-form{padding:14px 20px 20px}#pin-auth-dialog .pin-auth-actions{grid-template-columns:1fr 1.3fr}}
