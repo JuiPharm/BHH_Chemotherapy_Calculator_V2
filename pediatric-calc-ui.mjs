@@ -4,12 +4,18 @@ const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const fmt=x=>Number(x).toLocaleString('en-US',{maximumFractionDigits:3});
 const dayNumbers=spec=>Array.isArray(spec)?spec:Array.from({length:Math.max(0,(spec.to-spec.from)+1)},(_,i)=>spec.from+i).filter(n=>(n-spec.from)%(spec.step||1)===0);
 let protocol=null;
+let protocols=new Map();
 function textValue(id){return ($(id)?.value||'').trim();}
 function n(id){const v=textValue(id);return v===''?null:Number(v);}
 function check(id){return Boolean($(id)?.checked);}
 function phase() {return protocol?.phases.find(p=>p.id===textValue('ped-phase'));}
 function showPhase() {
   const p=phase();if(!p)return;
+  const highRisk=protocol.id==='ThaiPOG-ALL-1302';
+  $('ped-risk').closest('label').classList.toggle('hidden',highRisk||p.id==='induction');
+  $('ped-highrisk-wrap').classList.toggle('hidden',!highRisk);
+  $('ped-tcell').closest('label').classList.toggle('hidden',!highRisk);
+  $('ped-cns3-wrap').classList.toggle('hidden',!highRisk||p.id!=='induction');
   $('ped-day').max=p.max_day;
   if(Number($('ped-day').value)>p.max_day||Number($('ped-day').value)<1)$('ped-day').value=1;
   $('ped-cycle-wrap').classList.toggle('hidden',p.id!=='maintenance');
@@ -18,7 +24,6 @@ function showPhase() {
   $('ped-phase-notes').textContent='PDF p.'+p.pdf_page+' · Scheduled drug days: '+dayPreview+' · '+p.notes;
   $('ped-hdmtx').closest('label').classList.toggle('hidden',p.id!=='interim_maintenance');
   $('ped-tap').closest('label').classList.toggle('hidden',p.id!=='induction');
-  $('ped-risk').closest('label').classList.toggle('hidden',p.id==='induction');
 }
 function requireFields() {
  const labels={'ped-age':'อายุปัจจุบัน','ped-age-dx':'อายุตอนวินิจฉัย','ped-weight':'น้ำหนัก','ped-height':'ส่วนสูง','ped-wbc':'WBC ตอนวินิจฉัย','ped-sex':'เพศ','ped-day':'Treatment Day'};
@@ -63,11 +68,12 @@ function calculate(e) {
     weightKg:n('ped-weight'),heightCm:n('ped-height'),wbcAtDiagnosis:n('ped-wbc'),
     ancPerUl:n('ped-anc'),plateletsPerUl:n('ped-platelets'),
     precursorBCellConfirmed:check('ped-bcell'),burkittExcluded:check('ped-burkitt'),
-    standardRiskConfirmed:check('ped-risk'),severeInfection:check('ped-infection'),
+    standardRiskConfirmed:check('ped-risk'),highRiskConfirmed:check('ped-highrisk'),
+    tCellConfirmed:check('ped-tcell'),severeInfection:check('ped-infection'),
     hdMtxSafetyConfirmed:check('ped-hdmtx')
   };
   const s={phaseId:textValue('ped-phase'),day:n('ped-day'),cycle:phase()?.id==='maintenance'?n('ped-cycle'):1,
-    traumaticTap:check('ped-tap'),startingPhase:check('ped-phase-start')};
+    traumaticTap:check('ped-tap'),cns3:check('ped-cns3'),startingPhase:check('ped-phase-start')};
   displayResult(calculatePediatric(protocol,p,s));
  }catch(e){showError(e.message||String(e));}
 }
@@ -75,13 +81,21 @@ async function init(){
  const form=$('ped-calc-form');if(!form)return;
  form.addEventListener('submit',calculate);
  try {
-  const res=await fetch('./data/pediatric-all-1301.structured.json?v=2.8.0',{cache:'no-store'});
-  if(!res.ok)throw Error('ไม่พบฐานข้อมูล Pediatric (HTTP '+res.status+')');
-  protocol=await res.json();
-  if(protocol?.id!=='ThaiPOG-ALL-1301'||protocol.phases.length!==5)throw Error('Database format invalid');
-  $('ped-phase').innerHTML=protocol.phases.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.label)+'</option>').join('');
+  const res=await Promise.all(['1301','1302'].map(x=>fetch('./data/pediatric-all-'+x+'.structured.json?v=2.8.1',{cache:'no-store'})));
+  if(res.some(x=>!x.ok))throw Error('โหลด Pediatric Structured Database ไม่ครบ (check GitHub Pages assets)');
+  const data=await Promise.all(res.map(x=>x.json()));
+  if(data.some(x=>!['ThaiPOG-ALL-1301','ThaiPOG-ALL-1302'].includes(x.id)||x.phases.length!==5))throw Error('Pediatric source data invalid');
+  protocols=new Map(data.map(x=>[x.id,x]));
+  const onProtocol=()=>{
+    protocol=protocols.get($('ped-protocol').value)||null;
+    $('ped-phase').innerHTML=(protocol?.phases||[]).map(p=>'<option value="'+esc(p.id)+'">'+esc(p.label)+'</option>').join('');
+    $('ped-day').value='1';
+    $('ped-results').innerHTML='<div class="pediatric-empty">เลือก Phase/Day ใหม่ และตรวจ Risk Group ก่อนคำนวณ</div>';
+    showPhase();
+  };
+  $('ped-protocol').addEventListener('change',onProtocol);
   $('ped-phase').addEventListener('change',showPhase);
-  showPhase();
+  onProtocol();
  }catch(e){showError(e.message||String(e));$('ped-calculate').disabled=true;}
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
