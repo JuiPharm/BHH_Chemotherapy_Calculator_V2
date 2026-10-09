@@ -65,6 +65,20 @@ assert(publisher.indexOf("'<label>ลิงก์ Guideline") < publisher.indexO
 assert(publisher.includes('ห้ามอนุมัติจากการใส่ลิงก์อย่างเดียว'), 'Protocol-mismatch warning must remain visible');
 assert(index.includes('calc-rounding-choice'), 'Rounding policy radio options must be present');
 assert(index.includes('admin-pin-toggle-btn'), 'Pharmacist PIN toggle must be present');
+
+const pinCss=fs.readFileSync(new URL('../pin-auth.css', import.meta.url),'utf8');
+assert(index.includes('pin-auth.css?v=2.9.1'),'Production must load isolated Pharmacist PIN dialog stylesheet');
+assert(index.includes('id="pin-auth-dialog"') && index.includes('aria-labelledby="pin-auth-heading"'),'Accessible PIN dialog must exist');
+assert(index.includes('class="bhh-pin-header"') && index.includes('class="bhh-pin-body"'),'PIN interface must have branded header and responsive content');
+assert(index.includes('id="pin-auth-visibility"') && index.includes('id="pin-auth-input"'),'PIN must have a show/hide input control');
+assert(index.includes('id="pin-auth-form"') && index.includes('id="pin-auth-error"'),'Existing PIN authentication selectors must remain intact');
+assert(!index.includes('id="pin-auth-form" style='),'PIN dialog layout must not rely on inline form styles');
+assert(pinCss.includes('width: min(520px, calc(100vw - 32px))'),'PIN modal must fit desktop and mobile viewport');
+assert(pinCss.includes('@media (max-width: 520px)'),'PIN dialog must have narrow viewport styles');
+assert(bundle.includes("const revealBtn = $('#pin-auth-visibility')"),'PIN show/hide must be connected to login runtime');
+assert(bundle.includes("submitButton.textContent = 'กำลังตรวจสอบ…'"),'Login must display progress while verifying PIN');
+assert(bundle.includes("fetch('/api/verify-pin'"),'Existing PIN verification logic must be preserved');
+
 assert(bundle.includes("loadJson('./data/guideline-status.v2.4.json?v=2.4.0')"), 'Runtime must load guideline approval and review statuses');
 const guideline=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
 assert(guideline.length>=33,'Baseline 33 guideline-status records must be preserved');
