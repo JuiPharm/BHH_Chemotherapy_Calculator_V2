@@ -12,7 +12,7 @@ assert(!/\\binit;\\s*$/.test(bundle), 'Runtime ends with init; instead of init()
 assert(bundle.includes("loadJson('./data/regimens.published.json?v=2.3.0')"), 'Runtime must load central published regimen data');
 assert(bundle.includes("loadJson('./data/legacy-regimens.v1.json?v=2.3.0')"), 'Runtime must load the central 136-regimen master');
 assert(bundle.includes("loadJson('./data/rounding-profiles.json?v=2.3.0')"), 'Runtime must load central rounding defaults');
-assert(index.includes('app.bundle.js?v=2.7.1'), 'Index is not using v2.7.1 runtime');
+assert(index.includes('app.bundle.js?v=2.7.2'), 'Index is not using v2.7.2 runtime');
 assert(index.includes('publish-manager.js?v=2.6.4'), 'Review/Publish UI script must load');
 assert(index.includes('publish-manager.css?v=2.6.3'), 'Review/Publish styling missing');
 assert(index.includes('https://api.github.com'), 'GitHub publication API not permitted by CSP');
@@ -28,24 +28,19 @@ assert(publisher.includes('showReviewIssue(e)'), 'Publish must display the reaso
 assert(publisher.includes("$('review-publish-source').value=key"), 'Pasted official guideline URLs must select their source automatically');
 assert(publisher.includes("'eviQ': ['eviq.org.au']"), 'eviQ guideline links must be supported');
 assert(publisher.includes("'NHSO Pediatric 2566': ['nhso.go.th']"), 'NHSO Pediatric guideline must be selectable');
-const pediatric=JSON.parse(fs.readFileSync(new URL('../data/pediatric-regimens.thaipog-2566.json',import.meta.url),'utf8'));
-assert(pediatric.regimens.length===62 && pediatric.record_count===62,'Pediatric database must contain 62 reference protocols/variants');
-assert(pediatric.regimens.every(x=>x.population==='pediatric' && x.approved===true && x.published===true),'Every pediatric reference must be tagged and reference published');
-assert(pediatric.regimens.every(x=>x.approval_scope==='SOURCE_REFERENCE_PUBLICATION' && x.calculator_enabled===false && x.clinical_dose_calculator_approval===false),'Pediatric reference approval must not enable dose calculation');
-assert(pediatric.regimens.find(x=>x.protocol_id==='ThaiPOG-ALL-1301')?.verified_source_examples?.length===25,'SR-ALL must retain 25 phase-specific medicine reference entries');
-assert(pediatric.source_evidence_pages===303,'Source PDF evidence must be indexed across all 303 referenced pages');
-assert(pediatric.regimens.every(x=>x.source_evidence_pages?.length>0),'Every pediatric regimen must retain page-specific source excerpts');
-assert(pediatric.regimens.flatMap(x=>x.source_evidence_pages).every(p=>p.source_excerpt_lines && p.extraction_note),'All extracts must identify limitations of raw PDF text');
-assert(bundle.includes('function buildPediatricEvidenceHtml(item)'), 'Pediatric source PDF excerpts must be available to users');
-assert(bundle.includes('data-pediatric-evidence'), 'Pediatric source evidence must render on demand in the regimen library');
-assert(bundle.includes("container.dataset.loaded='true'"), 'PDF evidence rendering must be lazy for mobile performance');
 
-assert(pediatric.regimens.find(x=>x.protocol_id==='ThaiPOG-ALL-1302')?.verified_source_examples?.length===31,'HR-ALL must retain 31 phase-specific medicine reference entries');
-assert(pediatric.regimens.some(x=>x.protocol_id==='ThaiPOG-NPC-21' && x.verified_source_examples.length===3),'Pediatric nasopharyngeal induction/concurrent protocol must remain traceable');
-assert(new Set(pediatric.regimens.map(x=>x.catalog_id)).size===62,'Duplicate pediatric IDs prohibited');
-assert(bundle.includes("loadJson('./data/pediatric-regimens.thaipog-2566.json?v=2.7.0')"),'Production frontend must load the pediatric database');
-assert(bundle.includes("if (selectedItem.isPediatric) $('#cycle-input').disabled=true"),'Pediatric calculation must be blocked');
-assert(bundle.includes("x.master&&!x.isPediatric"),'Pediatric protocol must not enter adult simplistic review form');
+const pediatric=JSON.parse(fs.readFileSync(new URL('../data/pediatric-regimens.thaipog-2566.json',import.meta.url),'utf8'));
+assert(pediatric.regimens.length===62 && pediatric.record_count===62,'Archive must retain all 62 ThaiPOG protocol records');
+assert(pediatric.database_status==='ARCHIVED_OUT_OF_PRODUCTION_UI','All reference-only pediatric records must be archived');
+assert(pediatric.regimens.every(x=>x.population==='pediatric' && x.status==='archived_not_calculator_ready' && x.approved===false && x.published===false && x.production_visible===false),'Pediatric unvalidated regimens must not be published');
+assert(pediatric.regimens.every(x=>x.calculator_enabled===false && x.clinical_dose_calculator_approval===false),'Pediatric calculators must remain disabled');
+assert(pediatric.regimens.every(x=>x.source_evidence_pages?.length>0),'Retain document extracts for safe future implementation');
+assert(pediatric.source_evidence_pages===303,'Retain 303 source PDF pages indexed across pediatric protocols');
+assert(new Set(pediatric.regimens.map(x=>x.catalog_id)).size===62,'No duplicate pediatric catalog IDs');
+assert(!bundle.includes("loadJson('./data/pediatric-regimens.thaipog-2566.json"),'Production frontend must not load pediatric archive into the working catalog');
+assert(bundle.includes('BHH_PEDIATRIC=[]; // Reference-only pediatric catalog not displayed'),'Pediatric archive must remain hidden');
+assert(!bundle.includes("catalog.push({\n      key:'pediatric:'"),'Do not render reference-only pediatric regimens as active library items');
+assert(bundle.includes("['BHH-CATALOG-046','BHH-CATALOG-048']"),'Unsafe legacy Burkitt automated calculation must stay blocked');
 const legacyApproval=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
 for(const id of ['BHH-CATALOG-046','BHH-CATALOG-048']){
  const row=legacyApproval.find(x=>x.catalog_id===id);
@@ -54,6 +49,7 @@ for(const id of ['BHH-CATALOG-046','BHH-CATALOG-048']){
 
 const nhso=JSON.parse(fs.readFileSync(new URL('../data/nhso-pediatric-oncology-2566-source.json', import.meta.url), 'utf8'));
 assert(nhso.ingestion_status==='PRIMARY_PDF_PROVIDED_PROTOCOL_INDEX_EXTRACTED', 'PDF source provenance must be updated after receiving document');
+assert(nhso.default_published===false && nhso.default_calculator_enabled===false,'Archive not advertised as clinician-approved production calculator');
 assert(nhso.source_pdf_pages===412, 'Original guideline pagination must be traceable');
 assert(nhso.default_calculator_enabled===false, 'NHSO source registration must not enable pediatric calculations');
 assert(publisher.includes('SUGGESTED_PROTOCOLS'), 'Official protocol comparison suggestions must be available');
