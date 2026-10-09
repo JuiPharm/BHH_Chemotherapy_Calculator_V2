@@ -70,6 +70,33 @@
     const matches=await evalJS("document.querySelectorAll('#regimen-search-dropdown [data-select-key]').length");
     assert(matches>0,'Instant search should return results');
     console.log('BROWSER_PASS 05: instant search works');
+
+    const popup=await evalJS("(()=>{const a=document.getElementById('regimen-search').getBoundingClientRect(),b=document.getElementById('regimen-search-dropdown').getBoundingClientRect();return {inputTop:a.top,inputBottom:a.bottom,popupTop:b.top,popupBottom:b.bottom,popupLeft:b.left,popupRight:b.right,vh:innerHeight,vw:innerWidth,parent:document.getElementById('regimen-search-dropdown').parentElement.tagName,count:document.querySelectorAll('#regimen-search-dropdown [data-select-key]').length,documentY:document.scrollingElement.scrollTop};})()");
+    assert(popup.parent==='BODY','Search results must be portaled out of the grid into body');
+    assert(Math.abs(popup.popupTop-popup.inputBottom)<14 || Math.abs(popup.popupBottom-popup.inputTop)<14,'Search results must open directly next to search input');
+    assert(popup.count>0&&popup.count<=4,'Instant search must show at most four visible top matches');
+    assert(popup.popupBottom<=popup.vh+3 && popup.popupLeft>=0 && popup.popupRight<=popup.vw+3,'Search result popup must stay inside viewport');
+    console.log('BROWSER_PASS 12: popup anchored to search input; four-item compact layout');
+    await evalJS("(()=>{const input=document.getElementById('regimen-search');input.value='R-CHOP';input.dispatchEvent(new Event('input',{bubbles:true}));input.dispatchEvent(new KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));input.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true,cancelable:true}));})()");
+    const chosen=await evalJS("({name:selectedItem?.name,ready:!document.getElementById('calculate-btn').disabled,closed:document.getElementById('regimen-search-dropdown').classList.contains('hidden')})");
+    assert(chosen.name?.toLowerCase().startsWith('r-chop')&&chosen.ready&&chosen.closed,'ArrowDown + Enter must select approved R-CHOP and close popup');
+    console.log('BROWSER_PASS 13: keyboard selection keeps correct regimen and closes suggestions');
+    await evalJS("(()=>{const input=document.getElementById('regimen-search');input.value='R-B';input.dispatchEvent(new Event('input',{bubbles:true}));})()");
+    const reset=await evalJS("({cleared:selectedItem===null,disabled:document.getElementById('calculate-btn').disabled,hasOptions:document.querySelectorAll('#regimen-search-dropdown [data-select-key]').length>0})");
+    assert(reset.cleared&&reset.disabled&&reset.hasOptions,'Editing a selected regimen must invalidate the old calculation and show new choices');
+    await evalJS("document.getElementById('regimen-search').dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}))");
+    const escaped=await evalJS("document.getElementById('regimen-search-dropdown').classList.contains('hidden')");
+    assert(escaped,'Escape must dismiss search results');
+    console.log('BROWSER_PASS 14: stale regimen selection reset, Escape closes popup');
+    await call('Emulation.setDeviceMetricsOverride',{width:390,height:750,deviceScaleFactor:1,mobile:true});
+    await evalJS("(()=>{const input=document.getElementById('regimen-search');input.value='R';input.dispatchEvent(new Event('input',{bubbles:true}));})()");
+    const mobilePopup=await evalJS("(()=>{const a=document.getElementById('regimen-search').getBoundingClientRect(),b=document.getElementById('regimen-search-dropdown').getBoundingClientRect();return {inTop:a.top,inBottom:a.bottom,top:b.top,bottom:b.bottom,left:b.left,right:b.right,vh:innerHeight,vw:innerWidth};})()");
+    assert(mobilePopup.left>=0 && mobilePopup.right<=mobilePopup.vw+3 && mobilePopup.top>=0 && mobilePopup.bottom<=mobilePopup.vh+3,'Mobile search popup must remain on-screen');
+    assert(Math.abs(mobilePopup.top-mobilePopup.inBottom)<14 || Math.abs(mobilePopup.bottom-mobilePopup.inTop)<14,'Mobile search popup must stay near input');
+    await call('Emulation.clearDeviceMetricsOverride');
+    await evalJS("closeSearchDropdown()");
+    console.log('BROWSER_PASS 15: responsive mobile popup remains anchored without page scrolling');
+
     await evalJS("window.BHH_BUILDER.open(catalog.find(x=>x.master?.catalog_id==='BHH-CATALOG-007'))");
     const builder=await evalJS("!!document.querySelector('#builder-content [data-phase]') && !!document.querySelector('#builder-content [data-order]')");
     assert(builder,'Builder should display editable structured phases/drugs');
