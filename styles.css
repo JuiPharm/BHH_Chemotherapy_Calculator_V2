@@ -26,4 +26,9 @@
 .search-match-sub{color:#334e68;font-size:.85rem;margin-top:2px}
 .search-match-drugs{color:#526a82;font-size:.78rem;margin-top:4px}
 .search-empty{padding:14px;color:#627386;text-align:center;font-size:.88rem}
-
+
+/* ThaiPOG Pediatric Oncology - published reference evidence, never an auto-dose order */
+.pediatric-evidence-content{padding:12px 6px;max-height:75vh;overflow:auto}
+.pediatric-evidence-page{margin:12px 0;padding:12px;border:1px solid #ccdae9;background:#f7faff;border-radius:10px}
+.pediatric-evidence-page strong{color:#0c3156;font-size:.91rem}
+.pediatric-evidence-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:.78rem;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;line-height:1.6;color:#20344c;margin:8px 0 0}
