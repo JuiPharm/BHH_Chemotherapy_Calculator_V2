@@ -1,5 +1,5 @@
 {
-  "schema_version": "2026-10-09.1",
+  "schema_version": "2026-10-09.2",
   "protocol_id": "Oxford-NSSG-L49-v5",
   "version": "5.0",
   "date": "September 2025",
@@ -374,6 +374,129 @@
       ],
       "only_when": "CNS disease AND overall cycle 2",
       "pdf_page": 5
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Mesna pre-ifosfamide (age >65)",
+      "dose": 200,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "15–30 min before ifosfamide",
+      "age_rule": ">65",
+      "pdf_page": 5,
+      "alternative_not_additive": false
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Ifosfamide (age >65)",
+      "dose": 1000,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "Starting age-specific reduction",
+      "age_rule": ">65",
+      "pdf_page": 5,
+      "alternative_not_additive": false
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Mesna concurrent (age >65)",
+      "dose": 1000,
+      "unit": "mg/m²",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "Administer with ifosfamide",
+      "age_rule": ">65",
+      "pdf_page": 5,
+      "alternative_not_additive": false
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Mesna post-ifosfamide IV (age >65)",
+      "dose": 300,
+      "unit": "mg/m² per dose",
+      "route": "IV",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "Two doses, at H+4 and H+8 after START of ifosfamide",
+      "age_rule": ">65",
+      "pdf_page": 5,
+      "alternative_not_additive": false
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Mesna post-ifosfamide PO (age >65)",
+      "dose": 600,
+      "unit": "mg/m² per dose",
+      "route": "PO",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "Alternative: two doses, at H+2 and H+6 after END of ifosfamide",
+      "age_rule": ">65",
+      "pdf_page": 5,
+      "alternative_not_additive": true
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Cytarabine (age >65)",
+      "dose": 1000,
+      "unit": "mg/m² per dose",
+      "route": "IV",
+      "days": [
+        1,
+        2
+      ],
+      "timing": "BID over 3 hours",
+      "age_rule": ">65",
+      "pdf_page": 5,
+      "alternative_not_additive": false
+    },
+    {
+      "block": "R-IVAC",
+      "drug": "Mesna post-ifosfamide PO (age ≤65)",
+      "dose": 900,
+      "unit": "mg/m² per dose",
+      "route": "PO",
+      "days": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "timing": "Alternative to IV post-ifosfamide mesna: two doses H+2 and H+6 after END of ifosfamide",
+      "age_rule": "≤65",
+      "pdf_page": 5,
+      "alternative_not_additive": true
     }
   ],
   "critical_safety": [
@@ -383,6 +506,69 @@
     "HD-MTX requires hydration, urine alkalinization pH≥7, MTX levels at H36/H42/H48 and repeated clearance monitoring.",
     "Review renal function, third space fluid, interactions (co-trimoxazole, NSAIDs, PPIs) and leucovorin rescue; glucarpidase protocol when indicated.",
     "IT administration must comply with dedicated institutional intrathecal policy.",
-    "Cycle timing depends on count recovery; cannot assume fixed 21-day interval."
-  ]
+    "Cycle timing depends on count recovery; cannot assume fixed 21-day interval.",
+    "Mesna PO and IV post-ifosfamide are alternatives, NOT additive orders; PO administration is timed after END versus IV after START.",
+    "Age >65 IVAC reductions are explicitly recorded but require oncology pharmacist validation before the calculation engine may use them."
+  ],
+  "premedication": [
+    {
+      "block": "R-CODOX-M / R-IVAC",
+      "days": [
+        1
+      ],
+      "timing": "At least 30 minutes before rituximab",
+      "drugs": [
+        {
+          "name": "Paracetamol",
+          "dose": 1000,
+          "unit": "mg",
+          "route": "PO"
+        },
+        {
+          "name": "Dexamethasone",
+          "dose": 12,
+          "unit": "mg",
+          "route": "PO/IV"
+        },
+        {
+          "name": "Chlorphenamine",
+          "dose": 10,
+          "unit": "mg",
+          "route": "IV"
+        }
+      ],
+      "pdf_pages": [
+        3,
+        5
+      ]
+    }
+  ],
+  "hd_mtx_rescue": {
+    "start_hours_after_mtx_start": 36,
+    "initial_dose_mg_per_m2": 15,
+    "initial_route": "IV",
+    "initial_interval_hours": 3,
+    "initial_doses": 5,
+    "subsequent_interval_hours": 6,
+    "stop_when_mtx_below_umol_L": 0.1,
+    "level_based_adjustment_at_hour_48": [
+      {
+        "level": "<0.5 µmol/L",
+        "dose_mg_per_m2": 15,
+        "route": "IV/PO"
+      },
+      {
+        "level": "0.5–1 µmol/L",
+        "dose_mg_per_m2": 50,
+        "route": "IV"
+      },
+      {
+        "level": ">1 µmol/L",
+        "dose_mg_per_m2": 100,
+        "route": "IV"
+      }
+    ],
+    "note": "PO folinate only if tolerated and dose ≤30 mg; timed rescue must be clinically verified, not automatically prescribed.",
+    "pdf_page": 4
+  }
 }
