@@ -1,0 +1,34 @@
+/* Pediatric oncology calculator — source-derived reference arithmetic, not prescribing */
+.pediatric-card{padding:24px;max-width:1200px;margin:0 auto}
+.pediatric-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:12px}
+.pediatric-header h2{color:#0b2c55;margin:0 0 4px}
+.pediatric-header p{margin:0}
+.pediatric-intro{background:#f1f6fc;color:#183550;padding:13px;border-left:4px solid #23568b;line-height:1.65;border-radius:6px}
+.pediatric-section-title{font-weight:750;color:#0b2c55;font-size:1.03rem;padding:11px 0 8px;margin-top:12px;border-bottom:1px solid #dae5f0}
+.pediatric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:12px}
+.pediatric-grid label{display:grid;gap:5px;font-weight:650;font-size:.9rem}
+.pediatric-grid label span{line-height:1.4}
+.pediatric-grid input,.pediatric-grid select{width:100%;min-width:0;border:1px solid #b6cadb;border-radius:9px;background:white;padding:10px;color:#112b48;font-size:16px}
+.pediatric-grid input:focus,.pediatric-grid select:focus{outline:2px solid #316d9f;outline-offset:1px}
+.pediatric-check-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:14px 0}
+.pediatric-check-grid label{display:flex;align-items:flex-start;gap:9px;font-size:.89rem;line-height:1.45;border:1px solid #dde5ef;padding:11px;border-radius:9px}
+.pediatric-check-grid label input{margin-top:3px;flex-shrink:0;accent-color:#144e88}
+.pediatric-calc-button{margin:8px 0 12px;padding:12px 18px;cursor:pointer}
+.pediatric-results{scroll-margin-top:18px;border-top:2px solid #d6e4f0;margin-top:14px;padding-top:15px}
+.pediatric-empty{padding:16px;border-radius:9px;background:#f7fafc;color:#61728a}
+.pediatric-result-top{display:flex;align-items:center;gap:18px;flex-wrap:wrap;justify-content:space-between;background:#f2f7fe;padding:15px;border-radius:10px;margin-bottom:12px}
+.pediatric-result-top strong{display:block;color:#0b2c55}
+.pediatric-hold{font-weight:800;color:#b42318;background:#ffe9e8;border:1px solid #e49e98;padding:9px 12px;border-radius:8px}
+.pediatric-reference{font-weight:800;color:#9b6200;background:#fff5df;border:1px solid #e8ca81;padding:9px 12px;border-radius:8px}
+.pediatric-issues{border:2px solid #ce4543;border-radius:10px;background:#fff2f2;padding:15px;color:#7c2020;margin:8px 0}
+.pediatric-issues h3{font-size:1.04rem;margin:0 0 9px;color:#941b1b}
+.pediatric-warning{background:#fff7e9;border:1px solid #ebc98d;border-radius:9px;padding:12px;margin:12px 0;color:#6e4710}
+.pediatric-result-table{width:100%;font-size:.89rem}
+.pediatric-result-table th{background:#eef5fc}
+.pediatric-result-table td{vertical-align:top;line-height:1.5}
+.pediatric-guard{color:#b42318;font-weight:750}
+.pediatric-notes{margin:12px 0;border:1px solid #c9d9e8;padding:10px;border-radius:8px}
+.pediatric-notes summary{font-weight:700;cursor:pointer}
+.pediatric-legal{font-size:.86rem;line-height:1.6;background:#f0f2f5;padding:12px;border-radius:8px;margin-top:12px;color:#3f4b5d}
+@media(max-width:960px){.pediatric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.pediatric-card{padding:15px}.pediatric-grid,.pediatric-check-grid{grid-template-columns:1fr}.pediatric-result-top{align-items:stretch;gap:8px}.pediatric-result-top>*{width:100%}.pediatric-calc-button{width:100%}}
