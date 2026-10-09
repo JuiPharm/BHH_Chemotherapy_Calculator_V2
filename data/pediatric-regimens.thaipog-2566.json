@@ -29,7 +29,7 @@
       "calculator_enabled": false,
       "structured_regimen_id": null,
       "source_verified": "OFFICIAL_PROTOCOL_TITLE_RISK_AND_PAGE",
-      "dose_schedule_verification": "PDF_SCHEDULE_NOT_STRUCTURED_YET",
+      "dose_schedule_verification": "PHASE_TABLES_TRANSCRIBED_FROM_PDF_PAGES; COMPLEX_SUPPORTIVE_CARE_AND_AGE_GATES_UNVALIDATED",
       "protocol_phases": [
         "SR-Induction pp.25",
         "SR-Consolidation pp.26",
@@ -37,8 +37,159 @@
         "SR-Delayed-Intensification pp.28",
         "SR-Maintenance pp.29-30"
       ],
-      "verified_source_examples": [],
-      "note": "Phase-level dosing and age-dependent IT-MTX must be preserved; no generic fixed 21-day cycles.",
+      "verified_source_examples": [
+        {
+          "phase": "SR-Induction · p25",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "1,8,15,22"
+        },
+        {
+          "phase": "SR-Induction · p25",
+          "drug": "Prednisolone",
+          "dose": "30 mg/m²/dose PO BID",
+          "day": "1–28"
+        },
+        {
+          "phase": "SR-Induction · p25",
+          "drug": "L-Asparaginase",
+          "dose": "10,000 IU/m² IM",
+          "day": "4,6,8,10,12,14"
+        },
+        {
+          "phase": "SR-Induction · p25",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "1,8,29; day 15 traumatic tap only"
+        },
+        {
+          "phase": "SR-Consolidation · p26",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "1,15"
+        },
+        {
+          "phase": "SR-Consolidation · p26",
+          "drug": "Mercaptopurine",
+          "dose": "75 mg/m² PO nightly",
+          "day": "1–28"
+        },
+        {
+          "phase": "SR-Consolidation · p26",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "1,15"
+        },
+        {
+          "phase": "SR-Interim Maintenance I · p27",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "1,15,29,43"
+        },
+        {
+          "phase": "SR-Interim Maintenance I · p27",
+          "drug": "High-dose methotrexate",
+          "dose": "2.5 g/m² IV infusion over 24 hours",
+          "day": "1,15,29,43"
+        },
+        {
+          "phase": "SR-Interim Maintenance I · p27",
+          "drug": "Leucovorin rescue",
+          "dose": "15 mg/m²/dose PO or IV at hours 42,48,54,60,66,72 after starting each HD-MTX infusion",
+          "day": "After each HD-MTX"
+        },
+        {
+          "phase": "SR-Interim Maintenance I · p27",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "1,15,29,43"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "Dexamethasone",
+          "dose": "5 mg/m²/dose PO BID",
+          "day": "1–7 and 15–21"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "1,8,15"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "Doxorubicin",
+          "dose": "25 mg/m² IV over 15 minutes",
+          "day": "1,8,15"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "L-Asparaginase",
+          "dose": "25,000 IU/m² IM",
+          "day": "8,15"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "Cyclophosphamide",
+          "dose": "1,000 mg/m² IV over 30–60 minutes",
+          "day": "29"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "Mesna",
+          "dose": "250 mg/m² IV at hours 0,4,8 relative to cyclophosphamide",
+          "day": "29"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "Thioguanine",
+          "dose": "60 mg/m² PO at bedtime",
+          "day": "29–42"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "Cytarabine",
+          "dose": "75 mg/m² IV over 15–30 minutes or SC",
+          "day": "29–32,36–39"
+        },
+        {
+          "phase": "SR-Delayed Intensification · p28",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "1,29"
+        },
+        {
+          "phase": "SR-Maintenance · p29",
+          "drug": "Prednisolone",
+          "dose": "20 mg/m²/dose PO BID",
+          "day": "1–5,29–33,57–61"
+        },
+        {
+          "phase": "SR-Maintenance · p29",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "1,29,57"
+        },
+        {
+          "phase": "SR-Maintenance · p29",
+          "drug": "Mercaptopurine",
+          "dose": "50 mg/m²/dose PO at bedtime",
+          "day": "1–84"
+        },
+        {
+          "phase": "SR-Maintenance · p29",
+          "drug": "Methotrexate",
+          "dose": "20 mg/m²/dose PO weekly",
+          "day": "1 then weekly to day 78"
+        },
+        {
+          "phase": "SR-Maintenance · p29",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "day 1 every 3 months"
+        }
+      ],
+      "note": "Five phase-specific drug/day tables transcribed from uploaded ThaiPOG 2023 PDF. These are reference displays only, not automatic orders or calculator approvals; age-specific IT-MTX, HD-MTX rescue and protocol transitions must be independently validated.",
       "pdf_source_filename": "แนวทางการรักษาโรคมะเร็งในเด็ก พ.ศ. 2566 Protocal_Final.pdf"
     },
     {
@@ -62,7 +213,7 @@
       "calculator_enabled": false,
       "structured_regimen_id": null,
       "source_verified": "OFFICIAL_PROTOCOL_TITLE_RISK_AND_PAGE",
-      "dose_schedule_verification": "PDF_SCHEDULE_NOT_STRUCTURED_YET",
+      "dose_schedule_verification": "PHASE_TABLES_TRANSCRIBED_FROM_PDF_PAGES; COMPLEX_SUPPORTIVE_CARE_AND_AGE_GATES_UNVALIDATED",
       "protocol_phases": [
         "HR-Induction pp.32",
         "HR-Augmented-Consolidation pp.33",
@@ -70,8 +221,195 @@
         "HR-Augmented-DI pp.35",
         "HR-Augmented-Maintenance pp.36-37"
       ],
-      "verified_source_examples": [],
-      "note": "Guideline reference published; phase-specific pediatric doses must be confirmed before enabling any calculation.",
+      "verified_source_examples": [
+        {
+          "phase": "HR/VHR-Induction · p32",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "1,8,15,22"
+        },
+        {
+          "phase": "HR/VHR-Induction · p32",
+          "drug": "Prednisolone",
+          "dose": "30 mg/m²/dose PO BID",
+          "day": "1–28"
+        },
+        {
+          "phase": "HR/VHR-Induction · p32",
+          "drug": "Doxorubicin",
+          "dose": "25 mg/m² IV over 15 minutes",
+          "day": "1,8,15,22"
+        },
+        {
+          "phase": "HR/VHR-Induction · p32",
+          "drug": "L-Asparaginase",
+          "dose": "10,000 IU/m² IM",
+          "day": "4,6,8,10,12,14"
+        },
+        {
+          "phase": "HR/VHR-Induction · p32",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "1,8,29; 15,22 CNS-3 or traumatic tap only"
+        },
+        {
+          "phase": "HR-Augmented Consolidation · p33",
+          "drug": "Cyclophosphamide",
+          "dose": "1,000 mg/m² IV over 30–60 minutes",
+          "day": "1,29"
+        },
+        {
+          "phase": "HR-Augmented Consolidation · p33",
+          "drug": "Mesna",
+          "dose": "250 mg/m² IV at hours 0,4,8 of cyclophosphamide",
+          "day": "1,29"
+        },
+        {
+          "phase": "HR-Augmented Consolidation · p33",
+          "drug": "Cytarabine",
+          "dose": "75 mg/m² IV or SC daily",
+          "day": "1–4,8–11,29–32,36–39"
+        },
+        {
+          "phase": "HR-Augmented Consolidation · p33",
+          "drug": "Mercaptopurine",
+          "dose": "60 mg/m² PO nightly",
+          "day": "1–14 and 29–42"
+        },
+        {
+          "phase": "HR-Augmented Consolidation · p33",
+          "drug": "L-Asparaginase",
+          "dose": "25,000 IU/m² IM",
+          "day": "15,22,43,50"
+        },
+        {
+          "phase": "HR-Augmented Consolidation · p33",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "15,22,43,50"
+        },
+        {
+          "phase": "HR-Augmented Consolidation · p33",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "1,8,15,22"
+        },
+        {
+          "phase": "HR-Augmented Interim Maintenance I · p34",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "1,15,29,43"
+        },
+        {
+          "phase": "HR-Augmented Interim Maintenance I · p34",
+          "drug": "High-dose methotrexate",
+          "dose": "5 g/m² IV over 24 hours",
+          "day": "1,15,29,43"
+        },
+        {
+          "phase": "HR-Augmented Interim Maintenance I · p34",
+          "drug": "Leucovorin rescue",
+          "dose": "15 mg/m²/dose PO/IV at hours 42,48,54,60,66,72 after each HD-MTX",
+          "day": "After each HD-MTX"
+        },
+        {
+          "phase": "HR-Augmented Interim Maintenance I · p34",
+          "drug": "Mercaptopurine",
+          "dose": "25 mg/m² PO at bedtime",
+          "day": "1–56"
+        },
+        {
+          "phase": "HR-Augmented Interim Maintenance I · p34",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "1,29"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "Dexamethasone",
+          "dose": "5 mg/m²/dose PO BID",
+          "day": "1–7,15–21"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV push; max 2 mg",
+          "day": "1,8,15,43,50"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "Doxorubicin",
+          "dose": "25 mg/m² IV over 15 minutes",
+          "day": "1,8,15"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "L-Asparaginase",
+          "dose": "25,000 IU/m² IM",
+          "day": "8,15,43,50"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "Cyclophosphamide",
+          "dose": "1,000 mg/m² IV over 30–60 minutes",
+          "day": "29"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "Mesna",
+          "dose": "250 mg/m² IV at hours 0,4,8 of cyclophosphamide",
+          "day": "29"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "Thioguanine",
+          "dose": "60 mg/m² PO nightly",
+          "day": "29–42"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "Cytarabine",
+          "dose": "75 mg/m² IV or SC daily",
+          "day": "29–32,36–39"
+        },
+        {
+          "phase": "HR-Augmented Delayed Intensification · p35",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "1,29,36"
+        },
+        {
+          "phase": "HR-Augmented Maintenance · p36",
+          "drug": "Prednisolone",
+          "dose": "20 mg/m²/dose PO BID",
+          "day": "1–5,29–33,57–61"
+        },
+        {
+          "phase": "HR-Augmented Maintenance · p36",
+          "drug": "Vincristine",
+          "dose": "1.5 mg/m² IV; max 2 mg",
+          "day": "1,29,57"
+        },
+        {
+          "phase": "HR-Augmented Maintenance · p36",
+          "drug": "Mercaptopurine",
+          "dose": "50 mg/m² PO daily at bedtime",
+          "day": "1–84"
+        },
+        {
+          "phase": "HR-Augmented Maintenance · p36",
+          "drug": "Methotrexate",
+          "dose": "20 mg/m² PO weekly",
+          "day": "1 then weekly through day 78"
+        },
+        {
+          "phase": "HR-Augmented Maintenance · p36",
+          "drug": "Intrathecal methotrexate",
+          "dose": "Age-based intrathecal MTX: age 1–<2 y 8 mg, 2–<3 y 10 mg, 3–<9 y 12 mg, age >=9 and <30 kg 12 mg, otherwise age >=9 y 15 mg",
+          "day": "day 1; day 29 during cycles 1–4 only"
+        }
+      ],
+      "note": "Five phase-specific drug/day tables transcribed from uploaded ThaiPOG 2023 PDF. These are reference displays only, not automatic orders or calculator approvals; age-specific IT-MTX, HD-MTX rescue and protocol transitions must be independently validated.",
       "pdf_source_filename": "แนวทางการรักษาโรคมะเร็งในเด็ก พ.ศ. 2566 Protocal_Final.pdf"
     },
     {
@@ -1841,5 +2179,6 @@
       "note": "Radiotherapy is integral; no standalone 5-cycle generic chemotherapy schedule.",
       "pdf_source_filename": "แนวทางการรักษาโรคมะเร็งในเด็ก พ.ศ. 2566 Protocal_Final.pdf"
     }
-  ]
+  ],
+  "protocols_with_transcribed_medication_examples": 8
 }
