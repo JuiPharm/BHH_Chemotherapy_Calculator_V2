@@ -454,15 +454,35 @@ async function syncCentralRegimens() {
     const data=await res.json();
     if (!Array.isArray(data.regimens)) throw Error('Invalid central registry');
     centralOnline=true;
-    const signature=JSON.stringify(data.regimens.map(x=>[x.id,x.revision]));
+    const signature=JSON.stringify(data.regimens.map(x=>[x.id,x.revision,x.status]));
     if (centralVersion!==signature) {
       centralVersion=signature;
+      const prior=selectedItem;
+      const key=prior?.key||null;
+      const previousClinical=prior?.structured
+        ? [prior.structured.id,prior.structured.revision??0,prior.structured.version,prior.structured.status].join('|')
+        : '';
+      // Rebuild from the immutable baseline on *every registry change*, so an
+      // archived/downgraded regimen cannot survive in a different workstation.
+      rebuildCatalog();
       data.regimens.forEach(applyCentralRegimen);
+      selectedItem=key?catalog.find(x=>x.key===key)||null:null;
+      const currentClinical=selectedItem?.structured
+        ? [selectedItem.structured.id,selectedItem.structured.revision??0,selectedItem.structured.version,selectedItem.structured.status].join('|')
+        : '';
+      if (previousClinical!==currentClinical || (prior && !selectedItem)) {
+        invalidateCalculation();
+        if (!selectedItem) {
+          const control=document.getElementById('regimen-select');
+          if (control) control.value='';
+        }
+      }
       if (document.getElementById('regimen-select')) {
-        const key=selectedItem?.key||null;
-        populateRegimenOptionsForType($('#cancer-type-select').value||'', key);
+        populateRegimenOptionsForType($('#cancer-type-select').value||'', selectedItem?.key||null);
         renderLibrary();
       }
+      const count=document.getElementById('manager-approved-count');
+      if(count) count.textContent=catalog.filter(x=>x.structured).length;
     }
     if (badge) badge.textContent='● Central sync connected';
   } catch {
@@ -470,6 +490,7 @@ async function syncCentralRegimens() {
     if (badge) badge.textContent='● Central sync unavailable — publishing disabled';
   }
 }
+
 window.BHH_APPLY_PUBLISHED = function(regimen) {
   applyCentralRegimen(regimen);
   if (selectedItem && selectedItem.structured?.id===regimen.id) lastCalculation=null;
@@ -478,6 +499,7 @@ window.BHH_APPLY_PUBLISHED = function(regimen) {
   renderLibrary();
 };
 window.BHH_CENTRAL_READY = ()=>centralOnline;
+window.BHH_REFRESH_REGIMENS = syncCentralRegimens;
 
 function updateAdminUi() {
   const adminTabs = document.querySelectorAll('.admin-tab');
@@ -511,47 +533,88 @@ function bindAdminPin() {
   const err = $('#pin-auth-error');
   const closeBtn = $('#pin-auth-close');
   const cancelBtn = $('#pin-auth-cancel');
+  const submitBtn = $('#pin-auth-submit');
+  const visibilityBtn = $('#pin-auth-visibility');
+  let busy = false;
 
-  if (btn) {
-    btn.addEventListener('click', () => {
-      if (isAdminUnlocked) {
-        isAdminUnlocked = false;
-        sessionStorage.removeItem('bhh_pharmacist_pin_unlocked');
-        sessionStorage.removeItem('bhh_pharmacist_pin_token');
-        localStorage.removeItem('bhh_approve_pin');
-        updateAdminUi();
-      } else {
-        if (input) input.value = '';
-        if (err) { err.classList.add('hidden'); err.textContent = ''; }
-        if (dialog) dialog.showModal();
-        if (input) input.focus();
-      }
-    });
-  }
+  const clearError = () => { err.textContent = ''; err.classList.add('hidden'); };
+  const reset = () => {
+    input.value = '';
+    input.type = 'password';
+    visibilityBtn.textContent = 'แสดง';
+    visibilityBtn.setAttribute('aria-label', 'แสดงรหัส PIN');
+    visibilityBtn.setAttribute('aria-pressed', 'false');
+    clearError();
+  };
+  const closeDialog = () => {
+    if (busy) return;
+    if (dialog.open) dialog.close();
+    reset();
+  };
+  const setBusy = value => {
+    busy = value;
+    submitBtn.disabled = value;
+    cancelBtn.disabled = value;
+    closeBtn.disabled = value;
+    submitBtn.textContent = value ? 'กำลังตรวจสอบ PIN…' : 'ยืนยัน PIN →';
+  };
 
-  const closeDialog = () => { if (dialog?.open) dialog.close(); };
+  btn?.addEventListener('click', () => {
+    if (isAdminUnlocked) {
+      isAdminUnlocked = false;
+      updateAdminUi();
+      return;
+    }
+    reset();
+    if (!dialog.open) dialog.showModal();
+    input.focus();
+  });
   closeBtn?.addEventListener('click', closeDialog);
   cancelBtn?.addEventListener('click', closeDialog);
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const pin=input.value.trim();
-    err.classList.add('hidden'); err.textContent='';
-    if (!pin || pin==='1234') {
-      err.textContent='กรุณาใช้ Pharmacist PIN ที่กำหนดไว้ใน Cloudflare';err.classList.remove('hidden');return;
-    }
-    try {
-      const res=await fetch('/api/verify-pin',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pin})});
-      const data=await res.json().catch(()=>({}));
-      if (!res.ok || data.valid!==true) throw Error(data.message||'ไม่สามารถยืนยันสิทธิ์ได้');
-      isAdminUnlocked=true;
-      // No PIN, token, or unlock flag is persisted in browser storage.
-      updateAdminUi(); closeDialog(); input.value='';
-    } catch(e) {
-      err.textContent=e.message||'การยืนยัน PIN ผ่าน Server ไม่สำเร็จ';err.classList.remove('hidden');input.select();
-    }
+  dialog?.addEventListener('cancel', event => { if (busy) event.preventDefault(); else reset(); });
+  visibilityBtn?.addEventListener('click', () => {
+    const visible = input.type === 'password';
+    input.type = visible ? 'text' : 'password';
+    visibilityBtn.textContent = visible ? 'ซ่อน' : 'แสดง';
+    visibilityBtn.setAttribute('aria-label', visible ? 'ซ่อนรหัส PIN' : 'แสดงรหัส PIN');
+    visibilityBtn.setAttribute('aria-pressed', String(visible));
+    input.focus();
   });
 
+  form?.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (busy) return;
+    clearError();
+    const pin = input.value.trim();
+    if (!pin || pin === '1234') {
+      err.textContent = 'กรุณาใช้ Pharmacist PIN ที่ตั้งค่าไว้บน Cloudflare';
+      err.classList.remove('hidden');
+      input.focus();
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await fetch('/api/verify-pin', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.valid !== true) throw Error(data.message || 'ไม่สามารถยืนยันสิทธิ์ได้');
+      isAdminUnlocked = true;
+      updateAdminUi();
+      // The secret stays only in this request; no local/session storage fallback.
+      input.value = '';
+      dialog.close();
+      reset();
+    } catch (error) {
+      err.textContent = error.message || 'ไม่สามารถติดต่อ Cloudflare Server ได้';
+      err.classList.remove('hidden');
+      input.focus();
+      input.select();
+    } finally {
+      setBusy(false);
+    }
+  });
   updateAdminUi();
 }
 
