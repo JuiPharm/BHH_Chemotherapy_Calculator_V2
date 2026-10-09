@@ -106,7 +106,7 @@
   }
   function cloneAsDraft() {
     collect();model.id=(model.id||'BHH-REGIMEN')+'-DRAFT-'+Date.now().toString().slice(-6);
-    model.revision=0;model.status='draft';model.localApproval=false;
+    model.revision=0;model.status='draft';model.localApproval=false;model.archived=false;model.archivedAt=null;
     render();message('Clone เป็น Draft ใหม่แล้ว · กรุณาทบทวนก่อนบันทึก');
   }
   function open(item,fields){
@@ -119,6 +119,8 @@
     if(fields?.corrected_indication)model.indication=fields.corrected_indication;
     if(fields?.source||fields?.reference_url)model.references=[{label:fields.reference_url||fields.source,source:fields.source||'',url:fields.reference_url||''}];
     render();
+    $('builder-attest').checked=false;
+    $('builder-pin').value='';
     document.querySelector('[data-tab="builder"]')?.click();
     message('Structured Editor: กรุณายืนยันข้อมูลขนาดยาและ Schedule ก่อน Publish');
   }
@@ -134,6 +136,7 @@
       const data=await response.json().catch(()=>({}));
       if(!response.ok||!data.success)throw Error((data.issues||[]).map(x=>x.field+': '+x.reason).join(' • ')||data.message||'Cannot save');
       model=data.regimen;
+      $('builder-attest').checked=false;
       if(action==='publish')window.BHH_APPLY_PUBLISHED?.(model);
       message((action==='publish'?'Published':'Saved Draft')+' in Central D1 · revision '+model.revision,'success');
     }catch(e){message('Server rejected: '+e.message,'error');}
