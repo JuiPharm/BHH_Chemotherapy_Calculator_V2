@@ -12,7 +12,7 @@ assert(!/\\binit;\\s*$/.test(bundle), 'Runtime ends with init; instead of init()
 assert(bundle.includes("loadJson('./data/regimens.published.json?v=2.3.0')"), 'Runtime must load central published regimen data');
 assert(bundle.includes("loadJson('./data/legacy-regimens.v1.json?v=2.3.0')"), 'Runtime must load the central 136-regimen master');
 assert(bundle.includes("loadJson('./data/rounding-profiles.json?v=2.3.0')"), 'Runtime must load central rounding defaults');
-assert(index.includes('app.bundle.js?v=2.5.0'), 'Index is not using v2.5.0 runtime');
+assert(index.includes('app.bundle.js?v=2.7.0'), 'Index is not using v2.7.0 runtime');
 assert(index.includes('publish-manager.js?v=2.6.4'), 'Review/Publish UI script must load');
 assert(index.includes('publish-manager.css?v=2.6.3'), 'Review/Publish styling missing');
 assert(index.includes('https://api.github.com'), 'GitHub publication API not permitted by CSP');
