@@ -4,9 +4,13 @@ const file=p=>fs.readFileSync(new URL(p,import.meta.url),'utf8');
 const app=file('../app.bundle.js'),html=file('../index.html'),published=file('../publish-manager.js');
 assert(app.includes('init();'));
 assert(app.includes('loadJson'));
-assert(html.includes('app.bundle.js?v=2.7.1'));
+assert(html.includes('app.bundle.js?v=2.7.2'));
 assert(html.includes('publish-manager.js'));
 assert(html.includes('regimen-builder.js'));
+assert(html.includes('styles.css?v=2.7.2'));
+assert(app.includes('function placeSearchDropdown()'));
+assert(app.includes('const SEARCH_MAX_RESULTS=4'));
+
 assert(html.includes('renal-equations.js'));
 assert(html.includes('value="ckd_epi_2021_cr"'));
 assert(html.includes('id="renal-preview"'));
