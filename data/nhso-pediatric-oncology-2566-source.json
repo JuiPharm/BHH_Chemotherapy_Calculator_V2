@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0",
+  "source_id": "NHSO-THAIPOG-PEDIATRIC-ONCOLOGY-2566",
+  "title_th": "แนวทางการรักษาโรคมะเร็งในเด็ก พ.ศ. 2566",
+  "title_en": "National Protocol for the Treatment of Childhood Cancers 2023",
+  "publication_year_be": 2566,
+  "issuing_organizations": [
+    "National Health Security Office (NHSO)",
+    "Thai Pediatric Oncology Group (ThaiPOG)"
+  ],
+  "isbn": "978-616-490-096-7",
+  "official_flipbook_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
+  "user_requested_locator": "https://stream.nhso.go.th/ebook/flipbook/182/1/1#%E0%B9%81%E0%B8%99%E0%B8%A7%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%A3%E0%B8%B1%E0%B8%81%E0%B8%A9%E0%B8%B2%E0%B9%82%E0%B8%A3%E0%B8%84%E0%B8%A1%E0%B8%B0%E0%B9%80%E0%B8%94%E0%B9%87%E0%B8%81%20%E0%B8%9E.%E0%B8%A8.%202566%20%20Protocal_Final/37",
+  "ingestion_status": "REGISTERED_LINK_ONLY_PDF_NOT_EXTRACTABLE",
+  "clinical_approval_status": "NOT_APPROVED_PENDING_FULL_TEXT_DOSE_SCHEDULE_VERIFICATION",
+  "default_published": false,
+  "default_calculator_enabled": false,
+  "last_checked_date": "2026-10-09",
+  "source_integrity_note": "Official flipbook page confirmed; dose tables unavailable to machine reading. Do not infer numerical regimens from older 2016/2018 protocols or book title.",
+  "legacy_catalog_potential_matches": [
+    {
+      "catalog_id": "BHH-CATALOG-046",
+      "name": "R-CHOP regimen",
+      "existing_indication": "Pediatric B-Cell Lymphoma (Burkitt)",
+      "reconciliation": "HIGH_PRIORITY_CRITICAL_REVIEW",
+      "reason": "Legacy description uses R-CHOP for pediatric Burkitt; this must not be approved as a guideline match without chapter-specific protocol, age/risk and treatment phases."
+    },
+    {
+      "catalog_id": "BHH-CATALOG-048",
+      "name": "R-CODOX-M/IVAC regimen",
+      "existing_indication": "Burkitt (High-Risk)",
+      "reconciliation": "CHECK_PEDIATRIC_VS_ADULT_VARIANT",
+      "reason": "A Burkitt protocol name alone does not establish matching age group, dose, phases or intrathecal schedule."
+    }
+  ],
+  "extracted_protocols": [],
+  "approved_protocols": [],
+  "requirements_for_pediatric_regimens": [
+    "diagnosis_and_risk_group",
+    "protocol_name_and_variant",
+    "age_and_bsa_weight_dosing",
+    "drug_route_dose_unit_day",
+    "cycle_and_phase_timing",
+    "intrathecal_protocol",
+    "supportive_care",
+    "organ_adjustment",
+    "maximum_dose",
+    "source_page",
+    "pharmacist_clinical_verification"
+  ],
+  "change_scope": "Source registration only. No existing doses, approval statuses, published flags or dose engines changed."
+}
