@@ -575,7 +575,7 @@ function populateCancerTypes() {
   }
 }
 // Compact viewport-anchored instant search. Result list never extends the page height.
-const SEARCH_MAX_RESULTS=6;
+const SEARCH_MAX_RESULTS=4;
 let searchActiveIndex=-1;
 function closeSearchDropdown() {
   const dropdown=$('#regimen-search-dropdown');
@@ -600,7 +600,7 @@ function placeSearchDropdown(){
   const below=vh-rect.bottom-margin,above=rect.top-margin;
   const flip=below<160&&above>below;
   const space=Math.max(100,flip?above:below);
-  const maxHeight=Math.min(284,Math.max(100,space-4));
+  const maxHeight=Math.min(320,Math.max(100,space-4));
   const width=Math.max(220,Math.min(rect.width,vw-margin*2));
   const left=Math.max(margin,Math.min(rect.left,vw-width-margin));
   Object.assign(dropdown.style,{
