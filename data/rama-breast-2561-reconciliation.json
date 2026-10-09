@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0.0",
+  "source_id": "RAMA-NHSO-CA-BREAST-2561",
+  "source_title": "แนวทางการรักษาโรคมะเร็งเต้านมเพื่อประกอบการเบิกจ่ายค่าชดเชยการบริการทางการแพทย์ในระบบหลักประกันสุขภาพแห่งชาติ",
+  "source_year_be": 2561,
+  "url": "https://www.rama.mahidol.ac.th/cancer_center/sites/default/files/public/pdf/FromOCPA/Protocol_cancer/Onco%20CA%20Breast%202561.pdf",
+  "scope": "HISTORICAL_NHSO_2561_CHEMOTHERAPY_PROTOCOL_NOT_CURRENT_GUIDELINE_VERIFICATION",
+  "clinical_note": "Publication from BE2561; does not establish modern first-line preference, present-day funding rights, or chemotherapy suitability. Regimen variants presented for historical source comparison and local oncology review.",
+  "existing_regimens_unchanged": [
+    "BHH-CATALOG-057 TCH pilot",
+    "BHH-CATALOG-059 AC-T q21",
+    "BHH-CATALOG-060 CMF",
+    "BHH-CATALOG-068 TC"
+  ],
+  "corrected_existing": [
+    {
+      "catalog_id": "BHH-CATALOG-067",
+      "regimen": "FAC/CAF",
+      "field": "5-Fluorouracil schedule",
+      "old_value": "500 mg/m² IV days 1 and 8 q21d",
+      "new_value": "500 mg/m² IV day 1 q21d ×6",
+      "source_section": "Protocol 1 adjuvant (also present in Protocol 2 metastatic)"
+    }
+  ],
+  "new_regimens": [
+    {
+      "catalog_id": "BHH-CATALOG-138",
+      "name": "AC adjuvant",
+      "source_section": "Protocol 1",
+      "cycles": 4,
+      "cycle_days": 21
+    },
+    {
+      "catalog_id": "BHH-CATALOG-139",
+      "name": "AC metastatic",
+      "source_section": "Protocol 2",
+      "cycles": 6,
+      "cycle_days": 21
+    },
+    {
+      "catalog_id": "BHH-CATALOG-140",
+      "name": "AC followed by weekly paclitaxel",
+      "source_section": "Protocol 1",
+      "phases": [
+        {
+          "id": "AC",
+          "cycles": 4,
+          "cycle_days": 21
+        },
+        {
+          "id": "paclitaxel_weekly",
+          "cycles": 12,
+          "cycle_days": 7
+        }
+      ]
+    },
+    {
+      "catalog_id": "BHH-CATALOG-141",
+      "name": "Adjuvant trastuzumab monotherapy",
+      "source_section": "Protocol 1",
+      "administrations_total": 18,
+      "cycle_days": 21
+    },
+    {
+      "catalog_id": "BHH-CATALOG-142",
+      "name": "Paclitaxel monotherapy metastatic",
+      "source_section": "Protocol 2",
+      "cycles": 6,
+      "cycle_days": 21
+    },
+    {
+      "catalog_id": "BHH-CATALOG-143",
+      "name": "Docetaxel monotherapy metastatic",
+      "source_section": "Protocol 2",
+      "cycles": 6,
+      "cycle_days": 21,
+      "dose_selection_required": true
+    },
+    {
+      "catalog_id": "BHH-CATALOG-144",
+      "name": "Capecitabine monotherapy metastatic",
+      "source_section": "Protocol 2",
+      "cycles": 8,
+      "cycle_days": 21,
+      "dose_selection_required": true
+    }
+  ],
+  "source_identified_unmodified": [
+    {
+      "catalog_id": "BHH-CATALOG-060",
+      "name": "CMF q28 days ×6",
+      "status": "Already included; matches source doses and days 1–14 cyclophosphamide, 1/8 MTX/5FU"
+    },
+    {
+      "catalog_id": "BHH-CATALOG-059",
+      "name": "AC→Paclitaxel q21 days ×4+4",
+      "status": "Already in catalog; weekly paclitaxel variant added separately"
+    },
+    {
+      "catalog_id": "BHH-CATALOG-068",
+      "name": "TC 75 mg/m² docetaxel + 600 mg/m² cyclophosphamide",
+      "status": "Already in catalog; q21 adjuvant source 4 cycles; existing 4–6 variant retained"
+    },
+    {
+      "catalog_id": "BHH-CATALOG-057",
+      "name": "TCH pilot",
+      "status": "Retained without changes; not a direct extraction from Rama 2561 adjuvant trastuzumab single-agent schedule"
+    }
+  ],
+  "out_of_scope": "Endocrine therapy, surgery, radiotherapy, non-chemotherapy-only sections not imported as chemotherapy regimens.",
+  "automatic_dose_calculation_enabled_for_new_entries": false,
+  "baseline_adult_entries": 136,
+  "total_after_update": 144,
+  "changed_date": "2026-10-09"
+}
