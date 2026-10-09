@@ -15,7 +15,10 @@ assert(bundle.includes("loadJson('./data/rounding-profiles.json?v=2.3.0')"), 'Ru
 assert(index.includes('app.bundle.js?v=2.7.2'), 'Index is not using v2.7.2 runtime');
 assert(index.includes('data-tab="pediatric"'), 'Pediatric calculator must have a visible main navigation tab');
 assert(index.includes('id="tab-pediatric"'), 'Pediatric calculator screen must exist');
-assert(index.includes('pediatric-calc-ui.mjs?v=2.8.0'), 'Pediatric calculator UI module must be loaded');
+assert(index.includes('pediatric-calc-ui.mjs?v=2.8.1'), 'Pediatric calculator UI module must be loaded');
+assert(index.includes('ThaiPOG-ALL-1302'), 'UI must expose distinct high-risk pediatric regimen');
+const hrProtocol=JSON.parse(fs.readFileSync(new URL('../data/pediatric-all-1302.structured.json',import.meta.url),'utf8'));
+assert(hrProtocol.phases.length===5 && hrProtocol.risk_group==='High Risk', 'High risk data must have five independently source-cited phases');
 assert(index.includes('pediatric-calc.css?v=2.8.0'), 'Pediatric calculator CSS must be loaded');
 const pediatricStructured=JSON.parse(fs.readFileSync(new URL('../data/pediatric-all-1301.structured.json',import.meta.url),'utf8'));
 assert(pediatricStructured.id==='ThaiPOG-ALL-1301' && pediatricStructured.phases.length===5, 'Pediatric structured ALL protocol must contain five complete phases');
