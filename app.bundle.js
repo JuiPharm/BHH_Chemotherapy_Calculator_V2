@@ -2,6 +2,7 @@ let BHH_ACTIVE = [];
 let BHH_MASTER = [];
 let BHH_ROUNDING_DEFAULTS = [];
 let BHH_GUIDELINE_STATUS = [];
+let BHH_PEDIATRIC = [];
 let catalog = [];
 let activeById = {};
 let roundingProfiles = {};
@@ -18,7 +19,7 @@ let lastCalculation = null;
 let selectedItem = null;
 
 const TYPE_ORDER = [
-  'Hematologic Malignancy','Lung / Thoracic','Breast','Colorectal',
+  'Pediatric Oncology','Hematologic Malignancy','Lung / Thoracic','Breast','Colorectal',
   'Upper GI / Pancreatic','Gynecologic','Hepatobiliary','Genitourinary',
   'Head & Neck','Sarcoma','Skin / Melanoma'
 ];
@@ -39,6 +40,7 @@ function cancerTypeFromText(text='') {
   return 'Other';
 }
 const TYPE_LABELS={
+'Pediatric Oncology':'Pediatric Oncology / สูตรมะเร็งเด็ก (ThaiPOG 2566)',
 'Hematologic Malignancy':'Hematologic / มะเร็งระบบเลือด',
 'Lung / Thoracic':'Lung / Thoracic / มะเร็งปอดและทรวงอก',
 'Breast':'Breast / มะเร็งเต้านม','Colorectal':'Colorectal / มะเร็งลำไส้ใหญ่',
@@ -74,6 +76,7 @@ function getGuidelineRecord(catalogId) {
   return BHH_GUIDELINE_STATUS.find(r=>r.catalog_id===catalogId)||null;
 }
 function displayStatus(item) {
+  if (item.isPediatric) return 'APPROVED · PUBLISHED · PEDIATRIC REFERENCE';
   if (item.structuredLink) return 'APPROVED · PILOT';
   if (item.status==='approved_published') return 'APPROVED · PUBLISHED';
   if (item.status==='blocked') return 'BLOCKED · REVIEW';
@@ -163,7 +166,7 @@ function parseMasterDrug(drug, index) {
 }
 
 function buildStructuredFromMaster(m) {
-  if (!m) return null;
+  if (!m || ['BHH-CATALOG-046','BHH-CATALOG-048'].includes(m.catalog_id) || getGuidelineRecord(m.catalog_id)?.status==='blocked') return null;
   const orders = (m.drugs || []).map(parseMasterDrug);
   return {
     id: m.catalog_id || m.regimen_id,
@@ -220,6 +223,27 @@ function rebuildCatalog() {
       status:isPilot ? 'approved' : (a?.status||'approved_published')
     };
   });
+  for(const p of BHH_PEDIATRIC) {
+    // A source-approved pediatric protocol is NOT a calculator-ready medication order set.
+    const m={
+      regimen_id:p.catalog_id,catalog_id:p.catalog_id,name:p.name,indication:p.indication,
+      cycle_text:'ThaiPOG 2566 · '+p.reference_detail+' · '+p.cancer_group,
+      cancer_type:'Pediatric Oncology',cancer_type_label:TYPE_LABELS['Pediatric Oncology'],
+      drugs:(p.verified_source_examples||[]).map(d=>({
+        'ชื่อยา':d.drug,'ขนาดยา':d.dose,'ความถี่ในการให้':(d.phase||'')+' · Day '+d.day,maximum_dose:null
+      }))
+    };
+    catalog.push({
+      key:'pediatric:'+p.catalog_id,master:m,structured:null,structuredLink:null,isPediatric:true,
+      pediatricRecord:p,cancerType:'Pediatric Oncology',cancerTypeLabel:TYPE_LABELS['Pediatric Oncology'],
+      name:p.name,indication:p.indication,status:p.status,
+      guidelineReference:{
+        catalog_id:p.catalog_id,protocol:p.protocol_id,source:p.source,
+        reference_url:p.reference_url,
+        note:p.reference_detail+' · '+p.indication+' · '+p.note
+      }
+    });
+  }
   for (const r of BHH_ACTIVE) if (!linked.has(r.id)) {
     const ct=activeCancerType(r);
     catalog.push({key:`active:${r.id}`,master:null,structured:r,structuredLink:r.id,cancerType:ct,cancerTypeLabel:typeLabel(ct),name:r.name,indication:r.indication,status:'approved'});
@@ -360,14 +384,17 @@ function calculate(context) {
 
 async function init() {
   try {
-    const [active,legacyRoot,rounding,guidelineStatus]=await Promise.all([
+    const [active,legacyRoot,rounding,guidelineStatus,pediatricData]=await Promise.all([
       loadJson('./data/regimens.published.json?v=2.3.0'),
       loadJson('./data/legacy-regimens.v1.json?v=2.3.0'),
       loadJson('./data/rounding-profiles.json?v=2.3.0'),
-      loadJson('./data/guideline-status.v2.4.json?v=2.4.0')
+      loadJson('./data/guideline-status.v2.4.json?v=2.4.0'),
+      loadJson('./data/pediatric-regimens.thaipog-2566.json?v=2.7.0')
     ]);
     BHH_ACTIVE=active;
     BHH_GUIDELINE_STATUS=guidelineStatus;
+    if(!Array.isArray(pediatricData?.regimens)||pediatricData.regimens.length!==pediatricData.record_count) throw Error('Invalid pediatric regimen database');
+    BHH_PEDIATRIC=pediatricData.regimens;
     BHH_MASTER=normalizeMaster(Array.isArray(legacyRoot?.['สูตรยาเคมีบำบัด'])?legacyRoot['สูตรยาเคมีบำบัด']:[]);
     BHH_ROUNDING_DEFAULTS=rounding;
     roundingProfiles=loadRounding();
@@ -804,7 +831,7 @@ function onRegimenSelected() {
   cycle.removeAttribute('max');
   $('#dose-selections').innerHTML = '';
 
-  if (!selectedItem.structured && selectedItem.master) {
+  if (!selectedItem.structured && selectedItem.master && !selectedItem.isPediatric) {
     selectedItem.structured = buildStructuredFromMaster(selectedItem.master);
   }
   if (selectedItem.structured?.cycleCount) {
@@ -812,7 +839,8 @@ function onRegimenSelected() {
   }
 
   renderSelectedContext();
-  $('#calculate-btn').disabled = false;
+  $('#calculate-btn').disabled = !selectedItem.structured || selectedItem.isPediatric;
+  if (selectedItem.isPediatric) $('#cycle-input').disabled=true;
 }
 
 function originalDrugRows(item) {
@@ -846,6 +874,15 @@ function renderSelectedContext() {
 
   const r = selectedItem.structured;
   const tableHtml = originalDrugRows(selectedItem);
+  if(selectedItem.isPediatric) {
+    const x=selectedItem.pediatricRecord;
+    const phases=(x.protocol_phases||[]).map(p=>`<li>${esc(p)}</li>`).join('');
+    box.innerHTML=`<div class="context-head"><strong>${esc(x.name)}</strong><span class="badge badge-ok">PEDIATRIC · REFERENCE PUBLISHED</span></div>
+      <p>${esc(x.indication)}</p><p><b>Protocol:</b> ${esc(x.protocol_id)} · ${esc(x.reference_detail)}</p>
+      <div class="alert alert-warning">เผยแพร่ข้อมูลอ้างอิงจาก ThaiPOG/NHSO 2566 แล้ว แต่ไม่ได้เปิดคำนวณยาผู้ป่วยอัตโนมัติ เนื่องจากต้องยืนยัน Treatment Phase, Risk Group, Age-based dose และการดูแลร่วม</div>
+      ${phases?`<b>Treatment phases:</b><ul>${phases}</ul>`:''}${referenceDetails(selectedItem)}${tableHtml}`;
+    return;
+  }
 
   if (r) {
     box.innerHTML = `<div class="context-head">
@@ -961,7 +998,7 @@ function renderLibrary() {
     arr.map(x=>`<article class="regimen-card"><div><span class="badge ${statusBadge(x)}">${displayStatus(x)}</span></div>
       <h4>${esc(x.name)}</h4><p>${esc(x.indication)}</p><div class="micro">${esc(x.master?.cycle_text||`${x.structured?.cycleIntervalDays||''} days/cycle`)}</div>${referenceDetails(x)}
       ${x.master?.drugs?.length?`<details><summary>Drug details</summary><div class="drug-list">${x.master.drugs.map(d=>`<div class="drug-row"><strong>${esc(d['ชื่อยา'])}</strong><span>${esc(d['ขนาดยา'])}</span></div>`).join('')}</div></details>`:''}
-      <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button>${x.master?`<button type="button" class="secondary" data-review-regimen="${esc(x.key)}">Review / Publish</button>`:''}</div></article>`).join('')
+      <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button>${x.master&&!x.isPediatric?`<button type="button" class="secondary" data-review-regimen="${esc(x.key)}">Review / Publish</button>`:x.isPediatric?`<a href="${esc(x.guidelineReference.reference_url)}" target="_blank" rel="noopener noreferrer">NHSO Source PDF · ${esc(x.pediatricRecord.reference_detail)}</a>`:''}</div></article>`).join('')
   }</div></section>`).join('');
   document.querySelectorAll('[data-use-regimen]').forEach(b=>b.addEventListener('click',()=>useFromLibrary(b.dataset.useRegimen)));
   document.querySelectorAll('[data-review-regimen]').forEach(b=>b.addEventListener('click',()=>{
