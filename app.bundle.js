@@ -223,7 +223,11 @@ function rebuildCatalog() {
       status:isPilot ? 'approved' : (a?.status||'approved_published')
     };
   });
-  for(const p of BHH_PEDIATRIC) {
+  // Pediatric reference-only records are intentionally withheld from the live regimen catalog.
+  // The uploaded ThaiPOG 2023 PDF supports phases, risks and age-based dosing, but
+  // a tested pediatric calculation engine is not yet implemented. Do not expose
+  // source-only records as actionable regimens.
+  for(const p of []) {
     // A source-approved pediatric protocol is NOT a calculator-ready medication order set.
     const m={
       regimen_id:p.catalog_id,catalog_id:p.catalog_id,name:p.name,indication:p.indication,
@@ -384,17 +388,15 @@ function calculate(context) {
 
 async function init() {
   try {
-    const [active,legacyRoot,rounding,guidelineStatus,pediatricData]=await Promise.all([
+    const [active,legacyRoot,rounding,guidelineStatus]=await Promise.all([
       loadJson('./data/regimens.published.json?v=2.3.0'),
       loadJson('./data/legacy-regimens.v1.json?v=2.3.0'),
       loadJson('./data/rounding-profiles.json?v=2.3.0'),
-      loadJson('./data/guideline-status.v2.4.json?v=2.4.0'),
-      loadJson('./data/pediatric-regimens.thaipog-2566.json?v=2.7.0')
+      loadJson('./data/guideline-status.v2.4.json?v=2.4.0')
     ]);
     BHH_ACTIVE=active;
     BHH_GUIDELINE_STATUS=guidelineStatus;
-    if(!Array.isArray(pediatricData?.regimens)||pediatricData.regimens.length!==pediatricData.record_count) throw Error('Invalid pediatric regimen database');
-    BHH_PEDIATRIC=pediatricData.regimens;
+    BHH_PEDIATRIC=[]; // Reference-only pediatric catalog not displayed until validated calculator release.
     BHH_MASTER=normalizeMaster(Array.isArray(legacyRoot?.['สูตรยาเคมีบำบัด'])?legacyRoot['สูตรยาเคมีบำบัด']:[]);
     BHH_ROUNDING_DEFAULTS=rounding;
     roundingProfiles=loadRounding();
