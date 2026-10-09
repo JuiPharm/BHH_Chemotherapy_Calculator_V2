@@ -29,6 +29,7 @@ jobs:
           node tests/production-smoke.mjs
           node tests/ckd-epi-2021.mjs
           node tests/production-safety.mjs
+          node tests/regimen-lifecycle.mjs
           node tests/rounding-security.mjs
           node tests/runtime-startup-static.mjs
       - name: Real browser workflow (headless Chrome)
