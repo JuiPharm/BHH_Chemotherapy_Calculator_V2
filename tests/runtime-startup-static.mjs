@@ -43,8 +43,9 @@ for(const id of ['BHH-CATALOG-046','BHH-CATALOG-048']){
 }
 
 const nhso=JSON.parse(fs.readFileSync(new URL('../data/nhso-pediatric-oncology-2566-source.json', import.meta.url), 'utf8'));
-assert(nhso.ingestion_status==='REGISTERED_LINK_ONLY_PDF_NOT_EXTRACTABLE', 'NHSO source ingestion provenance must stay explicit');
-assert(nhso.approved_protocols.length===0, 'Do not auto-approve pediatric dosing without the complete primary source');
+assert(nhso.ingestion_status==='PRIMARY_PDF_PROVIDED_PROTOCOL_INDEX_EXTRACTED', 'PDF source provenance must be updated after receiving document');
+assert(nhso.source_pdf_pages===412, 'Original guideline pagination must be traceable');
+assert(nhso.default_calculator_enabled===false, 'NHSO source registration must not enable pediatric calculations');
 assert(publisher.includes('SUGGESTED_PROTOCOLS'), 'Official protocol comparison suggestions must be available');
 assert(publisher.includes('BHH-CATALOG-039'), 'R-CVP review should surface eviQ 168 for comparison');
 assert(publisher.indexOf("'<label>ลิงก์ Guideline") < publisher.indexOf("'<label>ข้อบ่งใช้"), 'Mobile review must show the Guideline link before lengthy dosing');
