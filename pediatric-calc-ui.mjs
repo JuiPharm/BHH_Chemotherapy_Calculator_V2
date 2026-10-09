@@ -1,4 +1,4 @@
-import {calculatePediatric} from './pediatric-calc-core.mjs?v=2.8.0';
+import {calculatePediatric} from './pediatric-calc-core.mjs?v=2.8.1';
 const $=id=>document.getElementById(id);
 const esc=x=>String(x??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=x=>Number(x).toLocaleString('en-US',{maximumFractionDigits:3});
