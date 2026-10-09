@@ -1,0 +1,749 @@
+{
+  "schema_version": "1.0.0",
+  "id": "ThaiPOG-ALL-1302",
+  "display_name": "Pediatric ALL — ThaiPOG-ALL-1302 (High Risk)",
+  "population": "pediatric",
+  "malignancy": "Precursor B-cell acute lymphoblastic leukemia",
+  "risk_group": "High Risk",
+  "guideline": "National Protocol for the Treatment of Childhood Cancers 2023 (ThaiPOG / NHSO)",
+  "pdf_pages": [
+    31,
+    32,
+    33,
+    34,
+    35,
+    36,
+    37
+  ],
+  "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
+  "source_version": "2566",
+  "calculation_scope": "NOMINAL_PROTOCOL_DOSE_WITH_PHASE_DAY_AGE_WEIGHT_GATES; CLINICAL_SIGNOFF_REQUIRED",
+  "clinical_approval": false,
+  "default_treatment_status": "VERIFY_BEFORE_ADMINISTRATION",
+  "eligibility": {
+    "mode": "clinician_high_risk_confirmed",
+    "precursor_b_or_t_cell_required": true,
+    "burkitt_excluded": true,
+    "needs_post_induction_restratification": true,
+    "source_notes": [
+      "Precursor B-cell (age 10–13, WBC≥50,000, testicular disease, steroid pretreatment or transferred SR after MRD) or T-cell ALL (p.31)",
+      "High risk may transition to very high risk after day 29 evaluation"
+    ]
+  },
+  "intrathecal_methotrexate": [
+    {
+      "min_age": 1,
+      "max_age_exclusive": 2,
+      "dose_mg": 8
+    },
+    {
+      "min_age": 2,
+      "max_age_exclusive": 3,
+      "dose_mg": 10
+    },
+    {
+      "min_age": 3,
+      "max_age_exclusive": 9,
+      "dose_mg": 12
+    },
+    {
+      "min_age": 9,
+      "max_weight_exclusive": 30,
+      "dose_mg": 12
+    },
+    {
+      "min_age": 9,
+      "dose_mg": 15
+    }
+  ],
+  "phases": [
+    {
+      "id": "induction",
+      "label": "Phase I — HR/VHR Induction",
+      "pdf_page": 32,
+      "max_day": 36,
+      "orders": [
+        {
+          "drug": "Vincristine",
+          "basis": "bsa",
+          "per": 1.5,
+          "unit": "mg",
+          "route": "IV push",
+          "frequency": "once",
+          "max": 2,
+          "infusion": "1 minute",
+          "notes": null,
+          "days": [
+            1,
+            8,
+            15,
+            22
+          ],
+          "pdf_page": 32
+        },
+        {
+          "drug": "Prednisolone",
+          "basis": "bsa",
+          "per": 30,
+          "unit": "mg",
+          "route": "PO",
+          "frequency": "BID",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": {
+            "from": 1,
+            "to": 28
+          },
+          "pdf_page": 32
+        },
+        {
+          "drug": "Doxorubicin",
+          "basis": "bsa",
+          "per": 25,
+          "unit": "mg",
+          "route": "IV",
+          "frequency": "once",
+          "max": null,
+          "infusion": "15 min",
+          "notes": null,
+          "days": [
+            1,
+            8,
+            15,
+            22
+          ],
+          "pdf_page": 32
+        },
+        {
+          "drug": "L-Asparaginase",
+          "basis": "bsa",
+          "per": 10000,
+          "unit": "IU",
+          "route": "IM",
+          "frequency": "once",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": [
+            4,
+            6,
+            8,
+            10,
+            12,
+            14
+          ],
+          "pdf_page": 32
+        },
+        {
+          "drug": "Methotrexate (intrathecal)",
+          "basis": "age_weight_it",
+          "unit": "mg",
+          "route": "Intrathecal",
+          "frequency": "once",
+          "notes": "Age and weight based IT dose",
+          "days": [
+            1,
+            8,
+            29
+          ],
+          "pdf_page": 32
+        },
+        {
+          "drug": "Methotrexate (intrathecal)",
+          "basis": "age_weight_it",
+          "unit": "mg",
+          "route": "Intrathecal",
+          "frequency": "once",
+          "notes": "Age and weight based IT dose",
+          "days": [
+            15,
+            22
+          ],
+          "pdf_page": 32,
+          "conditional": "cns3_or_traumatic_tap"
+        }
+      ],
+      "notes": "Includes assessment of Day 29 marrow/MRD; HR may transition to VHR depending on molecular features."
+    },
+    {
+      "id": "consolidation",
+      "label": "Phase II — HR Augmented Consolidation",
+      "pdf_page": 33,
+      "max_day": 57,
+      "orders": [
+        {
+          "drug": "Cyclophosphamide",
+          "basis": "bsa",
+          "per": 1000,
+          "unit": "mg",
+          "route": "IV",
+          "frequency": "once",
+          "max": null,
+          "infusion": "30–60 min",
+          "notes": null,
+          "days": [
+            1,
+            29
+          ],
+          "pdf_page": 33
+        },
+        {
+          "drug": "Mesna",
+          "basis": "bsa",
+          "per": 250,
+          "unit": "mg",
+          "route": "IV",
+          "frequency": "three doses",
+          "max": null,
+          "infusion": "15 min",
+          "notes": null,
+          "days": [
+            1,
+            29
+          ],
+          "pdf_page": 33,
+          "timed_relative_to_cyclophosphamide_hours": [
+            0,
+            4,
+            8
+          ]
+        },
+        {
+          "drug": "Cytarabine",
+          "basis": "bsa",
+          "per": 75,
+          "unit": "mg",
+          "route": "IV/SC",
+          "frequency": "once",
+          "max": null,
+          "infusion": "IV 15–30 min",
+          "notes": null,
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            8,
+            9,
+            10,
+            11,
+            29,
+            30,
+            31,
+            32,
+            36,
+            37,
+            38,
+            39
+          ],
+          "pdf_page": 33
+        },
+        {
+          "drug": "Mercaptopurine (6-MP)",
+          "basis": "bsa",
+          "per": 60,
+          "unit": "mg",
+          "route": "PO (bedtime)",
+          "frequency": "daily",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            29,
+            30,
+            31,
+            32,
+            33,
+            34,
+            35,
+            36,
+            37,
+            38,
+            39,
+            40,
+            41,
+            42
+          ],
+          "pdf_page": 33
+        },
+        {
+          "drug": "L-Asparaginase",
+          "basis": "bsa",
+          "per": 25000,
+          "unit": "IU",
+          "route": "IM",
+          "frequency": "once",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": [
+            15,
+            22,
+            43,
+            50
+          ],
+          "pdf_page": 33
+        },
+        {
+          "drug": "Vincristine",
+          "basis": "bsa",
+          "per": 1.5,
+          "unit": "mg",
+          "route": "IV push",
+          "frequency": "once",
+          "max": 2,
+          "infusion": "1 minute",
+          "notes": null,
+          "days": [
+            15,
+            22,
+            43,
+            50
+          ],
+          "pdf_page": 33
+        },
+        {
+          "drug": "Methotrexate (intrathecal)",
+          "basis": "age_weight_it",
+          "unit": "mg",
+          "route": "Intrathecal",
+          "frequency": "once",
+          "notes": "Age and weight based IT dose",
+          "days": [
+            1,
+            8,
+            15,
+            22
+          ],
+          "pdf_page": 33
+        }
+      ],
+      "notes": "Day 29 of augmented consolidation only when ANC ≥750/µL and platelets ≥75,000/µL (p.33)."
+    },
+    {
+      "id": "interim_maintenance",
+      "label": "Phase III — HR Augmented Interim Maintenance I",
+      "pdf_page": 34,
+      "max_day": 64,
+      "orders": [
+        {
+          "drug": "Vincristine",
+          "basis": "bsa",
+          "per": 1.5,
+          "unit": "mg",
+          "route": "IV push",
+          "frequency": "once",
+          "max": 2,
+          "infusion": "1 minute",
+          "notes": null,
+          "days": [
+            1,
+            15,
+            29,
+            43
+          ],
+          "pdf_page": 34
+        },
+        {
+          "drug": "Methotrexate (high dose)",
+          "basis": "bsa",
+          "per": 5,
+          "unit": "g",
+          "route": "IV infusion",
+          "frequency": "once",
+          "max": null,
+          "infusion": "24 hours",
+          "notes": "Requires serum MTX monitoring and rescue protocol.",
+          "days": [
+            1,
+            15,
+            29,
+            43
+          ],
+          "pdf_page": 34
+        },
+        {
+          "drug": "Leucovorin rescue",
+          "basis": "bsa",
+          "per": 15,
+          "unit": "mg",
+          "route": "PO/IV",
+          "frequency": "six doses",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": [
+            1,
+            15,
+            29,
+            43
+          ],
+          "pdf_page": 34,
+          "timed_after_mtx_hours": [
+            42,
+            48,
+            54,
+            60,
+            66,
+            72
+          ]
+        },
+        {
+          "drug": "Mercaptopurine (6-MP)",
+          "basis": "bsa",
+          "per": 25,
+          "unit": "mg",
+          "route": "PO bedtime",
+          "frequency": "daily",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": {
+            "from": 1,
+            "to": 56
+          },
+          "pdf_page": 34
+        },
+        {
+          "drug": "Methotrexate (intrathecal)",
+          "basis": "age_weight_it",
+          "unit": "mg",
+          "route": "Intrathecal",
+          "frequency": "once",
+          "notes": "Age and weight based IT dose",
+          "days": [
+            1,
+            29
+          ],
+          "pdf_page": 34
+        }
+      ],
+      "notes": "HD-MTX 5 g/m² is distinct from SR 2.5 g/m²; ANC and platelets gating before every infusion."
+    },
+    {
+      "id": "delayed_intensification",
+      "label": "Phase IV — HR Augmented Delayed Intensification",
+      "pdf_page": 35,
+      "max_day": 57,
+      "orders": [
+        {
+          "drug": "Dexamethasone",
+          "basis": "bsa",
+          "per": 5,
+          "unit": "mg",
+          "route": "PO",
+          "frequency": "BID",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21
+          ],
+          "pdf_page": 35
+        },
+        {
+          "drug": "Vincristine",
+          "basis": "bsa",
+          "per": 1.5,
+          "unit": "mg",
+          "route": "IV push",
+          "frequency": "once",
+          "max": 2,
+          "infusion": "1 minute",
+          "notes": null,
+          "days": [
+            1,
+            8,
+            15,
+            43,
+            50
+          ],
+          "pdf_page": 35
+        },
+        {
+          "drug": "Doxorubicin",
+          "basis": "bsa",
+          "per": 25,
+          "unit": "mg",
+          "route": "IV",
+          "frequency": "once",
+          "max": null,
+          "infusion": "15 min",
+          "notes": null,
+          "days": [
+            1,
+            8,
+            15
+          ],
+          "pdf_page": 35
+        },
+        {
+          "drug": "L-Asparaginase",
+          "basis": "bsa",
+          "per": 25000,
+          "unit": "IU",
+          "route": "IM",
+          "frequency": "once",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": [
+            8,
+            15,
+            43,
+            50
+          ],
+          "pdf_page": 35
+        },
+        {
+          "drug": "Cyclophosphamide",
+          "basis": "bsa",
+          "per": 1000,
+          "unit": "mg",
+          "route": "IV",
+          "frequency": "once",
+          "max": null,
+          "infusion": "30–60 min",
+          "notes": null,
+          "days": [
+            29
+          ],
+          "pdf_page": 35
+        },
+        {
+          "drug": "Mesna",
+          "basis": "bsa",
+          "per": 250,
+          "unit": "mg",
+          "route": "IV",
+          "frequency": "three doses",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": [
+            29
+          ],
+          "pdf_page": 35,
+          "timed_relative_to_cyclophosphamide_hours": [
+            0,
+            4,
+            8
+          ]
+        },
+        {
+          "drug": "Thioguanine (6-TG)",
+          "basis": "bsa",
+          "per": 60,
+          "unit": "mg",
+          "route": "PO bedtime",
+          "frequency": "daily",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": {
+            "from": 29,
+            "to": 42
+          },
+          "pdf_page": 35
+        },
+        {
+          "drug": "Cytarabine",
+          "basis": "bsa",
+          "per": 75,
+          "unit": "mg",
+          "route": "IV/SC",
+          "frequency": "once",
+          "max": null,
+          "infusion": "IV 15–30 min",
+          "notes": null,
+          "days": [
+            29,
+            30,
+            31,
+            32,
+            36,
+            37,
+            38,
+            39
+          ],
+          "pdf_page": 35
+        },
+        {
+          "drug": "Methotrexate (intrathecal)",
+          "basis": "age_weight_it",
+          "unit": "mg",
+          "route": "Intrathecal",
+          "frequency": "once",
+          "notes": "Age and weight based IT dose",
+          "days": [
+            1,
+            29,
+            36
+          ],
+          "pdf_page": 35
+        }
+      ],
+      "notes": "DI-Day 29 requires ANC ≥750/µL and platelets ≥75,000/µL; continue specified weeks per protocol."
+    },
+    {
+      "id": "maintenance",
+      "label": "Phase V — HR Augmented Maintenance",
+      "pdf_page": 36,
+      "max_day": 84,
+      "orders": [
+        {
+          "drug": "Prednisolone",
+          "basis": "bsa",
+          "per": 20,
+          "unit": "mg",
+          "route": "PO",
+          "frequency": "BID",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            29,
+            30,
+            31,
+            32,
+            33,
+            57,
+            58,
+            59,
+            60,
+            61
+          ],
+          "pdf_page": 36
+        },
+        {
+          "drug": "Vincristine",
+          "basis": "bsa",
+          "per": 1.5,
+          "unit": "mg",
+          "route": "IV push",
+          "frequency": "once",
+          "max": 2,
+          "infusion": "1 minute",
+          "notes": null,
+          "days": [
+            1,
+            29,
+            57
+          ],
+          "pdf_page": 36
+        },
+        {
+          "drug": "Mercaptopurine (6-MP)",
+          "basis": "bsa",
+          "per": 50,
+          "unit": "mg",
+          "route": "PO (bedtime)",
+          "frequency": "daily",
+          "max": null,
+          "infusion": null,
+          "notes": null,
+          "days": {
+            "from": 1,
+            "to": 84
+          },
+          "pdf_page": 36
+        },
+        {
+          "drug": "Methotrexate (oral weekly)",
+          "basis": "bsa",
+          "per": 20,
+          "unit": "mg",
+          "route": "PO",
+          "frequency": "weekly",
+          "max": null,
+          "infusion": null,
+          "notes": "Dose modification/withhold rules may apply; do not extrapolate a final dispensed dose.",
+          "days": [
+            1,
+            8,
+            15,
+            22,
+            29,
+            36,
+            43,
+            50,
+            57,
+            64,
+            71,
+            78
+          ],
+          "pdf_page": 36
+        },
+        {
+          "drug": "Methotrexate (intrathecal)",
+          "basis": "age_weight_it",
+          "unit": "mg",
+          "route": "Intrathecal",
+          "frequency": "once",
+          "notes": "Age and weight based IT dose",
+          "days": [
+            1
+          ],
+          "pdf_page": 36
+        },
+        {
+          "drug": "Methotrexate (intrathecal)",
+          "basis": "age_weight_it",
+          "unit": "mg",
+          "route": "Intrathecal",
+          "frequency": "once",
+          "notes": "Age and weight based IT dose",
+          "days": [
+            29
+          ],
+          "pdf_page": 36,
+          "conditional": "maintenance_first_four_cycles"
+        }
+      ],
+      "notes": "84 days/cycle. Intrathecal MTX Day 1 each cycle and Day 29 only in cycles 1–4. Total duration female 20 mo, male 32 mo.",
+      "repeat_days": 84
+    }
+  ],
+  "review_warnings": [
+    "Intrathecal methotrexate dosing changes with age and weight; independently verify route and preparation.",
+    "After Induction, re-stratify to SR, HR, or VHR based on Day 29 marrow/MRD, cytogenetics and clinician assessment.",
+    "High-dose MTX requires hydration, laboratory monitoring, timed leucovorin rescue and clinical adjustment; an arithmetic result is not clearance to administer.",
+    "Review ANC/platelets and infection status at protocol checkpoints; maintenance antimetabolite doses may require adjustment.",
+    "High-risk induction optional IT-MTX D15/D22 for CNS3 or traumatic tap (p.32).",
+    "Maintenance IT-MTX D29 is limited to cycles 1–4; do not carry indefinitely (p.36)."
+  ],
+  "calculation_test_status": "BUILD_IN_PROGRESS"
+}
