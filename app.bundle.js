@@ -5,7 +5,7 @@ let BHH_GUIDELINE_STATUS = [];
 let catalog = [];
 let activeById = {};
 let roundingProfiles = {};
-let isAdminUnlocked = sessionStorage.getItem('bhh_pharmacist_pin_unlocked') === 'true';
+let isAdminUnlocked = false; // browser flags never constitute authentication
 
 const $ = (s) => {
   const el = document.querySelector(s);
@@ -75,16 +75,19 @@ function getGuidelineRecord(catalogId) {
 }
 function displayStatus(item) {
   if (item.structuredLink) return 'APPROVED · PILOT';
-  if (item.status==='approved_published') return 'APPROVED · PUBLISHED';
+  if (item.status==='approved_published') return item.structured?.status==='published'?'APPROVED · PUBLISHED':'REVIEWED · STRUCTURED REQUIRED';
   if (item.status==='blocked') return 'BLOCKED · REVIEW';
   if (item.status==='published_review') return 'PUBLISHED · REVIEW';
   return 'CATALOG MASTER';
 }
-function statusBadge(item) {return item.structuredLink||item.status==='approved_published'?'badge-ok':'badge-neutral';}
+function statusBadge(item) {return item.structured?.status==='published'&&item.structured?.localApproval?'badge-ok':'badge-neutral';}
 function referenceDetails(item) {
   const r=item.guidelineReference;
   if (!r) return '';
-  const source=r.reference_url?`<a href="${esc(r.reference_url)}" target="_blank" rel="noopener noreferrer">${esc(r.protocol||r.source||'Guideline source')}</a>`:'รอตรวจสอบเอกสารต้นฉบับ';
+  const raw=String(r.reference_url||r.references?.[0]?.url||r.references?.[0]?.label||'').trim();
+  let safeLink='';
+  try {const u=new URL(raw);if(['https:','http:'].includes(u.protocol)) safeLink=u.href;} catch {}
+  const source=safeLink?`<a href="${esc(safeLink)}" target="_blank" rel="noopener noreferrer">${esc(r.protocol||r.source||r.references?.[0]?.label||safeLink)}</a>`:esc(raw||r.protocol||r.source||r.references?.[0]?.label||'ไม่ระบุเอกสารอ้างอิง');
   return `<div class="micro">${esc(r.catalog_id)} · ${source}</div><div class="micro">${esc(r.note||'')}</div>`;
 }
 
@@ -163,6 +166,9 @@ function parseMasterDrug(drug, index) {
 }
 
 function buildStructuredFromMaster(m) {
+  // Legacy free text is display/review only; never generate a calculation-ready protocol.
+  return null;
+  /*
   if (!m) return null;
   const orders = (m.drugs || []).map(parseMasterDrug);
   return {
@@ -187,6 +193,9 @@ function buildStructuredFromMaster(m) {
   };
 }
 
+  */
+}
+
 function normalizeMaster(raw) {
   return raw.map((r,i)=>{
     const approval=getGuidelineRecord(`BHH-CATALOG-${String(i+1).padStart(3,'0')}`);
@@ -206,7 +215,7 @@ function rebuildCatalog() {
   catalog=BHH_MASTER.map(m=>{
     const a=getGuidelineRecord(m.catalog_id);
     const isPilot = Boolean(m.structured_regimen_id && activeById[m.structured_regimen_id]);
-    const structuredObj = isPilot ? activeById[m.structured_regimen_id] : buildStructuredFromMaster(m);
+    const structuredObj = isPilot ? activeById[m.structured_regimen_id] : null;
     return {
       key:`master:${m.regimen_id}`,
       master:m,
@@ -217,7 +226,7 @@ function rebuildCatalog() {
       name:m.name,
       indication:m.indication,
       guidelineReference:a,
-      status:isPilot ? 'approved' : (a?.status||'approved_published')
+      status:isPilot ? 'approved' : (a?.status||'clinical_review_required')
     };
   });
   for (const r of BHH_ACTIVE) if (!linked.has(r.id)) {
@@ -259,10 +268,25 @@ function kidneyFunction(p,bsa) {
   if (p.kidneyMethod==='cockcroft_gault_legacy') {
     return {value:cockcroft(p),label:'Cockcroft-Gault CrCl (mL/min)'};
   }
+  if (p.kidneyMethod==='ckd_epi_2021_cr') {
+    const r=globalThis.BHH_RENAL.ckdEpi2021WithBsa(p,bsa);
+    return {
+      value:r.deindexedEgfr,
+      indexedEgfr:r.indexedEgfr,
+      deindexedEgfr:r.deindexedEgfr,
+      method:p.kidneyMethod,
+      label:'CKD-EPI 2021 (race-free), BSA de-indexed (mL/min)',
+      warning:'CKD-EPI 2021 is NOT the CKD-EPI 2009 equation used by eviQ/ADDIKD Carboplatin guidance. Confirm the protocol-approved renal method; measured GFR may be preferred.'
+    };
+  }
   if (!(p.kidneyValue>0)) throw new Error('Kidney function value is required');
   if (p.kidneyMethod==='measured_gfr') return {value:p.kidneyValue,label:'Measured GFR (mL/min)'};
   if (p.kidneyMethod==='bsa_adjusted_egfr') {
-    return {value:p.kidneyValue*(bsa/1.73),label:'BSA-adjusted eGFR (mL/min)'};
+    return {
+      value:globalThis.BHH_RENAL.deindexEgfr(p.kidneyValue,bsa),
+      indexedEgfr:p.kidneyValue, deindexedEgfr:globalThis.BHH_RENAL.deindexEgfr(p.kidneyValue,bsa),
+      method:p.kidneyMethod,label:'Lab-reported eGFR, BSA de-indexed (mL/min)'
+    };
   }
   throw new Error('Kidney function method is required');
 }
@@ -316,7 +340,9 @@ function scheduleText(s) {
 
 function calculate(context) {
   const {patient,regimen,cycle,selections}=context;
-  if (!regimen?.localApproval || regimen.status!=='published') throw new Error('Regimen is not approved for calculation');
+  if (!regimen?.localApproval || regimen.status!=='published' || !Array.isArray(regimen.phases) || !regimen.phases.length) throw new Error('Only approved structured regimens can be calculated');
+  if (!Number.isInteger(cycle) || cycle<1 || (regimen.cycleCount && cycle>regimen.cycleCount)) throw new Error('Cycle outside approved range');
+  if (regimen.population==='adult' && patient.ageYears<18) throw new Error('Adult-only regimen');
   const bsa=mosteller(patient.heightCm,patient.weightKg);
   const k=kidneyFunction(patient,bsa);
   const phase=regimen.phases.find(p=>cycle>=p.cycleStart&&(p.cycleEnd===undefined||cycle<=p.cycleEnd));
@@ -330,7 +356,8 @@ function calculate(context) {
     let clinical=raw;
     const notes=[],warnings=[];
     for (const rule of order.clinicalRules||[]) {
-      if (rule.type==='hard_max' && rule.unit===order.dose.unit && clinical>rule.value) {
+      if (rule.type==='hard_max' && rule.unit!==order.dose.unit) throw new Error('Incompatible clinical maximum dose unit');
+       if (rule.type==='hard_max' && rule.unit===order.dose.unit && clinical>rule.value) {
         clinical=rule.value; notes.push(`Maximum dose applied: ${fmt(rule.value)} ${rule.unit}`);
       }
       if (rule.type==='warning_threshold' && rule.metric==='kidney_function') {
@@ -340,7 +367,7 @@ function calculate(context) {
     }
 
     // Determine rounding profile based on user's radio selection
-    let profileId = userRoundingChoice;
+    let profileId = order.roundingProfileId === 'NO_ROUND' || !order.roundingProfileId ? 'NO_ROUND' : userRoundingChoice;
     // Special drug safeguards: if Vincristine or low dose, prefer 1mg profile unless NO_ROUND is explicitly chosen
     if (order.roundingProfileId === 'BHH_NEAREST_1MG_DEFAULT' && userRoundingChoice === 'BHH_NEAREST_10MG_DEFAULT') {
       profileId = 'BHH_NEAREST_1MG_DEFAULT';
@@ -352,7 +379,7 @@ function calculate(context) {
     return {
       drugName:order.drugName,protocol:protocolText(order.dose),route:order.route,schedule:scheduleText(order.schedule),
       raw,unit:order.dose.unit,clinical,recommended:rounded.recommended,difference:rounded.difference,differencePct:rounded.differencePct,
-      notes,warnings,roundingLabel:profile?.label||''
+      notes,warnings,roundingLabel:profile?.label||'',cycleTotal:clinical*order.schedule.days.length*(order.schedule.administrationsPerDay||1)
     };
   });
   return {bsa,kidney:k,results};
@@ -378,20 +405,8 @@ async function init() {
       localStorage.removeItem('bhh_approve_pin');
     }
 
-    // Check Cloudflare KV for any server-side published regimens
-    fetch('/api/regimens').then(r => r.ok ? r.json() : []).then(cfRegimens => {
-      if (Array.isArray(cfRegimens) && cfRegimens.length) {
-        cfRegimens.forEach(cfR => {
-          const match = catalog.find(c => c.master?.catalog_id === cfR.id || c.key === cfR.id);
-          if (match) {
-            match.status = 'approved_published';
-            match.structured = cfR;
-          }
-        });
-        const curType = $('#cancer-type-select')?.value || '';
-        populateRegimenOptionsForType(curType);
-      }
-    }).catch(() => {});
+    // The database is authoritative for edits; local JSON remains a read-only six-pilot baseline.
+    await syncCentralRegimens();
 
   } catch (error) {
     $('#app-loading').innerHTML=`<div class="alert alert-error">Unable to load regimen data: ${esc(error.message||String(error))}</div>`;
@@ -403,11 +418,88 @@ async function init() {
   bindCalculator();
   bindLibrary();
   bindRounding();
+  setInterval(syncCentralRegimens, 10000);
+  syncCentralRounding();
+  setInterval(syncCentralRounding, 10000);
   $('#manager-master-count').textContent=BHH_MASTER.length;
   $('#manager-approved-count').textContent=catalog.filter(x=>x.structured).length;
   $('#app-loading').classList.add('hidden');
   $('#app-shell').classList.remove('hidden');
 }
+
+let centralOnline = false;
+let centralVersion = '';
+function applyCentralRegimen(r) {
+  if (!r || r.status!=='published' || !r.localApproval || !Array.isArray(r.phases) || !r.phases.length) return;
+  const existing = catalog.find(c=>c.structured?.id===r.id || (c.master && (c.master.catalog_id===r.id || (r.catalog_id && c.master.catalog_id===r.catalog_id))));
+  if (existing) {
+    const changed=existing.structured?.revision!==r.revision || existing.structured?.version!==r.version;
+    existing.structured = r;
+    existing.name = r.name;
+    existing.indication = r.indication;
+    if (changed && selectedItem?.key===existing.key) invalidateCalculation();
+    existing.status = 'approved_published';
+    existing.guidelineReference = r;
+  } else {
+    const type = activeCancerType(r);
+    catalog.push({ key:'central:'+r.id, master:null, structured:r, structuredLink:r.id,
+      cancerType:type,cancerTypeLabel:typeLabel(type),name:r.name,indication:r.indication,status:'approved_published' });
+  }
+}
+async function syncCentralRegimens() {
+  const badge=document.getElementById('sync-status');
+  try {
+    const res=await fetch('/api/regimens', {cache:'no-store'});
+    if (!res.ok) throw Error('Central API unavailable');
+    const data=await res.json();
+    if (!Array.isArray(data.regimens)) throw Error('Invalid central registry');
+    centralOnline=true;
+    const signature=JSON.stringify(data.regimens.map(x=>[x.id,x.revision,x.status]));
+    if (centralVersion!==signature) {
+      centralVersion=signature;
+      const prior=selectedItem;
+      const key=prior?.key||null;
+      const previousClinical=prior?.structured
+        ? [prior.structured.id,prior.structured.revision??0,prior.structured.version,prior.structured.status].join('|')
+        : '';
+      // Rebuild from the immutable baseline on *every registry change*, so an
+      // archived/downgraded regimen cannot survive in a different workstation.
+      rebuildCatalog();
+      data.regimens.forEach(applyCentralRegimen);
+      selectedItem=key?catalog.find(x=>x.key===key)||null:null;
+      const currentClinical=selectedItem?.structured
+        ? [selectedItem.structured.id,selectedItem.structured.revision??0,selectedItem.structured.version,selectedItem.structured.status].join('|')
+        : '';
+      if (previousClinical!==currentClinical || (prior && !selectedItem)) {
+        invalidateCalculation();
+        if (!selectedItem) {
+          const control=document.getElementById('regimen-select');
+          if (control) control.value='';
+        }
+      }
+      if (document.getElementById('regimen-select')) {
+        populateRegimenOptionsForType($('#cancer-type-select').value||'', selectedItem?.key||null);
+        renderLibrary();
+      }
+      const count=document.getElementById('manager-approved-count');
+      if(count) count.textContent=catalog.filter(x=>x.structured).length;
+    }
+    if (badge) badge.textContent='● Central sync connected';
+  } catch {
+    centralOnline=false;
+    if (badge) badge.textContent='● Central sync unavailable — publishing disabled';
+  }
+}
+
+window.BHH_APPLY_PUBLISHED = function(regimen) {
+  applyCentralRegimen(regimen);
+  if (selectedItem && selectedItem.structured?.id===regimen.id) lastCalculation=null;
+  const key=selectedItem?.key||null;
+  populateRegimenOptionsForType($('#cancer-type-select').value||'',key);
+  renderLibrary();
+};
+window.BHH_CENTRAL_READY = ()=>centralOnline;
+window.BHH_REFRESH_REGIMENS = syncCentralRegimens;
 
 function updateAdminUi() {
   const adminTabs = document.querySelectorAll('.admin-tab');
@@ -441,106 +533,88 @@ function bindAdminPin() {
   const err = $('#pin-auth-error');
   const closeBtn = $('#pin-auth-close');
   const cancelBtn = $('#pin-auth-cancel');
+  const submitBtn = $('#pin-auth-submit');
+  const visibilityBtn = $('#pin-auth-visibility');
+  let busy = false;
 
-  if (btn) {
-    btn.addEventListener('click', () => {
-      if (isAdminUnlocked) {
-        isAdminUnlocked = false;
-        sessionStorage.removeItem('bhh_pharmacist_pin_unlocked');
-        updateAdminUi();
-      } else {
-        if (input) input.value = '';
-        if (err) { err.classList.add('hidden'); err.textContent = ''; }
-        if (dialog) dialog.showModal();
-        if (input) input.focus();
-      }
-    });
-  }
+  const clearError = () => { err.textContent = ''; err.classList.add('hidden'); };
+  const reset = () => {
+    input.value = '';
+    input.type = 'password';
+    visibilityBtn.textContent = 'แสดง';
+    visibilityBtn.setAttribute('aria-label', 'แสดงรหัส PIN');
+    visibilityBtn.setAttribute('aria-pressed', 'false');
+    clearError();
+  };
+  const closeDialog = () => {
+    if (busy) return;
+    if (dialog.open) dialog.close();
+    reset();
+  };
+  const setBusy = value => {
+    busy = value;
+    submitBtn.disabled = value;
+    cancelBtn.disabled = value;
+    closeBtn.disabled = value;
+    submitBtn.textContent = value ? 'กำลังตรวจสอบ PIN…' : 'ยืนยัน PIN →';
+  };
 
-  const closeDialog = () => { if (dialog?.open) dialog.close(); };
-  closeBtn?.addEventListener('click', closeDialog);
-  cancelBtn?.addEventListener('click', closeDialog);
-
-  form?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const pin = input.value.trim();
-    if (!pin) return;
-
-    err.classList.add('hidden');
-    err.textContent = '';
-
-    // 1. Explicitly reject deprecated default PIN 1234
-    if (pin === '1234') {
-      err.textContent = 'รหัส PIN 1234 ถูกยกเลิกแล้ว กรุณาใช้รหัส PIN ใหม่ที่ตั้งค่าไว้ใน Cloudflare (APPROVE_PIN)';
-      err.classList.remove('hidden');
-      input.select();
+  btn?.addEventListener('click', () => {
+    if (isAdminUnlocked) {
+      isAdminUnlocked = false;
+      updateAdminUi();
       return;
     }
-
-    // 2. Clear any stale 1234 from storage
-    if (localStorage.getItem('bhh_approve_pin') === '1234') {
-      localStorage.removeItem('bhh_approve_pin');
-    }
-
-    let verified = false;
-    try {
-      // Verify via Cloudflare Serverless Function (/api/verify-pin)
-      const res = await fetch('/api/verify-pin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin })
-      });
-      if (res.ok) {
-        const data = await res.json().catch(() => ({}));
-        if (data.valid) {
-          verified = true;
-        }
-      } else if (res.status === 401) {
-        const data = await res.json().catch(() => ({}));
-        err.textContent = data.message || 'รหัส PIN ไม่ถูกต้อง';
-        err.classList.remove('hidden');
-        input.select();
-        return;
-      } else if (res.status === 500) {
-        const data = await res.json().catch(() => ({}));
-        err.textContent = data.message || 'ระบบยังไม่ได้ตั้งค่าตัวแปร APPROVE_PIN ใน Cloudflare';
-        err.classList.remove('hidden');
-        input.select();
-        return;
-      }
-    } catch (netErr) {
-      // Offline / network failure
-    }
-
-    // Static host fallback (e.g. GitHub Pages where /api/verify-pin returns 404):
-    if (!verified) {
-      const localPin = localStorage.getItem('bhh_approve_pin');
-      if (localPin) {
-        if (pin === localPin) {
-          verified = true;
-        } else {
-          err.textContent = 'รหัส PIN ไม่ถูกต้อง';
-          err.classList.remove('hidden');
-          input.select();
-          return;
-        }
-      } else {
-        // First-time setup on static host: register entered non-1234 PIN
-        localStorage.setItem('bhh_approve_pin', pin);
-        verified = true;
-      }
-    }
-
-    if (verified) {
-      isAdminUnlocked = true;
-      sessionStorage.setItem('bhh_pharmacist_pin_unlocked', 'true');
-      sessionStorage.setItem('bhh_pharmacist_pin_token', pin);
-      localStorage.setItem('bhh_approve_pin', pin);
-      updateAdminUi();
-      closeDialog();
-    }
+    reset();
+    if (!dialog.open) dialog.showModal();
+    input.focus();
+  });
+  closeBtn?.addEventListener('click', closeDialog);
+  cancelBtn?.addEventListener('click', closeDialog);
+  dialog?.addEventListener('cancel', event => { if (busy) event.preventDefault(); else reset(); });
+  visibilityBtn?.addEventListener('click', () => {
+    const visible = input.type === 'password';
+    input.type = visible ? 'text' : 'password';
+    visibilityBtn.textContent = visible ? 'ซ่อน' : 'แสดง';
+    visibilityBtn.setAttribute('aria-label', visible ? 'ซ่อนรหัส PIN' : 'แสดงรหัส PIN');
+    visibilityBtn.setAttribute('aria-pressed', String(visible));
+    input.focus();
   });
 
+  form?.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (busy) return;
+    clearError();
+    const pin = input.value.trim();
+    if (!pin || pin === '1234') {
+      err.textContent = 'กรุณาใช้ Pharmacist PIN ที่ตั้งค่าไว้บน Cloudflare';
+      err.classList.remove('hidden');
+      input.focus();
+      return;
+    }
+    setBusy(true);
+    try {
+      const res = await fetch('/api/verify-pin', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin })
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.valid !== true) throw Error(data.message || 'ไม่สามารถยืนยันสิทธิ์ได้');
+      isAdminUnlocked = true;
+      updateAdminUi();
+      // The secret stays only in this request; no local/session storage fallback.
+      input.value = '';
+      dialog.close();
+      reset();
+    } catch (error) {
+      err.textContent = error.message || 'ไม่สามารถติดต่อ Cloudflare Server ได้';
+      err.classList.remove('hidden');
+      input.focus();
+      input.select();
+    } finally {
+      setBusy(false);
+    }
+  });
   updateAdminUi();
 }
 
@@ -563,61 +637,108 @@ function populateCancerTypes() {
     }
   }
 }
+// Compact viewport-anchored instant search. Result list never extends the page height.
+const SEARCH_MAX_RESULTS=4;
+let searchActiveIndex=-1;
 function closeSearchDropdown() {
-  const dropdown = $('#regimen-search-dropdown');
-  if (dropdown) {
+  const dropdown=$('#regimen-search-dropdown');
+  if(dropdown){
     dropdown.classList.add('hidden');
-    dropdown.innerHTML = '';
+    dropdown.innerHTML='';
   }
-  $('#regimen-search')?.setAttribute('aria-expanded', 'false');
+  searchActiveIndex=-1;
+  const input=$('#regimen-search');
+  input?.setAttribute('aria-expanded','false');
+  input?.removeAttribute('aria-activedescendant');
 }
 
-function handleSearchInput() {
-  const input = $('#regimen-search');
-  const dropdown = $('#regimen-search-dropdown');
-  if (!input || !dropdown) return;
-
-  const q = input.value.trim().toLowerCase();
-  if (!q) {
-    closeSearchDropdown();
-    return;
-  }
-
-  const matches = catalog.filter(x => {
-    const cancer = (x.cancerTypeLabel || typeLabel(x.cancerType) || '').toLowerCase();
-    const drugs = (x.master?.drugs || []).map(d => `${d['ชื่อยา']} ${d['ขนาดยา']}`).join(' ').toLowerCase()
-      || (x.structured?.phases?.[0]?.orders || []).map(o => `${o.drugName} ${protocolText(o.dose)}`).join(' ').toLowerCase();
-    const text = `${x.name} ${x.indication} ${cancer} ${drugs}`.toLowerCase();
-    return text.includes(q);
-  }).sort((a, b) => {
-    const aNameStart = a.name.toLowerCase().startsWith(q) ? 0 : 1;
-    const bNameStart = b.name.toLowerCase().startsWith(q) ? 0 : 1;
-    if (aNameStart !== bNameStart) return aNameStart - bNameStart;
-    const aRank = a.structuredLink ? 0 : a.status === 'approved_published' ? 1 : 2;
-    const bRank = b.structuredLink ? 0 : b.status === 'approved_published' ? 1 : 2;
-    return aRank - bRank || a.name.localeCompare(b.name);
+function placeSearchDropdown(){
+  const dropdown=$('#regimen-search-dropdown'),input=$('#regimen-search');
+  if(!dropdown||!input||dropdown.classList.contains('hidden'))return;
+  // Mount on document.body to avoid grid/card overflow and stretching the grid row.
+  if(dropdown.parentElement!==document.body)document.body.appendChild(dropdown);
+  const rect=input.getBoundingClientRect(),margin=8;
+  const vh=window.visualViewport?.height||window.innerHeight;
+  const vw=window.visualViewport?.width||window.innerWidth;
+  const below=vh-rect.bottom-margin,above=rect.top-margin;
+  const flip=below<160&&above>below;
+  const space=Math.max(100,flip?above:below);
+  const maxHeight=Math.min(320,Math.max(100,space-4));
+  const width=Math.max(220,Math.min(rect.width,vw-margin*2));
+  const left=Math.max(margin,Math.min(rect.left,vw-width-margin));
+  Object.assign(dropdown.style,{
+    position:'fixed',
+    left:left+'px',
+    width:width+'px',
+    top:flip?'auto':Math.max(margin,rect.bottom+4)+'px',
+    bottom:flip?Math.max(margin,vh-rect.top+4)+'px':'auto',
+    maxHeight:maxHeight+'px'
   });
+}
 
-  if (matches.length > 0) {
-    dropdown.innerHTML = matches.slice(0, 15).map(x => {
-      const drugSummary = (x.master?.drugs || []).map(d => `${esc(d['ชื่อยา'])} (${esc(d['ขนาดยา'])})`).join(' · ')
-        || (x.structured?.phases?.[0]?.orders || []).map(o => `${esc(o.drugName)} (${esc(protocolText(o.dose))})`).join(' · ');
-      return `<div class="search-match-item" data-select-key="${esc(x.key)}" role="option">
-        <div class="search-match-title">
-          <strong>${esc(x.name)}</strong>
-          <span class="badge ${x.structured ? 'badge-ok' : 'badge-neutral'}">${esc(x.cancerTypeLabel || typeLabel(x.cancerType))}</span>
-        </div>
-        <div class="search-match-sub">${esc(x.indication)}</div>
-        ${drugSummary ? `<div class="search-match-drugs micro">${drugSummary}</div>` : ''}
-      </div>`;
-    }).join('');
-    dropdown.classList.remove('hidden');
-    input.setAttribute('aria-expanded', 'true');
-  } else {
-    dropdown.innerHTML = `<div class="search-empty">ไม่พบสูตรยาที่ตรงกับ "${esc(q)}"</div>`;
-    dropdown.classList.remove('hidden');
-    input.setAttribute('aria-expanded', 'true');
+function searchMatches(q){
+  const selectedCancer=$('#cancer-type-select')?.value||'';
+  return catalog.filter(x=>{
+    const cancer=(x.cancerTypeLabel||typeLabel(x.cancerType)||'').toLowerCase();
+    const drugs=(x.master?.drugs||[]).map(d=>[d['ชื่อยา'],d['ขนาดยา']].join(' ')).join(' ').toLowerCase()
+      ||(x.structured?.phases?.[0]?.orders||[]).map(o=>[o.drugName,protocolText(o.dose)].join(' ')).join(' ').toLowerCase();
+    return [x.name,x.indication,cancer,drugs].join(' ').toLowerCase().includes(q);
+  }).sort((a,b)=>{
+    // Prefer matching regimen names, then current cancer type and approved calculations.
+    const rank=x=>{
+      const name=x.name.toLowerCase();
+      return [name===q?0:name.startsWith(q)?1:name.split(/[\s/-]+/).some(t=>t.startsWith(q))?2:3,
+        x.cancerType===selectedCancer?0:1,
+        x.structured?.status==='published'&&x.structured.localApproval?0:1];
+    };
+    const ra=rank(a),rb=rank(b);
+    for(let i=0;i<ra.length;i++)if(ra[i]!==rb[i])return ra[i]-rb[i];
+    return a.name.localeCompare(b.name);
+  });
+}
+
+function highlightSearchItem(index){
+  const dropdown=$('#regimen-search-dropdown'),input=$('#regimen-search');
+  const items=[...dropdown.querySelectorAll('[data-select-key]')];
+  searchActiveIndex=index;
+  items.forEach((el,i)=>{
+    el.classList.toggle('highlighted',i===index);
+    el.setAttribute('aria-selected',String(i===index));
+  });
+  if(index>=0&&items[index]){
+    input.setAttribute('aria-activedescendant',items[index].id);
+    // Scroll ONLY the small search result panel, not the document.
+    const itemRect=items[index].getBoundingClientRect(),panelRect=dropdown.getBoundingClientRect();
+    if(itemRect.bottom>panelRect.bottom)dropdown.scrollTop+=itemRect.bottom-panelRect.bottom+3;
+    else if(itemRect.top<panelRect.top)dropdown.scrollTop-=panelRect.top-itemRect.top+3;
+  }else input.removeAttribute('aria-activedescendant');
+}
+
+function handleSearchInput(){
+  const input=$('#regimen-search'),dropdown=$('#regimen-search-dropdown');
+  if(!input||!dropdown)return;
+  const q=input.value.trim().toLocaleLowerCase();
+  if(!q){closeSearchDropdown();return;}
+  const results=searchMatches(q),visible=results.slice(0,SEARCH_MAX_RESULTS);
+  searchActiveIndex=-1;
+  if(visible.length){
+    dropdown.innerHTML=visible.map((x,i)=>{
+      const ready=x.structured?.status==='published'&&x.structured.localApproval;
+      const drugs=(x.master?.drugs||[]).map(d=>[d['ชื่อยา'],d['ขนาดยา']].filter(Boolean).join(' ')).join(' · ')
+        ||(x.structured?.phases?.[0]?.orders||[]).map(o=>[o.drugName,protocolText(o.dose)].filter(Boolean).join(' ')).join(' · ');
+      return '<div class="search-match-item" id="regimen-option-'+i+'" data-select-key="'+esc(x.key)+'" role="option" aria-selected="false" tabindex="-1">'+
+        '<div class="search-match-title"><strong>'+esc(x.name)+'</strong><span class="search-match-state '+(ready?'ready':'review')+'">'+(ready?'✓ Ready':'Review')+'</span></div>'+
+        '<div class="search-match-sub">'+esc(x.indication||'')+' · '+esc(x.cancerTypeLabel||typeLabel(x.cancerType))+'</div>'+
+        (drugs?'<div class="search-match-drugs" title="'+esc(drugs)+'">'+esc(drugs)+'</div>':'')+
+        '</div>';
+    }).join('')+
+    '<div class="search-count" role="status">แสดง '+visible.length+' จาก '+results.length+' สูตร'+(results.length>SEARCH_MAX_RESULTS?' · พิมพ์ต่อเพื่อจำกัดผลค้นหา':'')+'</div>';
+  }else{
+    dropdown.innerHTML='<div class="search-empty" role="status">ไม่พบสูตรยาที่ตรงกับ "'+esc(input.value.trim())+'"</div>';
   }
+  dropdown.classList.remove('hidden');
+  input.setAttribute('aria-expanded','true');
+  placeSearchDropdown();
 }
 
 function populateRegimenOptionsForType(type, selectedKey = null) {
@@ -642,7 +763,7 @@ function populateRegimenOptionsForType(type, selectedKey = null) {
       const o = document.createElement('option');
       o.value = x.key;
       const typePrefix = !type ? `[${typeLabel(x.cancerType)}] ` : '';
-      o.textContent = `${x.structured || x.status === 'approved_published' ? '✓ ' : ''}${typePrefix}${x.name} — ${x.indication}`;
+      o.textContent = `${x.structured?.status==='published'&&x.structured?.localApproval ? '✓ ' : ''}${typePrefix}${x.name} — ${x.indication}`;
       sel.appendChild(o);
     }
     sel.disabled = false;
@@ -695,42 +816,49 @@ function bindCalculator() {
     $('#calculate-btn').disabled = true;
   });
   
-  $('#regimen-search').addEventListener('input', handleSearchInput);
+  $('#regimen-search').addEventListener('input', () => {
+    // Typing a new query must invalidate the previous regimen selection and dose.
+    const input=$('#regimen-search');
+    if(selectedItem && input.value.trim()!==selectedItem.name){
+      selectedItem=null;
+      $('#regimen-select').value='';
+      $('#cycle-input').value='';
+      $('#cycle-input').disabled=true;
+      $('#regimen-context').classList.add('hidden');
+      $('#dose-selections').innerHTML='';
+      $('#calculate-btn').disabled=true;
+    }
+    invalidateCalculation();
+    handleSearchInput();
+  });
+  window.addEventListener('resize',placeSearchDropdown);
+  window.addEventListener('scroll',placeSearchDropdown,{passive:true});
+  window.visualViewport?.addEventListener('resize',placeSearchDropdown);
   $('#regimen-search').addEventListener('focus', () => {
     if ($('#regimen-search').value.trim()) {
       handleSearchInput();
     }
   });
 
-  $('#regimen-search').addEventListener('keydown', e => {
-    const dropdown = $('#regimen-search-dropdown');
-    if (!dropdown || dropdown.classList.contains('hidden')) return;
-
-    const items = Array.from(dropdown.querySelectorAll('.search-match-item'));
-    if (!items.length) return;
-
-    let currentIndex = items.findIndex(el => el.classList.contains('highlighted'));
-
-    if (e.key === 'ArrowDown') {
+  $('#regimen-search').addEventListener('keydown',e=>{
+    const dropdown=$('#regimen-search-dropdown');
+    if(e.key==='Escape'){
+      if(!dropdown.classList.contains('hidden')){e.preventDefault();closeSearchDropdown();}
+      return;
+    }
+    if(dropdown.classList.contains('hidden'))return;
+    const options=[...dropdown.querySelectorAll('[data-select-key]')];
+    if(!options.length)return;
+    if(e.key==='ArrowDown'){
       e.preventDefault();
-      if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
-      currentIndex = (currentIndex + 1) % items.length;
-      items[currentIndex].classList.add('highlighted');
-      items[currentIndex].scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'ArrowUp') {
+      highlightSearchItem((searchActiveIndex+1)%options.length);
+    }else if(e.key==='ArrowUp'){
       e.preventDefault();
-      if (currentIndex >= 0) items[currentIndex].classList.remove('highlighted');
-      currentIndex = currentIndex <= 0 ? items.length - 1 : currentIndex - 1;
-      items[currentIndex].classList.add('highlighted');
-      items[currentIndex].scrollIntoView({ block: 'nearest' });
-    } else if (e.key === 'Enter') {
+      highlightSearchItem(searchActiveIndex<=0?options.length-1:searchActiveIndex-1);
+    }else if(e.key==='Enter'){
       e.preventDefault();
-      const target = currentIndex >= 0 ? items[currentIndex] : items[0];
-      if (target && target.dataset.selectKey) {
-        selectRegimenByKey(target.dataset.selectKey);
-      }
-    } else if (e.key === 'Escape') {
-      closeSearchDropdown();
+      const target=options[searchActiveIndex<0?0:searchActiveIndex];
+      if(target?.dataset.selectKey)selectRegimenByKey(target.dataset.selectKey);
     }
   });
 
@@ -764,7 +892,14 @@ function bindCalculator() {
   });
 
   $('#kidney-method').addEventListener('change', updateKidneyUi);
+  ['age-input','sex-input','height-input','weight-input','scr-input','kidney-value'].forEach(id=>{
+    const field=document.getElementById(id);
+    field?.addEventListener('input',updateRenalPreview);
+    field?.addEventListener('change',updateRenalPreview);
+  });
   $('#calc-form').addEventListener('submit', e => { e.preventDefault(); runCalculation(); });
+  $('#calc-form').addEventListener('input', e=>{if(e.target.id!=='regimen-search') invalidateCalculation();});
+  $('#calc-form').addEventListener('change', ()=>invalidateCalculation());
   $('#export-calc-btn').addEventListener('click', exportLast);
   $('#print-btn').addEventListener('click', () => window.print());
   
@@ -780,9 +915,15 @@ function bindCalculator() {
   updateKidneyUi();
 }
 
+function invalidateCalculation() {
+  lastCalculation=null;
+  const box=document.getElementById('calc-output');
+  if (box) {box.classList.remove('has-result');box.innerHTML='<p class="muted">กรอกข้อมูลและกด Calculate เพื่อดูผลล่าสุด</p>';}
+}
 function onRegimenSelected() {
   const sel = $('#regimen-select');
   if (!sel) return;
+  invalidateCalculation();
   selectedItem = catalog.find(x => x.key === sel.value) || null;
   if (!selectedItem) {
     $('#cycle-input').disabled = true;
@@ -805,14 +946,14 @@ function onRegimenSelected() {
   $('#dose-selections').innerHTML = '';
 
   if (!selectedItem.structured && selectedItem.master) {
-    selectedItem.structured = buildStructuredFromMaster(selectedItem.master);
+    // No auto-conversion of clinical free text; use Regimen Builder and clinical review.
   }
   if (selectedItem.structured?.cycleCount) {
     cycle.max = String(selectedItem.structured.cycleCount);
   }
 
   renderSelectedContext();
-  $('#calculate-btn').disabled = false;
+  $('#calculate-btn').disabled = !(selectedItem.structured?.status==='published' && selectedItem.structured?.localApproval);
 }
 
 function originalDrugRows(item) {
@@ -889,15 +1030,46 @@ function updateDoseSelections() {
 $('#cycle-input').addEventListener('input',()=>{if(selectedItem?.structured) updateDoseSelections();});
 function updateKidneyUi() {
   const method=$('#kidney-method').value;
-  const scrWrap=$('#scr-wrap'), kvWrap=$('#kidney-value-wrap');
-  const scr=$('#scr-input'), kv=$('#kidney-value');
-  if (method==='cockcroft_gault_legacy') {
-    scrWrap.classList.remove('hidden'); kvWrap.classList.add('hidden'); scr.required=true; kv.required=false; kv.value='';
-  } else {
-    scrWrap.classList.add('hidden'); kvWrap.classList.remove('hidden'); scr.required=false; scr.value=''; kv.required=true;
-    $('#kidney-value-label').innerHTML=method==='measured_gfr'?'Measured GFR (mL/min) <b>*</b>':'eGFR (mL/min/1.73m²) <b>*</b>';
+  const scrWrap=$('#scr-wrap'),kvWrap=$('#kidney-value-wrap'),scr=$('#scr-input'),kv=$('#kidney-value');
+  const serumMethod=method==='cockcroft_gault_legacy'||method==='ckd_epi_2021_cr';
+  scrWrap.classList.toggle('hidden',!serumMethod);
+  kvWrap.classList.toggle('hidden',serumMethod);
+  scr.required=serumMethod;kv.required=!serumMethod;
+  // Preserve SCr and reported eGFR when switching methods so pharmacists can compare results.
+  $('#kidney-value-label').innerHTML=method==='measured_gfr'
+    ?'Measured GFR (mL/min) <b>*</b>'
+    :'Lab-reported indexed eGFR (mL/min/1.73 m²) <b>*</b>';
+  updateRenalPreview();
+}
+function updateRenalPreview() {
+  const el=document.getElementById('renal-preview');if(!el)return;
+  const method=$('#kidney-method').value;
+  const required=['age-input','sex-input','height-input','weight-input',method==='measured_gfr'||method==='bsa_adjusted_egfr'?'kidney-value':'scr-input'];
+  if(required.some(id=>!document.getElementById(id)?.value.trim())) {
+    el.textContent='กรอกอายุ เพศ ส่วนสูง น้ำหนัก และค่า Renal ที่เลือก เพื่อดูผลแบบอัตโนมัติ';
+    return;
+  }
+  try {
+    const patient={ageYears:Number($('#age-input').value),sex:$('#sex-input').value,
+      heightCm:Number($('#height-input').value),weightKg:Number($('#weight-input').value),
+      kidneyMethod:method,
+      serumCreatinineMgDl:Number($('#scr-input').value),kidneyValue:Number($('#kidney-value').value)};
+    if (!Number.isFinite(patient.ageYears) || patient.ageYears<18 || patient.ageYears>120 ||
+        !['male','female'].includes(patient.sex) ||
+        !(patient.heightCm>0) || !(patient.weightKg>0)) throw Error('Incomplete or invalid patient data');
+    const bsa=mosteller(patient.heightCm,patient.weightKg);
+    const k=kidneyFunction(patient,bsa);
+    const idx=k.indexedEgfr!==undefined
+      ?'<div><strong>Indexed eGFR</strong> '+fmt(k.indexedEgfr,2)+' mL/min/1.73 m²</div>':'';
+    const adjusted=k.deindexedEgfr!==undefined
+      ?'<div><strong>De-indexed eGFR</strong> '+fmt(k.deindexedEgfr,2)+' mL/min (BSA '+fmt(bsa,3)+' m²)</div>':'';
+    el.innerHTML='<strong>'+esc(k.label)+'</strong><div>'+fmt(k.value,2)+' mL/min</div>'+
+      idx+adjusted+(k.warning?'<div class="micro" style="margin-top:7px">⚠ '+esc(k.warning)+'</div>':'');
+  }catch {
+    el.textContent='กรุณาตรวจสอบข้อมูลผู้ป่วยและค่า Renal ที่กรอก';
   }
 }
+
 function num(id) {
   const v=Number($(id).value);
   if (!Number.isFinite(v)) throw new Error('Please complete all required numeric data');
@@ -913,29 +1085,30 @@ function runCalculation() {
   try {
     const method=$('#kidney-method').value;
     const patient={ageYears:num('#age-input'),sex:$('#sex-input').value,heightCm:num('#height-input'),weightKg:num('#weight-input'),kidneyMethod:method};
-    if (method==='cockcroft_gault_legacy') patient.serumCreatinineMgDl=num('#scr-input'); else patient.kidneyValue=num('#kidney-value');
+    if (method==='cockcroft_gault_legacy'||method==='ckd_epi_2021_cr') patient.serumCreatinineMgDl=num('#scr-input'); else patient.kidneyValue=num('#kidney-value');
     const selections={};
     document.querySelectorAll('[data-dose-select]').forEach(s=>selections[s.dataset.doseSelect]=Number(s.value));
     const cycle=num('#cycle-input');
     const result=calculate({patient,regimen:selectedItem.structured,cycle,selections});
-    lastCalculation={generatedAt:new Date().toISOString(),regimenId:selectedItem.structured.id,cycle,patient,selections,result};
+    lastCalculation={generatedAt:new Date().toISOString(),regimenId:selectedItem.structured.id,regimenVersion:selectedItem.structured.version,cycle,patient,selections,result};
     renderResult(result,selectedItem.structured,cycle);
   } catch(e) {
+    lastCalculation=null;
     $('#calc-output').classList.remove('has-result');
     $('#calc-output').innerHTML=`<div class="alert alert-error"><strong>Calculation blocked:</strong> ${esc(e.message||String(e))}</div>`;
   }
 }
 function renderResult(result,r,cycle) {
   $('#calc-output').classList.add('has-result');
-  const warnings=result.results.flatMap(x=>x.warnings).map(w=>`<div class="alert alert-warning">${esc(w)}</div>`).join('');
+  const warnings=[...(result.kidney.warning?[result.kidney.warning]:[]),...result.results.flatMap(x=>x.warnings)].map(w=>`<div class="alert alert-warning">${esc(w)}</div>`).join('');
   const rows=result.results.map(x=>`<tr><td><strong>${esc(x.drugName)}</strong><div class="micro">${esc(x.route)} · ${esc(x.schedule)}</div></td>
     <td>${esc(x.protocol)}</td><td><strong>${fmt(x.raw)} ${esc(x.unit)}</strong></td><td><strong>${fmt(x.clinical)} ${esc(x.unit)}</strong>${x.notes.length?`<div class="micro">${x.notes.map(esc).join('<br>')}</div>`:''}</td>
     <td>${x.recommended===undefined?'<span class="muted">Review</span>':`<strong>${fmt(x.recommended)} ${esc(x.unit)}</strong><div class="micro">${esc(x.roundingLabel)}</div>`}</td>
-    <td>${x.differencePct===undefined?'—':`${signed(x.difference)} ${esc(x.unit)} (${signed(x.differencePct)}%)`}</td></tr>`).join('');
+    <td>${x.differencePct===undefined?'—':`${signed(x.difference)} ${esc(x.unit)} (${signed(x.differencePct)}%)`}</td><td>${fmt(x.cycleTotal)} ${esc(x.unit)}</td></tr>`).join('');
   $('#calc-output').innerHTML=`<section class="result-header"><div><span class="kpi-label">BSA</span><strong>${result.bsa.toFixed(5)} m²</strong></div>
-    <div><span class="kpi-label">Kidney function used</span><strong>${fmt(result.kidney.value)} mL/min</strong><span class="micro">${esc(result.kidney.label)}</span></div>
+    <div><span class="kpi-label">Kidney function used</span><strong>${fmt(result.kidney.value)} mL/min</strong><span class="micro">${esc(result.kidney.label)}</span>${result.kidney.indexedEgfr!==undefined?`<div class="micro">Indexed: ${fmt(result.kidney.indexedEgfr)} mL/min/1.73 m² · De-indexed: ${fmt(result.kidney.deindexedEgfr)} mL/min</div>`:''}</div>
     <div><span class="kpi-label">Regimen / Cycle</span><strong>${esc(r.name)} · Cycle ${cycle}</strong></div></section>${warnings}
-    <div class="table-wrap"><table><thead><tr><th>Drug</th><th>Protocol dose</th><th>Calculated</th><th>Clinical dose</th><th>Recommended</th><th>Difference</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    <div class="table-wrap"><table><thead><tr><th>Drug</th><th>Protocol dose</th><th>Calculated</th><th>Clinical dose</th><th>Recommended</th><th>Difference</th><th>Cycle total*</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 function exportLast() {
   if (!lastCalculation) {alert('Run a calculation first.');return;}
@@ -955,15 +1128,19 @@ function filteredCatalog() {
 }
 function renderLibrary() {
   const items=filteredCatalog();
-  $('#library-summary').innerHTML=`พบ <strong>${items.length}</strong> Regimens · Approved + Published <strong>${items.filter(x=>x.structured||x.status==='approved_published').length}</strong> · Calculator Ready <strong>${items.filter(x=>x.structured).length}</strong> · Review <strong>${items.filter(x=>!x.structured&&x.status!=='approved_published'&&x.status!=='blocked').length}</strong> · Blocked <strong>${items.filter(x=>x.status==='blocked').length}</strong>`;
+  $('#library-summary').innerHTML=`พบ <strong>${items.length}</strong> Regimens · Approved + Published <strong>${items.filter(x=>x.structured?.status==='published'&&x.structured?.localApproval).length}</strong> · Calculator Ready <strong>${items.filter(x=>x.structured?.status==='published'&&x.structured?.localApproval).length}</strong> · Review <strong>${items.filter(x=>!x.structured&&x.status!=='approved_published'&&x.status!=='blocked').length}</strong> · Blocked <strong>${items.filter(x=>x.status==='blocked').length}</strong>`;
   const groups=TYPE_ORDER.map(t=>[t,items.filter(x=>x.cancerType===t)]).filter(([,arr])=>arr.length);
   $('#library-list').innerHTML=groups.map(([type,arr])=>`<section class="cancer-group"><h3>${esc(typeLabel(type))} <span class="micro">(${arr.length})</span></h3><div class="registry-grid">${
     arr.map(x=>`<article class="regimen-card"><div><span class="badge ${statusBadge(x)}">${displayStatus(x)}</span></div>
       <h4>${esc(x.name)}</h4><p>${esc(x.indication)}</p><div class="micro">${esc(x.master?.cycle_text||`${x.structured?.cycleIntervalDays||''} days/cycle`)}</div>${referenceDetails(x)}
       ${x.master?.drugs?.length?`<details><summary>Drug details</summary><div class="drug-list">${x.master.drugs.map(d=>`<div class="drug-row"><strong>${esc(d['ชื่อยา'])}</strong><span>${esc(d['ขนาดยา'])}</span></div>`).join('')}</div></details>`:''}
-      <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button>${x.master?`<button type="button" class="secondary" data-review-regimen="${esc(x.key)}">Review / Publish</button>`:''}</div></article>`).join('')
+      <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button>${x.master?`<button type="button" class="secondary" data-review-regimen="${esc(x.key)}">Review / Publish</button><button type="button" class="secondary" data-builder-regimen="${esc(x.key)}">Build Structured</button>`:''}</div></article>`).join('')
   }</div></section>`).join('');
   document.querySelectorAll('[data-use-regimen]').forEach(b=>b.addEventListener('click',()=>useFromLibrary(b.dataset.useRegimen)));
+  document.querySelectorAll('[data-builder-regimen]').forEach(b=>b.addEventListener('click',()=>{
+    const item=catalog.find(x=>x.key===b.dataset.builderRegimen);
+    if(item)window.BHH_BUILDER?.open(item);
+  }));
   document.querySelectorAll('[data-review-regimen]').forEach(b=>b.addEventListener('click',()=>{
     const item=catalog.find(x=>x.key===b.dataset.reviewRegimen);
     if(item&&window.BHH_PUBLISH)window.BHH_PUBLISH.open(item);
@@ -975,60 +1152,94 @@ function useFromLibrary(key) {
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
+let roundingDraft=null;
+let roundingRevision=0;
 function loadRounding() {
-  try {
-    const v=JSON.parse(localStorage.getItem(ROUNDING_KEY)||'null');
-    if (Array.isArray(v)&&v.length) return Object.fromEntries(v.map(x=>[x.id,x]));
-  } catch {}
+  // Published profile only. Browser localStorage must never affect patient-care calculations.
   return Object.fromEntries(clone(BHH_ROUNDING_DEFAULTS).map(x=>[x.id,x]));
 }
-function roundingArray() {return Object.values(roundingProfiles);}
-function bindRounding() {
-  $('#rounding-save').addEventListener('click',saveRounding);
-  $('#rounding-reset').addEventListener('click',()=>{localStorage.removeItem(ROUNDING_KEY);roundingProfiles=Object.fromEntries(clone(BHH_ROUNDING_DEFAULTS).map(x=>[x.id,x]));renderRounding();});
-  $('#rounding-export').addEventListener('click',()=>{const blob=new Blob([JSON.stringify(roundingArray(),null,2)],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='BHH-rounding-policy.json';a.click();setTimeout(()=>URL.revokeObjectURL(u),500);});
-  $('#rounding-import').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{const v=JSON.parse(await f.text());if(!Array.isArray(v))throw new Error('Invalid policy');roundingProfiles=Object.fromEntries(v.map(x=>[x.id,x]));localStorage.setItem(ROUNDING_KEY,JSON.stringify(v));renderRounding();}catch(err){$('#rounding-message').innerHTML=`<div class="alert alert-error">${esc(err.message)}</div>`;}e.target.value='';});
+async function syncCentralRounding(){
+  try{
+    const res=await fetch('/api/rounding',{cache:'no-store'});
+    if(!res.ok)return;
+    const data=await res.json();
+    if(Array.isArray(data.profiles) && data.revision!==roundingRevision){
+      roundingProfiles=Object.fromEntries(data.profiles.map(x=>[x.id,x]));
+      roundingRevision=data.revision;
+      invalidateCalculation();
+      if(!roundingDraft)renderRounding();
+    }
+  }catch{}
 }
-function renderRounding() {
-  const local=Boolean(localStorage.getItem(ROUNDING_KEY));
-  $('#rounding-status').innerHTML=`<span class="badge ${local?'badge-warning':'badge-ok'}">${local?'LOCAL TEST OVERRIDE':'GLOBAL DEFAULT'}</span>`;
-  $('#rounding-policy-list').innerHTML=roundingArray().map((p,i)=>`<article class="rounding-card" data-rp-card="${esc(p.id)}"><strong>${esc(p.label)}</strong><div class="form-grid compact-grid">
+function roundingArray(){return Object.values(roundingDraft||roundingProfiles);}
+function bindRounding(){
+  $('#rounding-save').addEventListener('click',saveRounding);
+  $('#rounding-reset').addEventListener('click',()=>{
+    roundingDraft=Object.fromEntries(clone(BHH_ROUNDING_DEFAULTS).map(x=>[x.id,x]));
+    renderRounding();
+  });
+  $('#rounding-export').addEventListener('click',()=>{
+    const blob=new Blob([JSON.stringify(roundingArray(),null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='BHH-rounding-policy.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),500);
+  });
+  $('#rounding-import').addEventListener('change',async event=>{
+    const file=event.target.files?.[0];if(!file)return;
+    try{
+      const values=JSON.parse(await file.text());
+      if(!Array.isArray(values) || !values.length)throw Error('Invalid rounding data');
+      roundingDraft=Object.fromEntries(values.map(x=>[x.id,x]));
+      renderRounding();
+    }catch(err){$('#rounding-message').textContent='Import failed: '+err.message;}
+    event.target.value='';
+  });
+}
+function renderRounding(){
+  $('#rounding-status').textContent=roundingDraft?'UNSAVED DRAFT — no patient dose affected':'GLOBAL POLICY · revision '+roundingRevision;
+  $('#rounding-policy-list').innerHTML=roundingArray().map(p=>`<article class="rounding-card" data-rp-card="${esc(p.id)}"><strong>${esc(p.label)}</strong><div class="form-grid compact-grid">
     <label class="field"><span>Increment (${esc(p.unit)})</span><input data-rp="increment" type="number" step="any" min="0.000001" value="${p.increment}" ${p.method==='none'?'disabled':''}></label>
     <label class="field"><span>Max difference (%)</span><input data-rp="maxPercentDifference" type="number" step="0.01" min="0" max="100" value="${p.maxPercentDifference}" ${p.method==='none'?'disabled':''}></label>
     <label class="field"><span>Max absolute difference</span><input data-rp="maxAbsoluteDifference" type="number" step="any" min="0" value="${p.maxAbsoluteDifference??''}" ${p.method==='none'?'disabled':''}></label>
     </div></article>`).join('');
 }
-function saveRounding() {
-  document.querySelectorAll('[data-rp-card]').forEach(card=>{
-    const p=roundingProfiles[card.dataset.rpCard]; if(!p||p.method==='none')return;
-    card.querySelectorAll('[data-rp]').forEach(input=>{
-      const k=input.dataset.rp; const v=input.value.trim();
-      if (k==='maxAbsoluteDifference'&&v==='') delete p[k]; else p[k]=Number(v);
-    });
-  });
-  for (const p of roundingArray()) {
-    if (!(p.increment>0) || !(p.maxPercentDifference>=0&&p.maxPercentDifference<=100)) {
-      $('#rounding-message').innerHTML='<div class="alert alert-error">Invalid rounding policy.</div>'; return;
+async function saveRounding(){
+  if(!roundingDraft)roundingDraft=Object.fromEntries(clone(roundingArray()).map(p=>[p.id,p]));
+  for(const card of document.querySelectorAll('[data-rp-card]')){
+    const p=roundingDraft[card.dataset.rpCard];if(!p||p.method==='none')continue;
+    for(const input of card.querySelectorAll('[data-rp]')){
+      const k=input.dataset.rp,v=input.value.trim();
+      if(k==='maxAbsoluteDifference'&&!v)delete p[k];else p[k]=Number(v);
     }
   }
-  localStorage.setItem(ROUNDING_KEY,JSON.stringify(roundingArray()));
-  $('#rounding-message').innerHTML='<div class="alert alert-success">Local test override saved.</div>';
-  renderRounding();
+  const profiles=roundingArray();
+  if(profiles.some(x=>!(x.increment>0)||!(x.maxPercentDifference>=0&&x.maxPercentDifference<=100))){
+    $('#rounding-message').textContent='Invalid rounding profile';return;
+  }
+  const pin=$('#rounding-pin').value.trim();
+  if(!pin){$('#rounding-message').textContent='กรุณากรอก Pharmacist PIN';return;}
+  const btn=$('#rounding-save');btn.disabled=true;
+  try{
+    const response=await fetch('/api/rounding',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({pin,expectedRevision:roundingRevision,profiles})});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||data.success!==true)throw Error(data.message||'Server could not save rounding policy');
+    roundingRevision=data.revision;
+    roundingProfiles=Object.fromEntries(data.profiles.map(x=>[x.id,x]));
+    roundingDraft=null;
+    invalidateCalculation();
+    renderRounding();
+    $('#rounding-message').textContent='Global Rounding Policy saved on Server · revision '+roundingRevision;
+  }catch(err){$('#rounding-message').textContent='ไม่สำเร็จ: '+err.message;}
+  finally{$('#rounding-pin').value='';btn.disabled=false;}
 }
 
 // Global hook for publish-manager.js updates
 window.BHH_APP_NOTIFY_UPDATE = function(item) {
+  // Reviews and drafts never become calculator-ready via a UI-only callback.
   if (!item) return;
-  const match = catalog.find(c => c.master?.catalog_id === item.catalog_id || c.key === item.key);
-  if (match) {
-    match.status = 'approved_published';
-    if (match.master) {
-      match.structured = buildStructuredFromMaster(match.master);
-    }
-  }
-  const curType = $('#cancer-type-select')?.value || '';
-  populateRegimenOptionsForType(curType);
+  const match=catalog.find(c=>c.master?.catalog_id===item.catalog_id || c.key===item.key);
+  if (match && item.status) match.status=item.status;
   renderLibrary();
 };
+
 
 init();

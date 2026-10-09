@@ -29,6 +29,26 @@ jobs:
       - name: Run production smoke tests
         run: node tests/production-smoke.mjs
 
+      - name: Run production clinical and D1 safety tests
+        run: |
+          node tests/production-safety.mjs
+          node tests/regimen-lifecycle.mjs
+          node tests/rounding-security.mjs
+          node tests/ckd-epi-2021.mjs
+
+      - name: Syntax-check new modules
+        run: |
+          node --check renal-equations.js
+          node --check regimen-builder.js
+          node --check legacy-validator.js
+          node --check functions/api/publish.js
+          node --check functions/api/regimens.js
+          node --check functions/api/verify-pin.js
+          node --check src/server/clinical.js
+
+      - name: Real browser production smoke
+        run: node tests/browser-production-flow.mjs
+
       - name: Parse-check browser runtime
         run: node --check app.bundle.js
 
@@ -43,6 +63,7 @@ jobs:
           test -f index.html
           test -f styles.css
           test -f app.bundle.js
+          test -f renal-equations.js
           test -f cleanup.js
           test -f manifest.json
           test -f data/regimens.published.json
@@ -71,7 +92,7 @@ jobs:
       - name: Assemble static site
         run: |
           mkdir -p _site/data
-          cp index.html styles.css publish-manager.css publish-manager.js manifest.json cleanup.js app.bundle.js 404.html .nojekyll _site/
+          cp index.html styles.css publish-manager.css publish-manager.js regimen-builder.js legacy-validator.js renal-equations.js manifest.json cleanup.js app.bundle.js 404.html .nojekyll _site/
           cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json data/guideline-status.v2.4.json _site/data/
           test -s _site/data/guideline-status.v2.4.json
 

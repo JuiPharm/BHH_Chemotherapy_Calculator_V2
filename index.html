@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#0b2c55">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://github.com https://api.github.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>BHH Chemotherapy Calculator</title>
-  <link rel="stylesheet" href="./styles.css?v=2.3.0">
-  <link rel="stylesheet" href="./publish-manager.css?v=2.6.3">
+  <link rel="stylesheet" href="./styles.css?v=2.7.3">
+  <link rel="stylesheet" href="./publish-manager.css?v=2.7.0">
 </head>
 <body>
   <div id="app-loading" class="loading">Loading BHH Chemotherapy Calculator…</div>
@@ -26,9 +26,12 @@
       <button class="active" data-tab="calculator">Calculator</button>
       <button class="admin-tab hidden" data-tab="library">Regimen Library</button>
       <button class="admin-tab hidden" data-tab="manager">Regimen Manager</button>
+        <button class="admin-tab hidden" data-tab="builder">Regimen Builder</button>
+        <button class="admin-tab hidden" data-tab="legacy">Legacy Validator</button>
       <button class="admin-tab hidden" data-tab="rounding">Rounding Policy</button>
       <button class="admin-tab hidden" data-tab="about">About</button>
-      <button id="admin-pin-toggle-btn" class="pin-toggle-btn" type="button" style="margin-left:auto;">🔒 เภสัชกร (PIN)</button>
+      <span id="sync-status" class="micro" aria-live="polite">Checking central sync…</span>
+        <button id="admin-pin-toggle-btn" class="pin-toggle-btn" type="button" style="margin-left:auto;">🔒 เภสัชกร (PIN)</button>
     </nav>
 
     <main>
@@ -106,8 +109,9 @@
               <span>Kidney function method <b>*</b></span>
               <select id="kidney-method" required>
                 <option value="cockcroft_gault_legacy" selected>Cockcroft-Gault CrCl</option>
+                <option value="ckd_epi_2021_cr">CKD-EPI 2021 (Race-free) — คำนวณจาก SCr</option>
                 <option value="measured_gfr">Measured GFR</option>
-                <option value="bsa_adjusted_egfr">BSA-adjusted CKD-EPI eGFR</option>
+                <option value="bsa_adjusted_egfr">Lab eGFR (mL/min/1.73 m²) → BSA-adjusted</option>
               </select>
             </label>
             <label id="scr-wrap" class="field">
@@ -119,6 +123,8 @@
               <input id="kidney-value" type="number" min="1" max="250" step="0.1">
             </label>
           </div>
+          <div id="renal-preview" class="note-box" role="status" aria-live="polite">เลือกวิธีประเมินไต แล้วกรอกข้อมูลผู้ป่วยเพื่อแสดงผล</div>
+          <p class="micro">CKD-EPI 2021 ใช้ Serum Creatinine ที่มาตรฐาน IDMS สำหรับผู้ใหญ่ และแตกต่างจาก CKD-EPI 2009 ที่ eviQ/ADDIKD ใช้สำหรับ Carboplatin โปรดเลือกวิธีตาม Protocol ที่ผ่านการรับรอง</p>
 
           <div class="button-row">
             <button type="submit" id="calculate-btn" class="primary">Calculate</button>
@@ -158,8 +164,8 @@
       <section id="tab-manager" class="tab-panel hidden">
         <div class="card">
           <h2>Regimen Manager</h2>
-          <p>ข้อมูล Regimen ที่ใช้ร่วมกันทุกเครื่องถูกเก็บเป็น Central Master ใน Repository นี้ การแก้ไข Central Master แล้ว Deploy สำเร็จจะเปลี่ยนข้อมูลสำหรับผู้ใช้ทุกเครื่อง ไม่ใช้ browser-local data สำหรับ Regimen Master</p>
-          <div class="manager-actions">
+          <p>ข้อมูลที่ Publish ผ่าน Pharmacist PIN จะบันทึกใน Cloudflare D1 และซิงก์ข้ามเครื่องโดยอัตโนมัติ ไม่ต้องใช้ GitHub Token ส่วน Legacy Master เป็นข้อมูลสำหรับ Review เท่านั้น</p>
+          <div class="manager-actions"><button class="primary" type="button" data-tab="builder">+ New / Edit Structured Regimen</button>
             <a class="primary link-button" href="https://github.com/JuiPharm/BHH_Chemotherapy_Calculator_V2/edit/main/data/legacy-regimens.v1.json" target="_blank" rel="noopener noreferrer">Edit Central Regimen Master</a>
             <a class="secondary link-button" href="https://github.com/JuiPharm/BHH_Chemotherapy_Calculator_V2/edit/main/data/regimens.published.json" target="_blank" rel="noopener noreferrer">Edit Approved Structured Regimens</a>
             <a class="secondary link-button" href="https://github.com/JuiPharm/BHH_Chemotherapy_Calculator_V2/edit/main/data/rounding-profiles.json" target="_blank" rel="noopener noreferrer">Edit Global Rounding Policy</a>
@@ -167,9 +173,42 @@
           <div class="manager-grid">
             <div class="manager-kpi"><span>Central Master</span><strong id="manager-master-count">136</strong><small>Regimens</small></div>
             <div class="manager-kpi"><span>Approved Structured</span><strong id="manager-approved-count">6</strong><small>Regimens</small></div>
-            <div class="manager-kpi"><span>Global Update</span><strong>GitHub Pages</strong><small>Deploy after commit</small></div>
+            <div class="manager-kpi"><span>Global Update</span><strong>Cloudflare D1</strong><small>near-real-time central sync</small></div>
           </div>
-          <div class="note-box"><strong>หมายเหตุ:</strong> หากต้องการแก้ Regimen จากหน้าเว็บโดยตรงและมี User/Role/Audit trail แบบหลายผู้ใช้ ควรย้าย Central Master ไป Supabase; GitHub Pages เพียงอย่างเดียวไม่ควรเก็บสิทธิ์เขียนหรือ token ของ Admin ใน browser</div>
+          <div class="note-box"><strong>สำคัญ:</strong> GitHub Pages ใช้ดูข้อมูลแบบ Static เท่านั้น หากต้องการ Approve &amp; Publish ให้เปิดเว็บไซต์ Cloudflare Pages ที่ผูก D1 และ APPROVE_PIN แล้ว ใช้ Regimen Builder เพื่อตรวจข้อมูล Structured ก่อนเผยแพร่</div>
+        </div>
+      </section>
+
+      <section id="tab-builder" class="tab-panel hidden">
+        <div class="card">
+          <div class="section-heading">
+            <div><h2>Zero-code Regimen Builder</h2><p>สร้าง/แก้สูตรยา Structured แบบหลาย Phase แล้วบันทึก Draft หรือ Approve &amp; Publish ผ่าน Pharmacist PIN</p></div>
+            <div class="button-row"><button id="builder-new" type="button" class="secondary">+ New Draft</button><button id="builder-clear" type="button" class="secondary">Clear Form</button><button id="builder-clone" type="button" class="secondary">Clone as Draft</button></div>
+          </div>
+          <div id="builder-message" class="alert alert-info" role="status" aria-live="polite">เริ่มจากเลือก Regimen ใน Library แล้วกด Build Structured หรือสร้างสูตรใหม่</div>
+          <div id="builder-content"></div>
+          <div class="card" style="padding:16px;margin-top:20px">
+            <label class="field"><span>Pharmacist PIN — ใช้ยืนยันกับ Cloudflare Server ไม่เก็บใน Browser</span>
+              <input id="builder-pin" type="password" autocomplete="off" placeholder="PIN" maxlength="40"></label>
+            <label class="field"><input id="builder-attest" type="checkbox"> ยืนยันว่าทบทวนชื่อยา ขนาดยา หน่วย Route ตารางให้ยา และรอบยาเทียบกับเอกสารทางคลินิกแล้ว</label>
+            <div class="button-row" style="flex-wrap:wrap">
+              <button type="button" class="secondary" id="builder-save">Save Draft</button>
+              <button type="button" class="primary" id="builder-publish">Approve &amp; Publish</button>
+              <button type="button" class="secondary" id="builder-export">Export JSON</button>
+              <button type="button" class="secondary" id="builder-load">Load Central Drafts</button>
+            </div>
+          </div>
+          <div id="builder-drafts" class="builder-drafts" aria-live="polite"></div><p class="micro">Archive จะถอน Regimen ออกจากรายการใช้งานในฐานกลาง แต่เก็บข้อมูลไว้เพื่อกู้คืนเป็น Draft และทบทวนก่อน Publish ใหม่</p>
+        </div>
+      </section>
+      <section id="tab-legacy" class="tab-panel hidden">
+        <div class="card">
+          <h2>Legacy Validator</h2>
+          <p>ตรวจ Dose ข้อความเดิมเท่านั้น ไม่อนุญาตให้คำนวณหรือ Publish โดยอัตโนมัติ</p>
+          <label class="file-button">Choose Legacy JSON <input id="legacy-file" type="file" accept=".json,application/json"></label>
+          <button id="legacy-export" type="button" class="secondary">Export Migration Report CSV</button>
+          <div id="legacy-summary" class="summary-strip"></div>
+          <div id="legacy-results" class="table-wrap"></div>
         </div>
       </section>
 
@@ -180,8 +219,9 @@
             <div id="rounding-status"></div>
           </div>
           <div id="rounding-policy-list" class="rounding-grid"></div>
+          <label class="field"><span>Pharmacist PIN สำหรับบันทึก Global Rounding Policy</span><input id="rounding-pin" type="password" autocomplete="off" placeholder="PIN" maxlength="40"></label>
           <div class="button-row">
-            <button type="button" id="rounding-save" class="primary">Save Local Test Override</button>
+            <button type="button" id="rounding-save" class="primary">Save Global Policy</button>
             <button type="button" id="rounding-export" class="secondary">Export Policy JSON</button>
             <label class="file-button">Import Policy JSON<input id="rounding-import" type="file" accept="application/json,.json"></label>
             <button type="button" id="rounding-reset" class="secondary">Reset to Global Default</button>
@@ -194,37 +234,44 @@
         <div class="card prose">
           <h2>About</h2>
           <p>BHH Chemotherapy Calculator — Pharmacy Department, Bangkok Hospital Hatyai</p>
-          <p>Version <strong>2.6.3</strong> · Central Regimen Master · 7 October 2026</p>
+          <p>Version <strong>2.7.3</strong> · Central Regimen Master · 7 October 2026</p>
         </div>
       </section>
     </main>
 
-    <footer>Bangkok Hospital Hatyai · Pharmacy Department · BHH Chemotherapy Calculator v2.6.3</footer>
+    <footer>Bangkok Hospital Hatyai · Pharmacy Department · BHH Chemotherapy Calculator v2.7.3</footer>
   </div>
 
-  <dialog id="pin-auth-dialog">
-    <div class="review-publish-head">
-      <h2 id="pin-auth-heading">ยืนยันรหัส PIN (Pharmacist Mode)</h2>
-      <button id="pin-auth-close" type="button" aria-label="Close">✕</button>
+  <dialog id="pin-auth-dialog" aria-labelledby="pin-auth-heading" aria-describedby="pin-auth-description">
+    <div class="pin-auth-top">
+      <div class="pin-auth-icon" aria-hidden="true">🔐</div>
+      <button id="pin-auth-close" class="pin-auth-close" type="button" aria-label="ปิดหน้าต่าง">✕</button>
     </div>
-    <form id="pin-auth-form" style="padding: 20px;">
-      <p style="margin-top:0; color: #334e68; font-size: 0.95rem;">
-        กรุณากรอกรหัส PIN เพื่อปลดล็อคหน้าจัดการสูตรยา (Regimen Library, Manager และ Rounding Policy)
-      </p>
-      <div id="pin-auth-error" class="alert alert-error hidden"></div>
-      <label class="field" style="margin: 18px 0;">
-        <span>รหัส PIN *</span>
-        <input id="pin-auth-input" type="password" maxlength="10" required autocomplete="off" style="font-size: 1.3rem; letter-spacing: 4px; text-align: center;">
-      </label>
-      <div class="button-row" style="justify-content: flex-end; margin-top: 15px;">
+    <div class="pin-auth-heading">
+      <p class="pin-auth-eyebrow">BHH PHARMACY · SECURE ACCESS</p>
+      <h2 id="pin-auth-heading">Pharmacist Mode</h2>
+      <p id="pin-auth-description">ยืนยันตัวตนด้วย PIN เพื่อจัดการ Regimen, ทบทวนข้อมูล และตั้งค่าการคำนวณ</p>
+    </div>
+    <form id="pin-auth-form" class="pin-auth-form">
+      <label class="field" for="pin-auth-input"><span>Pharmacist PIN</span></label>
+      <div class="pin-auth-input-wrap">
+        <input id="pin-auth-input" type="password" maxlength="40" required autocomplete="off" placeholder="กรอกรหัส PIN" aria-describedby="pin-auth-tip pin-auth-error">
+        <button id="pin-auth-visibility" type="button" aria-controls="pin-auth-input" aria-pressed="false" aria-label="แสดงรหัส PIN">แสดง</button>
+      </div>
+      <p id="pin-auth-tip" class="pin-auth-tip">ตรวจสอบกับ Cloudflare Server ทุกครั้ง · ไม่บันทึกรหัส PIN ใน Browser</p>
+      <div id="pin-auth-error" class="pin-auth-error hidden" role="alert" aria-live="assertive"></div>
+      <div class="pin-auth-actions">
         <button type="button" id="pin-auth-cancel" class="secondary">ยกเลิก</button>
-        <button type="submit" class="primary">เข้าสู่ระบบ</button>
+        <button type="submit" id="pin-auth-submit" class="primary">ยืนยัน PIN <span aria-hidden="true">→</span></button>
       </div>
     </form>
   </dialog>
 
   <script src="./cleanup.js?v=2.3.0" defer></script>
-  <script src="./publish-manager.js?v=2.6.3" defer></script>
-  <script src="./app.bundle.js?v=2.5.0" defer></script>
+  <script src="./publish-manager.js?v=2.7.0" defer></script>
+  <script src="./renal-equations.js?v=2.7.1" defer></script>
+  <script src="./app.bundle.js?v=2.7.3" defer></script>
+  <script src="./regimen-builder.js?v=2.7.3" defer></script>
+  <script src="./legacy-validator.js?v=2.7.0" defer></script>
 </body>
 </html>

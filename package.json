@@ -1,10 +1,10 @@
 {
   "name": "bhh-chemotherapy-calculator-v2",
-  "version": "2.3.0",
+  "version": "2.7.3",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests/production-smoke.mjs && node tests/runtime-startup-static.mjs",
+    "test": "node tests/production-smoke.mjs && node tests/ckd-epi-2021.mjs && node tests/production-safety.mjs && node tests/regimen-lifecycle.mjs && node tests/rounding-security.mjs && node tests/runtime-startup-static.mjs",
     "smoke": "node tests/production-smoke.mjs",
     "serve": "python3 -m http.server 8080"
   }
