@@ -88,6 +88,8 @@ async function init(){
   protocols=new Map(data.map(x=>[x.id,x]));
   const onProtocol=()=>{
     protocol=protocols.get($('ped-protocol').value)||null;
+    // Confirmation of another risk-specific regimen must never carry over silently.
+    ['ped-risk','ped-highrisk','ped-tcell','ped-cns3','ped-tap','ped-hdmtx'].forEach(id=>$(id).checked=false);
     $('ped-phase').innerHTML=(protocol?.phases||[]).map(p=>'<option value="'+esc(p.id)+'">'+esc(p.label)+'</option>').join('');
     $('ped-day').value='1';
     $('ped-results').innerHTML='<div class="pediatric-empty">เลือก Phase/Day ใหม่ และตรวจ Risk Group ก่อนคำนวณ</div>';
