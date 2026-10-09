@@ -74,10 +74,10 @@ jobs:
         run: |
           mkdir -p _site/data
           cp index.html styles.css publish-manager.css publish-manager.js manifest.json cleanup.js app.bundle.js 404.html .nojekyll _site/
-          cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json data/guideline-status.v2.4.json data/nhso-pediatric-oncology-2566-source.json data/pediatric-regimens.thaipog-2566.json _site/data/
+          cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json data/guideline-status.v2.4.json _site/data/
           test -s _site/data/guideline-status.v2.4.json
-          test -s _site/data/nhso-pediatric-oncology-2566-source.json
-          test -s _site/data/pediatric-regimens.thaipog-2566.json
+          test ! -e _site/data/pediatric-regimens.thaipog-2566.json
+          test ! -e _site/data/nhso-pediatric-oncology-2566-source.json
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v4
