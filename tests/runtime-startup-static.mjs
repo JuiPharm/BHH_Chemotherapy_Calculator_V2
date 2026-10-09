@@ -12,7 +12,7 @@ assert(!/\\binit;\\s*$/.test(bundle), 'Runtime ends with init; instead of init()
 assert(bundle.includes("loadJson('./data/regimens.published.json?v=2.3.0')"), 'Runtime must load central published regimen data');
 assert(bundle.includes("loadJson('./data/legacy-regimens.v1.json?v=2.3.0')"), 'Runtime must load the central 136-regimen master');
 assert(bundle.includes("loadJson('./data/rounding-profiles.json?v=2.3.0')"), 'Runtime must load central rounding defaults');
-assert(index.includes('app.bundle.js?v=2.7.0'), 'Index is not using v2.7.0 runtime');
+assert(index.includes('app.bundle.js?v=2.7.1'), 'Index is not using v2.7.1 runtime');
 assert(index.includes('publish-manager.js?v=2.6.4'), 'Review/Publish UI script must load');
 assert(index.includes('publish-manager.css?v=2.6.3'), 'Review/Publish styling missing');
 assert(index.includes('https://api.github.com'), 'GitHub publication API not permitted by CSP');
@@ -33,6 +33,13 @@ assert(pediatric.regimens.length===62 && pediatric.record_count===62,'Pediatric 
 assert(pediatric.regimens.every(x=>x.population==='pediatric' && x.approved===true && x.published===true),'Every pediatric reference must be tagged and reference published');
 assert(pediatric.regimens.every(x=>x.approval_scope==='SOURCE_REFERENCE_PUBLICATION' && x.calculator_enabled===false && x.clinical_dose_calculator_approval===false),'Pediatric reference approval must not enable dose calculation');
 assert(pediatric.regimens.find(x=>x.protocol_id==='ThaiPOG-ALL-1301')?.verified_source_examples?.length===25,'SR-ALL must retain 25 phase-specific medicine reference entries');
+assert(pediatric.source_evidence_pages===303,'Source PDF evidence must be indexed across all 303 referenced pages');
+assert(pediatric.regimens.every(x=>x.source_evidence_pages?.length>0),'Every pediatric regimen must retain page-specific source excerpts');
+assert(pediatric.regimens.flatMap(x=>x.source_evidence_pages).every(p=>p.source_excerpt_lines && p.extraction_note),'All extracts must identify limitations of raw PDF text');
+assert(bundle.includes('function buildPediatricEvidenceHtml(item)'), 'Pediatric source PDF excerpts must be available to users');
+assert(bundle.includes('data-pediatric-evidence'), 'Pediatric source evidence must render on demand in the regimen library');
+assert(bundle.includes("container.dataset.loaded='true'"), 'PDF evidence rendering must be lazy for mobile performance');
+
 assert(pediatric.regimens.find(x=>x.protocol_id==='ThaiPOG-ALL-1302')?.verified_source_examples?.length===31,'HR-ALL must retain 31 phase-specific medicine reference entries');
 assert(pediatric.regimens.some(x=>x.protocol_id==='ThaiPOG-NPC-21' && x.verified_source_examples.length===3),'Pediatric nasopharyngeal induction/concurrent protocol must remain traceable');
 assert(new Set(pediatric.regimens.map(x=>x.catalog_id)).size===62,'Duplicate pediatric IDs prohibited');
