@@ -28,6 +28,20 @@ assert(publisher.includes('showReviewIssue(e)'), 'Publish must display the reaso
 assert(publisher.includes("$('review-publish-source').value=key"), 'Pasted official guideline URLs must select their source automatically');
 assert(publisher.includes("'eviQ': ['eviq.org.au']"), 'eviQ guideline links must be supported');
 assert(publisher.includes("'NHSO Pediatric 2566': ['nhso.go.th']"), 'NHSO Pediatric guideline must be selectable');
+const pediatric=JSON.parse(fs.readFileSync(new URL('../data/pediatric-regimens.thaipog-2566.json',import.meta.url),'utf8'));
+assert(pediatric.regimens.length===62 && pediatric.record_count===62,'Pediatric database must contain 62 reference protocols/variants');
+assert(pediatric.regimens.every(x=>x.population==='pediatric' && x.approved===true && x.published===true),'Every pediatric reference must be tagged and reference published');
+assert(pediatric.regimens.every(x=>x.approval_scope==='SOURCE_REFERENCE_PUBLICATION' && x.calculator_enabled===false && x.clinical_dose_calculator_approval===false),'Pediatric reference approval must not enable dose calculation');
+assert(new Set(pediatric.regimens.map(x=>x.catalog_id)).size===62,'Duplicate pediatric IDs prohibited');
+assert(bundle.includes("loadJson('./data/pediatric-regimens.thaipog-2566.json?v=2.7.0')"),'Production frontend must load the pediatric database');
+assert(bundle.includes("if (selectedItem.isPediatric) $('#cycle-input').disabled=true"),'Pediatric calculation must be blocked');
+assert(bundle.includes("x.master&&!x.isPediatric"),'Pediatric protocol must not enter adult simplistic review form');
+const legacyApproval=JSON.parse(fs.readFileSync(new URL('../data/guideline-status.v2.4.json',import.meta.url),'utf8'));
+for(const id of ['BHH-CATALOG-046','BHH-CATALOG-048']){
+ const row=legacyApproval.find(x=>x.catalog_id===id);
+ assert(row && row.status==='blocked' && row.calculator_enabled===false, 'Unsafe legacy pediatric Burkitt protocol must be blocked: '+id);
+}
+
 const nhso=JSON.parse(fs.readFileSync(new URL('../data/nhso-pediatric-oncology-2566-source.json', import.meta.url), 'utf8'));
 assert(nhso.ingestion_status==='REGISTERED_LINK_ONLY_PDF_NOT_EXTRACTABLE', 'NHSO source ingestion provenance must stay explicit');
 assert(nhso.approved_protocols.length===0, 'Do not auto-approve pediatric dosing without the complete primary source');
