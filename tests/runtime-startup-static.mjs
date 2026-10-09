@@ -7,7 +7,7 @@ assert(app.includes('loadJson'));
 assert(html.includes('app.bundle.js?v=2.7.3'));
 assert(html.includes('publish-manager.js'));
 assert(html.includes('regimen-builder.js'));
-assert(html.includes('styles.css?v=2.7.2'));
+assert(html.includes('styles.css?v=2.7.3'));
 assert(app.includes('function placeSearchDropdown()'));
 assert(app.includes('const SEARCH_MAX_RESULTS=4'));
 
