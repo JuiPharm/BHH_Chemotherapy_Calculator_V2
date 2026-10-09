@@ -25,7 +25,8 @@ export function intrathecalMtxMg(ageYears,weightKg) {
 }
 const r3=n=>Math.round((n+Number.EPSILON)*1000)/1000;
 export function calculatePediatric(protocol,patient,selection) {
-  if(!protocol||protocol.id!=='ThaiPOG-ALL-1301')throw Error('Unsupported pediatric protocol');
+  if(!protocol||!['ThaiPOG-ALL-1301','ThaiPOG-ALL-1302'].includes(protocol.id))throw Error('Unsupported pediatric protocol');
+  const highRisk=protocol.id==='ThaiPOG-ALL-1302';
   const p=patient||{},s=selection||{};
   for(const [key,description] of [['ageYears','current age in years'],['ageAtDiagnosisYears','age at diagnosis'],['weightKg','weight (kg)'],['heightCm','height (cm)'],['wbcAtDiagnosis','WBC at diagnosis']]){
     if(!finite(p[key]))throw Error('Please enter '+description);
@@ -43,13 +44,20 @@ export function calculatePediatric(protocol,patient,selection) {
   const holds=[],warnings=[],info=[];
   const pushHold=(msg)=>{if(!holds.includes(msg))holds.push(msg)};
   const pushWarn=(msg)=>{if(!warnings.includes(msg))warnings.push(msg)};
-  if(ageDx<1||ageDx>=10)pushHold('Age at diagnosis is outside the 1–9 year eligibility stated in ThaiPOG-ALL-1301 (p.24).');
-  if(wbc>=50000)pushHold('Diagnostic WBC is ≥50,000/µL; Standard Risk entry criterion is not met (p.24).');
-  if(p.precursorBCellConfirmed!==true)pushHold('Precursor B-cell phenotype must be confirmed (p.24).');
-  if(p.burkittExcluded!==true)pushHold('Burkitt leukemia exclusion must be confirmed (p.24).');
+  if(!highRisk){
+    if(ageDx<1||ageDx>=10)pushHold('Age at diagnosis is outside the 1–9 year eligibility stated in ThaiPOG-ALL-1301 (p.24).');
+    if(wbc>=50000)pushHold('Diagnostic WBC is ≥50,000/µL; Standard Risk entry criterion is not met (p.24).');
+    if(p.precursorBCellConfirmed!==true||p.tCellConfirmed===true)pushHold('Precursor B-cell phenotype must be confirmed for Standard-Risk protocol (p.24).');
+  } else {
+    if(p.highRiskConfirmed!==true)pushHold('High Risk eligibility/restratification must be confirmed by pediatric oncology team (p.31).');
+    if(!(p.precursorBCellConfirmed===true||p.tCellConfirmed===true)||p.precursorBCellConfirmed===true&&p.tCellConfirmed===true)pushHold('Confirm exactly one immunophenotype: Precursor B-cell ALL or T-cell ALL (p.31).');
+  }
+  if(p.burkittExcluded!==true)pushHold('Burkitt leukemia exclusion must be confirmed (pp.24/31).');
   if(p.severeInfection===true)pushHold('Severe infection reported: chemotherapy requires clinical hold and reassessment (p.27).');
-  if(phase.id!=='induction' && p.standardRiskConfirmed!==true)
+  if(!highRisk && phase.id!=='induction' && p.standardRiskConfirmed!==true)
     pushHold('Post-induction Standard Risk reassignment is not confirmed; check marrow/MRD and cytogenetics (pp.24–25).');
+  if(highRisk && phase.id!=='induction' && p.highRiskConfirmed!==true)
+    pushHold('Post-induction High Risk pathway requires confirmation; assess risk for VHR transition (p.31).');
   const hasCBC = finite(p.ancPerUl) && finite(p.plateletsPerUl);
   const anc=hasCBC?Number(p.ancPerUl):null,plt=hasCBC?Number(p.plateletsPerUl):null;
   const countGate = phase.id==='consolidation'||phase.id==='interim_maintenance'||
@@ -76,6 +84,8 @@ export function calculatePediatric(protocol,patient,selection) {
   for(const order of phase.orders){
     if(!matchDay(order.days,day))continue;
     if(order.conditional==='traumatic_tap_only'&&s.traumaticTap!==true)continue;
+    if(order.conditional==='cns3_or_traumatic_tap'&&s.cns3!==true&&s.traumaticTap!==true)continue;
+    if(order.conditional==='maintenance_first_four_cycles'&&cycle>4)continue;
     const raw=order.basis==='age_weight_it'?intrathecalMtxMg(age,w):order.per*bsa;
     const capped=order.max!==null&&order.max!==undefined?Math.min(raw,Number(order.max)):raw;
     const frequency=order.frequency||'once';
@@ -89,7 +99,9 @@ export function calculatePediatric(protocol,patient,selection) {
     });
   }
   if(!orders.length)info.push('No scheduled medications on this day within this phase. Check phase-day calendar and clinical plan.');
-  if(s.traumaticTap===true&&phase.id==='induction'&&day===15)info.push('Special Day 15 intrathecal MTX included for traumatic tap only (p.25).');
+  if(s.traumaticTap===true&&!highRisk&&phase.id==='induction'&&day===15)info.push('Special Day 15 intrathecal MTX included for traumatic tap only (p.25).');
+  if(highRisk&&phase.id==='maintenance'&&day===29&&cycle<=4)info.push('HR Maintenance IT-MTX Day 29 is given only in cycles 1–4 (p.36).');
+  if(highRisk&&phase.id==='induction'&&[15,22].includes(day)&&(s.cns3||s.traumaticTap))info.push('Conditional HR induction IT-MTX for CNS-3 or traumatic tap (p.32).');
   return {
     protocolId:protocol.id,phaseId:phase.id,phase:phase.label,phasePdfPage:phase.pdf_page,day,cycle,
     bsa:r3(bsa),ageYears:age,ageAtDiagnosisYears:ageDx,weightKg:w,sex:p.sex,
