@@ -447,6 +447,28 @@ function bindAdminPin() {
   const err = $('#pin-auth-error');
   const closeBtn = $('#pin-auth-close');
   const cancelBtn = $('#pin-auth-cancel');
+  const revealBtn = $('#pin-auth-visibility');
+
+  const resetPinVisibility = () => {
+    input.type = 'password';
+    revealBtn.textContent = 'แสดง';
+    revealBtn.setAttribute('aria-label', 'แสดงรหัส PIN');
+    revealBtn.setAttribute('aria-pressed', 'false');
+  };
+  revealBtn.addEventListener('click', () => {
+    const visible = input.type === 'password';
+    input.type = visible ? 'text' : 'password';
+    revealBtn.textContent = visible ? 'ซ่อน' : 'แสดง';
+    revealBtn.setAttribute('aria-label', visible ? 'ซ่อนรหัส PIN' : 'แสดงรหัส PIN');
+    revealBtn.setAttribute('aria-pressed', String(visible));
+    input.focus({ preventScroll: true });
+  });
+  dialog.addEventListener('close', () => {
+    resetPinVisibility();
+    input.value = '';
+    err.classList.add('hidden');
+    err.textContent = '';
+  });
 
   if (btn) {
     btn.addEventListener('click', () => {
@@ -456,6 +478,7 @@ function bindAdminPin() {
         updateAdminUi();
       } else {
         if (input) input.value = '';
+        resetPinVisibility();
         if (err) { err.classList.add('hidden'); err.textContent = ''; }
         if (dialog) dialog.showModal();
         if (input) input.focus();
@@ -470,7 +493,13 @@ function bindAdminPin() {
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const pin = input.value.trim();
-    if (!pin) return;
+    if (!pin) { input.focus(); return; }
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton.disabled) return;
+    const previousLabel = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.textContent = 'กำลังตรวจสอบ…';
+    try {
 
     err.classList.add('hidden');
     err.textContent = '';
@@ -544,6 +573,10 @@ function bindAdminPin() {
       localStorage.setItem('bhh_approve_pin', pin);
       updateAdminUi();
       closeDialog();
+    }
+    } finally {
+      submitButton.disabled = false;
+      submitButton.innerHTML = previousLabel;
     }
   });
 
