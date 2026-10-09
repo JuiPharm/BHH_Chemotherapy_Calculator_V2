@@ -50,6 +50,8 @@ jobs:
           test -f data/rounding-profiles.json
           test -f data/legacy-regimens.v1.json
           test -f data/guideline-status.v2.4.json
+          test -f data/oxford-l49-rcodox-ivac-v5.json
+          test -f data/rama-breast-2561-reconciliation.json
           test -f data/nhso-pediatric-oncology-2566-source.json
           test -f data/pediatric-regimens.thaipog-2566.json
           test -f publish-manager.js
@@ -75,8 +77,10 @@ jobs:
         run: |
           mkdir -p _site/data
           cp index.html styles.css pin-auth.css publish-manager.css publish-manager.js manifest.json cleanup.js app.bundle.js 404.html .nojekyll _site/
-          cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json data/guideline-status.v2.4.json _site/data/
+          cp data/regimens.published.json data/rounding-profiles.json data/legacy-regimens.v1.json data/guideline-status.v2.4.json data/oxford-l49-rcodox-ivac-v5.json data/rama-breast-2561-reconciliation.json _site/data/
           test -s _site/data/guideline-status.v2.4.json
+          test -s _site/data/oxford-l49-rcodox-ivac-v5.json
+          test -s _site/data/rama-breast-2561-reconciliation.json
           test -s _site/pin-auth.css
           test ! -e _site/pediatric-calc-core.mjs
           test ! -e _site/pediatric-calc-ui.mjs
