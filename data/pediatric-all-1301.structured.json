@@ -258,7 +258,15 @@
             29,
             43
           ],
-          "pdf_page": 27
+          "pdf_page": 27,
+          "timed_after_mtx_hours": [
+            42,
+            48,
+            54,
+            60,
+            66,
+            72
+          ]
         },
         {
           "drug": "Methotrexate (intrathecal)",
@@ -390,7 +398,12 @@
           "days": [
             29
           ],
-          "pdf_page": 28
+          "pdf_page": 28,
+          "timed_relative_to_cyclophosphamide_hours": [
+            0,
+            4,
+            8
+          ]
         },
         {
           "drug": "Thioguanine (6-TG)",
