@@ -4,7 +4,7 @@
   "source": "National Protocol for treatment of childhood cancer 2023 (NHSO/ThaiPOG)",
   "source_year_be": 2566,
   "source_pdf_pages": 412,
-  "definition": "Approved and Published refers ONLY to the verified publication of the protocol identifier/indication and traceability to source document, not approval of any auto-calculated clinical dose.",
+  "definition": "ThaiPOG pediatric protocols archived, NOT approved or published for patient calculation. Source evidence retained for audited implementation.",
   "clinical_calculation_disabled": true,
   "record_count": 62,
   "regimens": [
@@ -21,10 +21,10 @@
       "source_pdf_page_end": 30,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.24–30",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -358,7 +358,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-002",
@@ -373,10 +380,10 @@
       "source_pdf_page_end": 37,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.31–37",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -750,7 +757,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-003",
@@ -765,10 +779,10 @@
       "source_pdf_page_end": 48,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.38–48",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -1040,7 +1054,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-004",
@@ -1055,10 +1076,10 @@
       "source_pdf_page_end": 63,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.49–63",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -1412,7 +1433,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-005",
@@ -1427,10 +1455,10 @@
       "source_pdf_page_end": 71,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.64–71",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -1628,7 +1656,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-006",
@@ -1643,10 +1678,10 @@
       "source_pdf_page_end": 80,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.72–80",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -1866,7 +1901,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-007",
@@ -1881,10 +1923,10 @@
       "source_pdf_page_end": 92,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.81–92",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -2189,7 +2231,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-008",
@@ -2204,10 +2253,10 @@
       "source_pdf_page_end": 112,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.93–112",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -2593,7 +2642,14 @@
           "source_excerpt_lines": [],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-009",
@@ -2608,10 +2664,10 @@
       "source_pdf_page_end": 123,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.119–123",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -2731,7 +2787,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-010",
@@ -2746,10 +2809,10 @@
       "source_pdf_page_end": 128,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.124–128",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -2869,7 +2932,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-011",
@@ -2884,10 +2954,10 @@
       "source_pdf_page_end": 130,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.129–130",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -2929,7 +2999,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-012",
@@ -2944,10 +3021,10 @@
       "source_pdf_page_end": 137,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.131–137",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -3119,7 +3196,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-013",
@@ -3134,10 +3218,10 @@
       "source_pdf_page_end": 143,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.138–143",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -3290,7 +3374,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-014",
@@ -3305,10 +3396,10 @@
       "source_pdf_page_end": 148,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.144–148",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -3433,7 +3524,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-015",
@@ -3448,10 +3546,10 @@
       "source_pdf_page_end": 155,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.149–155",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -3554,7 +3652,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-016",
@@ -3569,10 +3674,10 @@
       "source_pdf_page_end": 171,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.166–171",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -3713,7 +3818,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-017",
@@ -3728,10 +3840,10 @@
       "source_pdf_page_end": 179,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.172–179",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -3928,7 +4040,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-018",
@@ -3943,10 +4062,10 @@
       "source_pdf_page_end": 183,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.180–183",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4001,7 +4120,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-019",
@@ -4016,10 +4142,10 @@
       "source_pdf_page_end": 195,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.195–195",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4083,7 +4209,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-020",
@@ -4098,10 +4231,10 @@
       "source_pdf_page_end": 201,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.196–201",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4269,7 +4402,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-021",
@@ -4284,10 +4424,10 @@
       "source_pdf_page_end": 210,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.202–210",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4505,7 +4645,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-022",
@@ -4520,10 +4667,10 @@
       "source_pdf_page_end": 212,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.212–212",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4557,7 +4704,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-023",
@@ -4572,10 +4726,10 @@
       "source_pdf_page_end": 214,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.213–214",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4620,7 +4774,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-024",
@@ -4635,10 +4796,10 @@
       "source_pdf_page_end": 223,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.218–223",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4733,7 +4894,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-025",
@@ -4748,10 +4916,10 @@
       "source_pdf_page_end": 225,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.224–225",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4797,7 +4965,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-026",
@@ -4812,10 +4987,10 @@
       "source_pdf_page_end": 228,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.226–228",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -4872,7 +5047,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-027",
@@ -4887,10 +5069,10 @@
       "source_pdf_page_end": 235,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.229–235",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5020,7 +5202,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-028",
@@ -5035,10 +5224,10 @@
       "source_pdf_page_end": 243,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.243–243",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5075,7 +5264,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-029",
@@ -5090,10 +5286,10 @@
       "source_pdf_page_end": 245,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.244–245",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5154,7 +5350,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-030",
@@ -5169,10 +5372,10 @@
       "source_pdf_page_end": 255,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.246–255",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5410,7 +5613,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-031",
@@ -5425,10 +5635,10 @@
       "source_pdf_page_end": 265,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.264–265",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5472,7 +5682,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-032",
@@ -5487,10 +5704,10 @@
       "source_pdf_page_end": 267,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.266–267",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5537,7 +5754,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-033",
@@ -5552,10 +5776,10 @@
       "source_pdf_page_end": 269,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.268–269",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5601,7 +5825,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-034",
@@ -5616,10 +5847,10 @@
       "source_pdf_page_end": 273,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.270–273",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5700,7 +5931,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-035",
@@ -5715,10 +5953,10 @@
       "source_pdf_page_end": 280,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.278–280",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5762,7 +6000,14 @@
           "source_excerpt_lines": [],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-036",
@@ -5777,10 +6022,10 @@
       "source_pdf_page_end": 284,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.281–284",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5838,7 +6083,14 @@
           "source_excerpt_lines": [],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-037",
@@ -5853,10 +6105,10 @@
       "source_pdf_page_end": 288,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.285–288",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -5918,7 +6170,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-038",
@@ -5933,10 +6192,10 @@
       "source_pdf_page_end": 291,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.289–291",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6009,7 +6268,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-039",
@@ -6024,10 +6290,10 @@
       "source_pdf_page_end": 295,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.292–295",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6091,7 +6357,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-040",
@@ -6106,10 +6379,10 @@
       "source_pdf_page_end": 303,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.302–303",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6145,7 +6418,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-041",
@@ -6160,10 +6440,10 @@
       "source_pdf_page_end": 305,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.304–305",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6211,7 +6491,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-042",
@@ -6226,10 +6513,10 @@
       "source_pdf_page_end": 307,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.306–307",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6284,7 +6571,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-043",
@@ -6299,10 +6593,10 @@
       "source_pdf_page_end": 309,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.308–309",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6348,7 +6642,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-044",
@@ -6363,10 +6664,10 @@
       "source_pdf_page_end": 313,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.310–313",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6432,7 +6733,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-045",
@@ -6447,10 +6755,10 @@
       "source_pdf_page_end": 314,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.314–314",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6484,7 +6792,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-046",
@@ -6499,10 +6814,10 @@
       "source_pdf_page_end": 316,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.315–316",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6549,7 +6864,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-047",
@@ -6564,10 +6886,10 @@
       "source_pdf_page_end": 318,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.317–318",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6616,7 +6938,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-048",
@@ -6631,10 +6960,10 @@
       "source_pdf_page_end": 327,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.325–327",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6707,7 +7036,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-049",
@@ -6722,10 +7058,10 @@
       "source_pdf_page_end": 334,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.328–334",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -6871,7 +7207,14 @@
           "source_excerpt_lines": [],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-050",
@@ -6886,10 +7229,10 @@
       "source_pdf_page_end": 340,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.335–340",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7007,7 +7350,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-051",
@@ -7022,10 +7372,10 @@
       "source_pdf_page_end": 345,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.344–345",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7072,7 +7422,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-052",
@@ -7087,10 +7444,10 @@
       "source_pdf_page_end": 349,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.346–349",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7172,7 +7529,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-053",
@@ -7187,10 +7551,10 @@
       "source_pdf_page_end": 354,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.350–354",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7269,7 +7633,14 @@
           "source_excerpt_lines": [],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-054",
@@ -7284,10 +7655,10 @@
       "source_pdf_page_end": 355,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.355–355",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7303,7 +7674,14 @@
           "source_excerpt_lines": [],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-055",
@@ -7318,10 +7696,10 @@
       "source_pdf_page_end": 356,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.356–356",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7341,7 +7719,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-056",
@@ -7356,10 +7741,10 @@
       "source_pdf_page_end": 359,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.357–359",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7425,7 +7810,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-057",
@@ -7440,10 +7832,10 @@
       "source_pdf_page_end": 363,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.360–363",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7514,7 +7906,14 @@
           "source_excerpt_lines": [],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-058",
@@ -7529,10 +7928,10 @@
       "source_pdf_page_end": 369,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.368–369",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7611,7 +8010,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-059",
@@ -7626,10 +8032,10 @@
       "source_pdf_page_end": 369,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.368–369",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -7708,7 +8114,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-060",
@@ -7723,10 +8136,10 @@
       "source_pdf_page_end": 393,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.374–393",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -8142,7 +8555,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-061",
@@ -8157,10 +8577,10 @@
       "source_pdf_page_end": 395,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.394–395",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -8213,7 +8633,14 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     },
     {
       "catalog_id": "BHH-PED-062",
@@ -8228,10 +8655,10 @@
       "source_pdf_page_end": 399,
       "reference_url": "https://stream.nhso.go.th/ebook/flipbook/182/1/1",
       "reference_detail": "PDF p.398–399",
-      "status": "approved_published",
-      "approved": true,
-      "published": true,
-      "approval_scope": "SOURCE_REFERENCE_PUBLICATION",
+      "status": "archived_not_calculator_ready",
+      "approved": false,
+      "published": false,
+      "approval_scope": "SOURCE_TRANSCRIPTION_ONLY_NOT_CLINICAL_CALCULATION_APPROVAL",
       "clinical_dose_calculator_approval": false,
       "calculator_enabled": false,
       "structured_regimen_id": null,
@@ -8307,11 +8734,22 @@
           ],
           "extraction_note": "Source PDF text; preserve full PDF as authority, especially for tables, continuation lines and dose modification."
         }
-      ]
+      ],
+      "previous_reference_status": {
+        "status": "approved_published",
+        "approved": true,
+        "published": true
+      },
+      "production_visible": false,
+      "archive_reason": "Not clinically calculation-ready: age, risk, phase and day decision logic is not implemented and tested; user requested removal from live interface until working."
     }
   ],
   "protocols_with_transcribed_medication_examples": 8,
   "source_evidence_scope": "PDF extracted text excerpts for every protocol page; these are unvalidated searchable citations, NOT normalized clinical orders.",
   "source_evidence_pages": 303,
-  "source_evidence_chars": 151617
+  "source_evidence_chars": 151617,
+  "database_status": "ARCHIVED_OUT_OF_PRODUCTION_UI",
+  "approved_reference_regimens": 0,
+  "published_reference_regimens": 0,
+  "archived_reference_regimens": 62
 }
