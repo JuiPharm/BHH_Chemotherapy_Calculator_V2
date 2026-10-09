@@ -985,6 +985,16 @@ function bindLibrary() {
   $('#library-search').addEventListener('input',renderLibrary);
   renderLibrary();
 }
+
+function buildPediatricEvidenceHtml(item) {
+  const p=item.pediatricRecord;
+  if(!p)return '';
+  const pages=(p.source_evidence_pages||[]).filter(x=>x.source_excerpt_lines?.length);
+  return '<div class="alert alert-warning">ข้อความถอดจาก PDF สำหรับอ้างอิงเท่านั้น โปรดตรวจตารางต้นฉบับและ protocol phase ก่อนใช้เป็นคำสั่งยา ไม่ใช่ข้อมูลสำหรับคำนวณอัตโนมัติ</div>'+
+    pages.map(page=>'<section class="pediatric-evidence-page"><strong>ThaiPOG 2566 · PDF page '+esc(page.page)+'</strong>'+
+      '<pre class="pediatric-evidence-text">'+page.source_excerpt_lines.map(esc).join('\n')+'</pre></section>').join('');
+}
+
 function filteredCatalog() {
   const type=$('#library-cancer-type').value;
   const q=$('#library-search').value.trim().toLowerCase();
@@ -997,9 +1007,19 @@ function renderLibrary() {
   $('#library-list').innerHTML=groups.map(([type,arr])=>`<section class="cancer-group"><h3>${esc(typeLabel(type))} <span class="micro">(${arr.length})</span></h3><div class="registry-grid">${
     arr.map(x=>`<article class="regimen-card"><div><span class="badge ${statusBadge(x)}">${displayStatus(x)}</span></div>
       <h4>${esc(x.name)}</h4><p>${esc(x.indication)}</p><div class="micro">${esc(x.master?.cycle_text||`${x.structured?.cycleIntervalDays||''} days/cycle`)}</div>${referenceDetails(x)}
-      ${x.master?.drugs?.length?`<details><summary>Drug details</summary><div class="drug-list">${x.master.drugs.map(d=>`<div class="drug-row"><strong>${esc(d['ชื่อยา'])}</strong><span>${esc(d['ขนาดยา'])}</span></div>`).join('')}</div></details>`:''}
+      ${x.isPediatric?`<details data-pediatric-evidence="${esc(x.key)}"><summary>📄 รายละเอียดจาก PDF · Dose / Days / Phases (${x.pediatricRecord.source_evidence_pages?.length||0} หน้า)</summary><div class="pediatric-evidence-content"></div></details>`:''}
+      ${x.master?.drugs?.length?`<details><summary>${x.isPediatric?'ตัวอย่างยาที่ถอดจาก PDF (ยังไม่ครบทุก Phase)':'Drug details'}</summary><div class="drug-list">${x.master.drugs.map(d=>`<div class="drug-row"><strong>${esc(d['ชื่อยา'])}</strong><span>${esc(d['ขนาดยา'])}</span></div>`).join('')}</div></details>`:''}
       <div class="button-row"><button class="secondary" data-use-regimen="${esc(x.key)}">Select Regimen</button>${x.master&&!x.isPediatric?`<button type="button" class="secondary" data-review-regimen="${esc(x.key)}">Review / Publish</button>`:x.isPediatric?`<a href="${esc(x.guidelineReference.reference_url)}" target="_blank" rel="noopener noreferrer">NHSO Source PDF · ${esc(x.pediatricRecord.reference_detail)}</a>`:''}</div></article>`).join('')
   }</div></section>`).join('');
+  document.querySelectorAll('[data-pediatric-evidence]').forEach(details=>details.addEventListener('toggle',()=>{
+    if(!details.open)return;
+    const item=catalog.find(x=>x.key===details.dataset.pediatricEvidence);
+    const container=details.querySelector('.pediatric-evidence-content');
+    if(item&&container&&!container.dataset.loaded){
+      container.innerHTML=buildPediatricEvidenceHtml(item);
+      container.dataset.loaded='true';
+    }
+  }));
   document.querySelectorAll('[data-use-regimen]').forEach(b=>b.addEventListener('click',()=>useFromLibrary(b.dataset.useRegimen)));
   document.querySelectorAll('[data-review-regimen]').forEach(b=>b.addEventListener('click',()=>{
     const item=catalog.find(x=>x.key===b.dataset.reviewRegimen);
