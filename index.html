@@ -8,7 +8,6 @@
   <title>BHH Chemotherapy Calculator</title>
   <link rel="stylesheet" href="./styles.css?v=2.7.2">
   <link rel="stylesheet" href="./publish-manager.css?v=2.6.3">
-  <link rel="stylesheet" href="./pediatric-calc.css?v=2.8.0">
 </head>
 <body>
   <div id="app-loading" class="loading">Loading BHH Chemotherapy Calculator…</div>
@@ -25,7 +24,6 @@
 
     <nav class="tabs" aria-label="Main navigation">
       <button class="active" data-tab="calculator">Calculator</button>
-      <button data-tab="pediatric">Pediatric ALL Calculator</button>
       <button class="admin-tab hidden" data-tab="library">Regimen Library</button>
       <button class="admin-tab hidden" data-tab="manager">Regimen Manager</button>
       <button class="admin-tab hidden" data-tab="rounding">Rounding Policy</button>
@@ -34,55 +32,6 @@
     </nav>
 
     <main>
-      <section id="tab-pediatric" class="tab-panel hidden">
-        <div class="card pediatric-card">
-          <div class="pediatric-header">
-            <div><h2>Pediatric Dosing Calculator</h2><p><strong>ThaiPOG-ALL-1301 (SR) / ThaiPOG-ALL-1302 (HR)</strong></p></div>
-            <span class="badge badge-warning">Clinical verification required</span>
-          </div>
-          <p class="pediatric-intro">คำนวณ <strong>ขนาดยาตามตารางต้นฉบับ</strong> แยก Treatment Phase / Day / อายุ / น้ำหนัก พร้อมตรวจเงื่อนไขสำคัญ — <strong>ไม่ใช่ใบสั่งยาและไม่อนุมัติให้บริหารยาอัตโนมัติ</strong> การอนุมัติการใช้จริงต้องผ่านการทดสอบ UAT ของทีม Pediatric Oncology Pharmacy</p>
-          <form id="ped-calc-form" novalidate>
-            <div class="pediatric-section-title">1 · เลือกสูตรและวันให้ยา</div>
-            <div class="pediatric-grid">
-              <label><span>Protocol</span><select id="ped-protocol"><option value="ThaiPOG-ALL-1301">ThaiPOG-ALL-1301 · Standard Risk</option><option value="ThaiPOG-ALL-1302">ThaiPOG-ALL-1302 · High Risk</option></select></label>
-              <label><span>Treatment Phase *</span><select id="ped-phase" required></select></label>
-              <label><span>Treatment Day *</span><input id="ped-day" type="number" min="1" max="36" step="1" value="1" required /></label>
-              <label id="ped-cycle-wrap" class="hidden"><span>Maintenance Cycle *</span><input id="ped-cycle" type="number" min="1" max="100" step="1" value="1" /></label>
-            </div>
-            <p id="ped-phase-notes" class="micro"></p>
-            <div class="pediatric-section-title">2 · Patient dosing inputs</div>
-            <div class="pediatric-grid">
-              <label><span>Current age (years) *</span><input id="ped-age" type="number" inputmode="decimal" min="1" max="21" step="0.01" placeholder="e.g. 5.5" required /></label>
-              <label><span>Age at diagnosis (years) *</span><input id="ped-age-dx" type="number" inputmode="decimal" min="1" max="21" step="0.01" placeholder="e.g. 5" required /></label>
-              <label><span>Sex *</span><select id="ped-sex" required><option value="">เลือกเพศ</option><option value="female">Female</option><option value="male">Male</option></select></label>
-              <label><span>Weight (kg) *</span><input id="ped-weight" type="number" inputmode="decimal" min="1" max="200" step="0.01" required /></label>
-              <label><span>Height (cm) *</span><input id="ped-height" type="number" inputmode="decimal" min="35" max="235" step="0.1" required /></label>
-              <label><span>WBC at diagnosis (/µL) *</span><input id="ped-wbc" type="number" inputmode="numeric" min="0" step="1" required /></label>
-              <label><span>Current ANC (/µL)</span><input id="ped-anc" type="number" inputmode="numeric" min="0" step="1" placeholder="จำเป็นก่อน HD-MTX/เปลี่ยน Phase" /></label>
-              <label><span>Current platelets (/µL)</span><input id="ped-platelets" type="number" inputmode="numeric" min="0" step="1" placeholder="จำเป็นก่อน HD-MTX/เปลี่ยน Phase" /></label>
-            </div>
-            <div class="pediatric-section-title">3 · Confirm clinical eligibility</div>
-            <div class="pediatric-check-grid">
-              <label><input id="ped-bcell" type="checkbox" /> ยืนยัน Precursor B-cell ALL</label>
-              <label><input id="ped-tcell" type="checkbox" /> ยืนยัน T-cell ALL (เฉพาะ High Risk)</label>
-              <label><input id="ped-burkitt" type="checkbox" /> ยืนยันไม่ใช่ Burkitt leukemia</label>
-              <label><input id="ped-risk" type="checkbox" /> ยืนยันยังเป็น Standard Risk หลังการประเมิน Day 29/MRD</label>
-              <label id="ped-highrisk-wrap" class="hidden"><input id="ped-highrisk" type="checkbox" /> แพทย์ยืนยันเข้าเกณฑ์ High Risk และไม่เปลี่ยนเป็น VHR</label>
-              <label><input id="ped-phase-start" type="checkbox" checked /> เป็นการเริ่ม Phase นี้ (ตรวจเกณฑ์เริ่ม Phase)</label>
-              <label><input id="ped-infection" type="checkbox" /> มี Severe Infection / ยังควบคุมการติดเชื้อไม่ได้</label>
-              <label><input id="ped-tap" type="checkbox" /> Traumatic tap (พิจารณา IT MTX เพิ่มใน Induction)</label>
-              <label id="ped-cns3-wrap" class="hidden"><input id="ped-cns3" type="checkbox" /> CNS-3 (เพิ่ม IT-MTX Day 15/22 เฉพาะ HR Induction)</label>
-              <label><input id="ped-hdmtx" type="checkbox" /> ทีมรักษายืนยันแผน HD-MTX: hydration / laboratory / leucovorin rescue / monitoring</label>
-            </div>
-            <button class="primary pediatric-calc-button" type="submit" id="ped-calculate">Calculate phase-specific doses</button>
-          </form>
-          <div id="ped-results" class="pediatric-results" role="status" aria-live="polite">
-            <div class="pediatric-empty">กรอกข้อมูลผู้ป่วย (ไม่ต้องใส่ชื่อหรือ HN) แล้วเลือก Phase/Day เพื่อคำนวณขนาดยาตาม PDF ThaiPOG 2566</div>
-          </div>
-          <p class="micro">Source: ThaiPOG/NHSO 2566, PDF pp. 24–37 · <a href="https://stream.nhso.go.th/ebook/flipbook/182/1/1" rel="noopener noreferrer" target="_blank">ดู Guideline ฉบับต้นฉบับ</a>. ค่าที่คำนวณเป็น <strong>unrounded protocol nominal doses</strong> ต้องตรวจ infusion procedure, supportive care, laboratory review และ dose modification แยกทุกครั้ง</p>
-        </div>
-      </section>
-
       <section id="tab-calculator" class="tab-panel">
         <form id="calc-form" class="card form-card">
           <h2>Patient & Regimen</h2>
@@ -245,12 +194,12 @@
         <div class="card prose">
           <h2>About</h2>
           <p>BHH Chemotherapy Calculator — Pharmacy Department, Bangkok Hospital Hatyai</p>
-          <p>Version <strong>2.8.1</strong> · Central Regimen Master · 7 October 2026</p>
+          <p>Version <strong>2.9.0</strong> · Central Regimen Master · 7 October 2026</p>
         </div>
       </section>
     </main>
 
-    <footer>Bangkok Hospital Hatyai · Pharmacy Department · BHH Chemotherapy Calculator v2.8.1</footer>
+    <footer>Bangkok Hospital Hatyai · Pharmacy Department · BHH Chemotherapy Calculator v2.9.0</footer>
   </div>
 
   <dialog id="pin-auth-dialog">
@@ -277,6 +226,5 @@
   <script src="./cleanup.js?v=2.3.0" defer></script>
   <script src="./publish-manager.js?v=2.6.4" defer></script>
   <script src="./app.bundle.js?v=2.7.2" defer></script>
-  <script type="module" src="./pediatric-calc-ui.mjs?v=2.8.1"></script>
 </body>
 </html>
