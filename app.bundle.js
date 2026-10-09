@@ -68,12 +68,15 @@ function structuredLink(name,indication) {
   return null;
 }
 function getGuidelineRecord(catalogId) {
+  const central = BHH_GUIDELINE_STATUS.find(r=>r.catalog_id===catalogId)||null;
+  // Updated Oxford/Rama clinical source records must be consistent across devices.
+  if (central?.source_integrity?.startsWith('SOURCE_TABLE_MATCHED')) return central;
   try {
     const local = JSON.parse(localStorage.getItem('bhh_custom_approvals_v2') || '[]');
     const foundLocal = local.find(r => r.catalog_id === catalogId);
     if (foundLocal) return foundLocal;
   } catch {}
-  return BHH_GUIDELINE_STATUS.find(r=>r.catalog_id===catalogId)||null;
+  return central;
 }
 function displayStatus(item) {
   if (item.isPediatric) return 'APPROVED · PUBLISHED · PEDIATRIC REFERENCE';
@@ -166,7 +169,8 @@ function parseMasterDrug(drug, index) {
 }
 
 function buildStructuredFromMaster(m) {
-  if (!m || ['BHH-CATALOG-046','BHH-CATALOG-048'].includes(m.catalog_id) || getGuidelineRecord(m.catalog_id)?.status==='blocked') return null;
+  const sourceRecord=m&&getGuidelineRecord(m.catalog_id);
+  if (!m || ['BHH-CATALOG-046','BHH-CATALOG-048'].includes(m.catalog_id) || sourceRecord?.status==='blocked' || (sourceRecord?.calculator_enabled===false && sourceRecord?.approval_scope==='SOURCE_REFERENCE_PUBLICATION_PENDING_LOCAL_REVIEW')) return null;
   const orders = (m.drugs || []).map(parseMasterDrug);
   return {
     id: m.catalog_id || m.regimen_id,
@@ -852,7 +856,7 @@ function onRegimenSelected() {
 
   renderSelectedContext();
   $('#calculate-btn').disabled = !selectedItem.structured || selectedItem.isPediatric;
-  if (selectedItem.isPediatric) $('#cycle-input').disabled=true;
+  if (!selectedItem.structured || selectedItem.isPediatric) $('#cycle-input').disabled=true;
 }
 
 function originalDrugRows(item) {
@@ -921,6 +925,7 @@ function renderSelectedContext() {
     </div>
     <p>${esc(m.indication)}</p>
     <div class="micro">${esc(m.cycle_text)}</div>
+    ${selectedItem.guidelineReference?.source_integrity?.startsWith('SOURCE_TABLE_MATCHED')?'<div class="alert alert-warning">Protocol source reviewed; dose calculation is intentionally disabled until regimen-specific structured scheduling and local clinical validation are complete.</div>':''}
     ${referenceDetails(selectedItem)}
     ${tableHtml}`;
   }
