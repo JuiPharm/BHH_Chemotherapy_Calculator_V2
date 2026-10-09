@@ -10,6 +10,7 @@
   const SOURCE_DOMAINS = {
     'NCCN': ['nccn.org'],
     'NCI Thailand': ['nci.go.th'],
+    'NHSO Pediatric 2566': ['nhso.go.th'],
     'ASCO': ['asco.org', 'ascopubs.org', 'jco.org'],
     'BC Cancer': ['bccancer.bc.ca'],
     'eviQ': ['eviq.org.au'],
@@ -43,7 +44,7 @@
       '<form id="review-publish-form" novalidate><div class="review-publish-content">' +
       '<p class="review-publish-help">แก้ไขข้อมูลที่จำเป็น ตรวจสอบกับ Guideline ฉบับจริง ใส่ PIN แล้วกด <strong>Approve & Publish</strong> เพื่อนำไปใช้คำนวณและเผยแพร่ในระบบ</p>' +
       '<p id="review-publish-error" role="alert" aria-live="assertive" hidden></p><div id="review-publish-name"></div><div id="review-reference-suggestion" hidden></div>' +
-      '<div class="review-publish-two"><label>แหล่งอ้างอิง<select id="review-publish-source"><option value="">เลือก Guideline (ถ้ามี)</option><option>NCCN</option><option>NCI Thailand</option><option>ASCO</option><option>BC Cancer</option><option>eviQ</option><option>NCI US</option></select></label>' +
+      '<div class="review-publish-two"><label>แหล่งอ้างอิง<select id="review-publish-source"><option value="">เลือก Guideline (ถ้ามี)</option><option>NCCN</option><option>NCI Thailand</option><option>NHSO Pediatric 2566</option><option>ASCO</option><option>BC Cancer</option><option>eviQ</option><option>NCI US</option></select></label>' +
       '<label>Protocol ID / Version (ถ้ามี)<input id="review-publish-protocol" placeholder="เช่น GICOXB / 2026" /></label></div>' +
       '<label>ลิงก์ Guideline ที่ใช้ตรวจสอบ<input id="review-publish-url" type="text" placeholder="https://... (ไม่บังคับ)" /></label>' +
       '<label>ข้อบ่งใช้ (Indication)<textarea id="review-publish-indication" rows="2" required></textarea></label>' +
