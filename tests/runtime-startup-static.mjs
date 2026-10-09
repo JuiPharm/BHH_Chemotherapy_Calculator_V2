@@ -32,6 +32,9 @@ const pediatric=JSON.parse(fs.readFileSync(new URL('../data/pediatric-regimens.t
 assert(pediatric.regimens.length===62 && pediatric.record_count===62,'Pediatric database must contain 62 reference protocols/variants');
 assert(pediatric.regimens.every(x=>x.population==='pediatric' && x.approved===true && x.published===true),'Every pediatric reference must be tagged and reference published');
 assert(pediatric.regimens.every(x=>x.approval_scope==='SOURCE_REFERENCE_PUBLICATION' && x.calculator_enabled===false && x.clinical_dose_calculator_approval===false),'Pediatric reference approval must not enable dose calculation');
+assert(pediatric.regimens.find(x=>x.protocol_id==='ThaiPOG-ALL-1301')?.verified_source_examples?.length===25,'SR-ALL must retain 25 phase-specific medicine reference entries');
+assert(pediatric.regimens.find(x=>x.protocol_id==='ThaiPOG-ALL-1302')?.verified_source_examples?.length===31,'HR-ALL must retain 31 phase-specific medicine reference entries');
+assert(pediatric.regimens.some(x=>x.protocol_id==='ThaiPOG-NPC-21' && x.verified_source_examples.length===3),'Pediatric nasopharyngeal induction/concurrent protocol must remain traceable');
 assert(new Set(pediatric.regimens.map(x=>x.catalog_id)).size===62,'Duplicate pediatric IDs prohibited');
 assert(bundle.includes("loadJson('./data/pediatric-regimens.thaipog-2566.json?v=2.7.0')"),'Production frontend must load the pediatric database');
 assert(bundle.includes("if (selectedItem.isPediatric) $('#cycle-input').disabled=true"),'Pediatric calculation must be blocked');
