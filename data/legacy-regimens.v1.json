@@ -1445,56 +1445,134 @@
       ]
     },
     {
-      "ชื่อสูตรยา": "R-CODOX-M/IVAC regimen",
-      "ชนิดของมะเร็ง": "มะเร็งต่อมน้ำเหลือง Burkitt (High-Risk)",
-      "รอบการรักษา": "Alternating cycles",
+      "ชื่อสูตรยา": "R-CODOX-M / R-IVAC — Oxford NSSG L.49 v5.0 (High-risk adult)",
+      "ชนิดของมะเร็ง": "Adult Burkitt lymphoma / high-risk mature B-cell lymphoma; Oxford NSSG L.49 high-risk schedule. NOT ThaiPOG pediatric.",
+      "รอบการรักษา": "High-risk: 4 alternating cycles, R-CODOX-M cycles 1 & 3; R-IVAC cycles 2 & 4; cycle starts every 21–28 days depending on count recovery. Oxford NSSG L.49 v5.0 (Sept 2025), pp.2–5",
       "รายการยา": [
         {
           "ชื่อยา": "Rituximab",
-          "ขนาดยา": "375 mg/m² IV day 1",
-          "ความถี่ในการให้": "per cycle",
+          "ขนาดยา": "375 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M day 1",
           "maximum_dose": null
         },
         {
-          "ชื่อยา": "Cyclophosphamide",
-          "ขนาดยา": "800 mg/m² IV days 1-2",
-          "ความถี่ในการให้": "R-CODOX-M",
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "40 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M day 1",
           "maximum_dose": null
         },
         {
           "ชื่อยา": "Vincristine",
-          "ขนาดยา": "1.5 mg/m² IV days 1,8",
-          "ความถี่ในการให้": "R-CODOX-M",
-          "maximum_dose": "2 mg"
+          "ขนาดยา": "1.5 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M days 1, 8",
+          "maximum_dose": "2 mg; age >70 max 1 mg (Oxford)"
         },
         {
-          "ชื่อยา": "Doxorubicin",
-          "ขนาดยา": "50 mg/m² IV day 1",
-          "ความถี่ในการให้": "R-CODOX-M",
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "800 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M day 1",
           "maximum_dose": null
         },
         {
-          "ชื่อยา": "Methotrexate",
-          "ขนาดยา": "3 g/m² IV day 10",
-          "ความถี่ในการให้": "R-CODOX-M",
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "200 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M days 2–5",
           "maximum_dose": null
         },
         {
-          "ชื่อยา": "Ifosfamide",
-          "ขนาดยา": "1500 mg/m² IV days 1-5",
-          "ความถี่ในการให้": "IVAC",
+          "ชื่อยา": "Cytarabine (intrathecal)",
+          "ขนาดยา": "70 mg IT",
+          "ความถี่ในการให้": "R-CODOX-M days 2, 4; additional day 6 in cycle 1 only if CNS disease",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate IV (loading)",
+          "ขนาดยา": "300 mg/m² IV over 1 hour",
+          "ความถี่ในการให้": "R-CODOX-M day 10; age ≤65; part 1 of 3,000 mg/m²",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate IV (continuation)",
+          "ขนาดยา": "2700 mg/m² IV over 23 hours",
+          "ความถี่ในการให้": "R-CODOX-M day 10, immediately after loading; age ≤65",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Calcium folinate / Leucovorin rescue",
+          "ขนาดยา": "15 mg/m² IV q3h ×5 starting H36, then q6h IV/PO adjusted by MTX level",
+          "ความถี่ในการให้": "R-CODOX-M from 36 hours after IV MTX start until MTX <0.1 µmol/L; Oxford p4",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate (intrathecal)",
+          "ขนาดยา": "12.5 mg IT",
+          "ความถี่ในการให้": "R-CODOX-M day 15; additional day 17 in cycle 1 only if CNS disease",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Calcium folinate after IT-MTX",
+          "ขนาดยา": "15 mg PO once",
+          "ความถี่ในการให้": "R-CODOX-M day 16 (and day 18 if day 17 IT MTX given)",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV",
+          "ความถี่ในการให้": "R-IVAC day 1",
           "maximum_dose": null
         },
         {
           "ชื่อยา": "Etoposide",
-          "ขนาดยา": "60 mg/m² IV days 1-5",
-          "ความถี่ในการให้": "IVAC",
+          "ขนาดยา": "60 mg/m² IV over 1 hour",
+          "ความถี่ในการให้": "R-IVAC days 1–5",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Mesna (pre-ifosfamide)",
+          "ขนาดยา": "300 mg/m² IV",
+          "ความถี่ในการให้": "R-IVAC days 1–5, 15–30 min before ifosfamide, age ≤65",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Ifosfamide",
+          "ขนาดยา": "1500 mg/m² IV over 1 hour",
+          "ความถี่ในการให้": "R-IVAC days 1–5, age ≤65",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Mesna (concurrent)",
+          "ขนาดยา": "1500 mg/m² IV over 1 hour",
+          "ความถี่ในการให้": "R-IVAC days 1–5 with ifosfamide, age ≤65",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Mesna (post-ifosfamide)",
+          "ขนาดยา": "450 mg/m² IV each dose",
+          "ความถี่ในการให้": "R-IVAC days 1–5, H+4 and H+8 from ifosfamide start, age ≤65",
           "maximum_dose": null
         },
         {
           "ชื่อยา": "Cytarabine",
-          "ขนาดยา": "2 g/m² IV BID days 1-5",
-          "ความถี่ในการให้": "IVAC",
+          "ขนาดยา": "2000 mg/m² IV per dose over 3 hours",
+          "ความถี่ในการให้": "R-IVAC days 1–2, twice daily, age ≤65",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate (intrathecal)",
+          "ขนาดยา": "12.5 mg IT",
+          "ความถี่ในการให้": "R-IVAC day 5",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Calcium folinate after IT-MTX",
+          "ขนาดยา": "15 mg PO once",
+          "ความถี่ในการให้": "R-IVAC day 6",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine (intrathecal), conditional",
+          "ขนาดยา": "70 mg IT",
+          "ความถี่ในการให้": "R-IVAC day 7 and 9, ONLY first R-IVAC cycle (cycle 2 overall) if CNS disease",
           "maximum_dose": null
         }
       ]
@@ -1994,12 +2072,12 @@
     {
       "ชื่อสูตรยา": "FAC regimen",
       "ชนิดของมะเร็ง": "มะเร็งเต้านม (Breast Cancer)",
-      "รอบการรักษา": "6 รอบการรักษา",
+      "รอบการรักษา": "Every 21 days ×6; FAC/CAF as Ramathibodi 2561, fluorouracil D1. Other FAC schedules should be separate variants.",
       "รายการยา": [
         {
           "ชื่อยา": "Fluorouracil",
-          "ขนาดยา": "500 mg/m² IV days 1 and 8",
-          "ความถี่ในการให้": "ทุก 21 วัน",
+          "ขนาดยา": "500 mg/m² IV day 1",
+          "ความถี่ในการให้": "Every 21 days ×6 (FAC/CAF, Ramathibodi 2561)",
           "maximum_dose": null
         },
         {
@@ -3796,6 +3874,200 @@
           "ชื่อยา": "Leucovorin",
           "ขนาดยา": "400 mg/m² IV day 1",
           "ความถี่ในการให้": "ทุก 14 วัน",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "R-CODOX-M — Oxford NSSG L.49 Low-risk adult",
+      "ชนิดของมะเร็ง": "Adult low-risk Burkitt/mature B-cell lymphoma meeting Oxford L.49 risk criteria; not pediatric",
+      "รอบการรักษา": "R-CODOX-M alone ×3 cycles, 21–28 days between cycles depending on counts (Oxford L.49 v5.0)",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Rituximab",
+          "ขนาดยา": "375 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M day 1",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "40 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M day 1",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Vincristine",
+          "ขนาดยา": "1.5 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M days 1, 8",
+          "maximum_dose": "2 mg; age >70 max 1 mg (Oxford)"
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "800 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M day 1",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "200 mg/m² IV",
+          "ความถี่ในการให้": "R-CODOX-M days 2–5",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cytarabine (intrathecal)",
+          "ขนาดยา": "70 mg IT",
+          "ความถี่ในการให้": "R-CODOX-M days 2, 4; additional day 6 in cycle 1 only if CNS disease",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate IV (loading)",
+          "ขนาดยา": "300 mg/m² IV over 1 hour",
+          "ความถี่ในการให้": "R-CODOX-M day 10; age ≤65; part 1 of 3,000 mg/m²",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate IV (continuation)",
+          "ขนาดยา": "2700 mg/m² IV over 23 hours",
+          "ความถี่ในการให้": "R-CODOX-M day 10, immediately after loading; age ≤65",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Calcium folinate / Leucovorin rescue",
+          "ขนาดยา": "15 mg/m² IV q3h ×5 starting H36, then q6h IV/PO adjusted by MTX level",
+          "ความถี่ในการให้": "R-CODOX-M from 36 hours after IV MTX start until MTX <0.1 µmol/L; Oxford p4",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Methotrexate (intrathecal)",
+          "ขนาดยา": "12.5 mg IT",
+          "ความถี่ในการให้": "R-CODOX-M day 15; additional day 17 in cycle 1 only if CNS disease",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Calcium folinate after IT-MTX",
+          "ขนาดยา": "15 mg PO once",
+          "ความถี่ในการให้": "R-CODOX-M day 16 (and day 18 if day 17 IT MTX given)",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "AC — Breast Adjuvant (Ramathibodi 2561)",
+      "ชนิดของมะเร็ง": "Early breast cancer, adjuvant chemotherapy",
+      "รอบการรักษา": "Every 21 days ×4 cycles (Protocol 1)",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "60 mg/m² IV day 1",
+          "ความถี่ในการให้": "q21d ×4",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "q21d ×4",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "AC — Breast Metastatic (Ramathibodi 2561)",
+      "ชนิดของมะเร็ง": "Metastatic breast cancer, selected candidates under 2561 Protocol 2; consider cumulative anthracycline exposure",
+      "รอบการรักษา": "Every 21 days ×6 cycles (Protocol 2)",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "60 mg/m² IV day 1",
+          "ความถี่ในการให้": "q21d ×6",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "q21d ×6",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "AC → Paclitaxel weekly — Breast Adjuvant (Ramathibodi 2561)",
+      "ชนิดของมะเร็ง": "Early breast cancer, adjuvant sequential AC then weekly paclitaxel",
+      "รอบการรักษา": "AC q21d ×4 followed by paclitaxel 80 mg/m² IV weekly ×12 (NOT a single shared 21-day cycle)",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Doxorubicin",
+          "ขนาดยา": "60 mg/m² IV day 1",
+          "ความถี่ในการให้": "AC phase: q21d ×4",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Cyclophosphamide",
+          "ขนาดยา": "600 mg/m² IV day 1",
+          "ความถี่ในการให้": "AC phase: q21d ×4",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "80 mg/m² IV",
+          "ความถี่ในการให้": "Taxane phase: q7d ×12, AFTER AC",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Trastuzumab — Breast Adjuvant q21d (Ramathibodi 2561)",
+      "ชนิดของมะเร็ง": "HER2-positive early breast cancer; adjuvant trastuzumab reference schedule, confirm HER2 and cardiac status",
+      "รอบการรักษา": "8 mg/kg loading, then 6 mg/kg every 21 days, total 18 administrations (~1 year), from Protocol 1",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Trastuzumab (loading)",
+          "ขนาดยา": "8 mg/kg IV",
+          "ความถี่ในการให้": "First administration only",
+          "maximum_dose": null
+        },
+        {
+          "ชื่อยา": "Trastuzumab (maintenance)",
+          "ขนาดยา": "6 mg/kg IV",
+          "ความถี่ในการให้": "Every 21 days, remaining administrations to 18",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Paclitaxel monotherapy q21d — Breast Metastatic (Ramathibodi 2561)",
+      "ชนิดของมะเร็ง": "Metastatic breast cancer, single-agent paclitaxel from historical Protocol 2",
+      "รอบการรักษา": "Every 21 days ×6 cycles (Protocol 2)",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Paclitaxel",
+          "ขนาดยา": "175 mg/m² IV over 3 hours day 1",
+          "ความถี่ในการให้": "q21d ×6",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Docetaxel monotherapy q21d — Breast Metastatic (Ramathibodi 2561)",
+      "ชนิดของมะเร็ง": "Metastatic breast cancer, single-agent docetaxel, historical Protocol 2",
+      "รอบการรักษา": "Every 21 days ×6 cycles; source dose range 75–100 mg/m² requires prescriber selection",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Docetaxel",
+          "ขนาดยา": "75–100 mg/m² IV over 1 hour day 1",
+          "ความถี่ในการให้": "q21d ×6; select approved dose before ordering",
+          "maximum_dose": null
+        }
+      ]
+    },
+    {
+      "ชื่อสูตรยา": "Capecitabine monotherapy — Breast Metastatic (Ramathibodi 2561)",
+      "ชนิดของมะเร็ง": "Metastatic breast cancer, capecitabine monotherapy from historical Protocol 2",
+      "รอบการรักษา": "Every 21 days ×8 cycles, days 1–14 per cycle (Protocol 2)",
+      "รายการยา": [
+        {
+          "ชื่อยา": "Capecitabine",
+          "ขนาดยา": "1,000–1,250 mg/m² PO twice daily days 1–14",
+          "ความถี่ในการให้": "q21d ×8; choose clinical starting dose, renal modifications as needed",
           "maximum_dose": null
         }
       ]
