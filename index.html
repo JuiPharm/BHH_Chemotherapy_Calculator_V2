@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0b2c55">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://github.com https://api.github.com; object-src 'none'; base-uri 'self'; form-action 'self'">
   <title>BHH Chemotherapy Calculator</title>
-  <link rel="stylesheet" href="./styles.css?v=2.7.2">
+  <link rel="stylesheet" href="./styles.css?v=2.7.3">
   <link rel="stylesheet" href="./publish-manager.css?v=2.7.0">
 </head>
 <body>
@@ -183,7 +183,7 @@
         <div class="card">
           <div class="section-heading">
             <div><h2>Zero-code Regimen Builder</h2><p>สร้าง/แก้สูตรยา Structured แบบหลาย Phase แล้วบันทึก Draft หรือ Approve &amp; Publish ผ่าน Pharmacist PIN</p></div>
-            <div class="button-row"><button id="builder-new" type="button" class="secondary">+ New Draft</button><button id="builder-clone" type="button" class="secondary">Clone as Draft</button></div>
+            <div class="button-row"><button id="builder-new" type="button" class="secondary">+ New Draft</button><button id="builder-clear" type="button" class="secondary">Clear Form</button><button id="builder-clone" type="button" class="secondary">Clone as Draft</button></div>
           </div>
           <div id="builder-message" class="alert alert-info" role="status" aria-live="polite">เริ่มจากเลือก Regimen ใน Library แล้วกด Build Structured หรือสร้างสูตรใหม่</div>
           <div id="builder-content"></div>
@@ -198,7 +198,7 @@
               <button type="button" class="secondary" id="builder-load">Load Central Drafts</button>
             </div>
           </div>
-          <div id="builder-drafts" class="button-row" style="flex-wrap:wrap"></div>
+          <div id="builder-drafts" class="builder-drafts" aria-live="polite"></div><p class="micro">Archive จะถอน Regimen ออกจากรายการใช้งานในฐานกลาง แต่เก็บข้อมูลไว้เพื่อกู้คืนเป็น Draft และทบทวนก่อน Publish ใหม่</p>
         </div>
       </section>
       <section id="tab-legacy" class="tab-panel hidden">
@@ -242,23 +242,27 @@
     <footer>Bangkok Hospital Hatyai · Pharmacy Department · BHH Chemotherapy Calculator v2.7.1</footer>
   </div>
 
-  <dialog id="pin-auth-dialog">
-    <div class="review-publish-head">
-      <h2 id="pin-auth-heading">ยืนยันรหัส PIN (Pharmacist Mode)</h2>
-      <button id="pin-auth-close" type="button" aria-label="Close">✕</button>
+  <dialog id="pin-auth-dialog" aria-labelledby="pin-auth-heading" aria-describedby="pin-auth-description">
+    <div class="pin-auth-top">
+      <div class="pin-auth-icon" aria-hidden="true">🔐</div>
+      <button id="pin-auth-close" class="pin-auth-close" type="button" aria-label="ปิดหน้าต่าง">✕</button>
     </div>
-    <form id="pin-auth-form" style="padding: 20px;">
-      <p style="margin-top:0; color: #334e68; font-size: 0.95rem;">
-        กรุณากรอกรหัส PIN เพื่อปลดล็อคหน้าจัดการสูตรยา (Regimen Library, Manager และ Rounding Policy)
-      </p>
-      <div id="pin-auth-error" class="alert alert-error hidden"></div>
-      <label class="field" style="margin: 18px 0;">
-        <span>รหัส PIN *</span>
-        <input id="pin-auth-input" type="password" maxlength="10" required autocomplete="off" style="font-size: 1.3rem; letter-spacing: 4px; text-align: center;">
-      </label>
-      <div class="button-row" style="justify-content: flex-end; margin-top: 15px;">
+    <div class="pin-auth-heading">
+      <p class="pin-auth-eyebrow">BHH PHARMACY · SECURE ACCESS</p>
+      <h2 id="pin-auth-heading">Pharmacist Mode</h2>
+      <p id="pin-auth-description">ยืนยันตัวตนด้วย PIN เพื่อจัดการ Regimen, ทบทวนข้อมูล และตั้งค่าการคำนวณ</p>
+    </div>
+    <form id="pin-auth-form" class="pin-auth-form">
+      <label class="field" for="pin-auth-input"><span>Pharmacist PIN</span></label>
+      <div class="pin-auth-input-wrap">
+        <input id="pin-auth-input" type="password" maxlength="40" required autocomplete="off" placeholder="กรอกรหัส PIN" aria-describedby="pin-auth-tip pin-auth-error">
+        <button id="pin-auth-visibility" type="button" aria-controls="pin-auth-input" aria-pressed="false" aria-label="แสดงรหัส PIN">แสดง</button>
+      </div>
+      <p id="pin-auth-tip" class="pin-auth-tip">ตรวจสอบกับ Cloudflare Server ทุกครั้ง · ไม่บันทึกรหัส PIN ใน Browser</p>
+      <div id="pin-auth-error" class="pin-auth-error hidden" role="alert" aria-live="assertive"></div>
+      <div class="pin-auth-actions">
         <button type="button" id="pin-auth-cancel" class="secondary">ยกเลิก</button>
-        <button type="submit" class="primary">เข้าสู่ระบบ</button>
+        <button type="submit" id="pin-auth-submit" class="primary">ยืนยัน PIN <span aria-hidden="true">→</span></button>
       </div>
     </form>
   </dialog>
@@ -266,8 +270,8 @@
   <script src="./cleanup.js?v=2.3.0" defer></script>
   <script src="./publish-manager.js?v=2.7.0" defer></script>
   <script src="./renal-equations.js?v=2.7.1" defer></script>
-  <script src="./app.bundle.js?v=2.7.2" defer></script>
-  <script src="./regimen-builder.js?v=2.7.0" defer></script>
+  <script src="./app.bundle.js?v=2.7.3" defer></script>
+  <script src="./regimen-builder.js?v=2.7.3" defer></script>
   <script src="./legacy-validator.js?v=2.7.0" defer></script>
 </body>
 </html>
